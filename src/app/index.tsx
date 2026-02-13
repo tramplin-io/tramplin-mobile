@@ -1,44 +1,53 @@
-import { StatusBar } from 'expo-status-bar'
-import { Text, View, Pressable } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { Container } from '@/components/ui/Container'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
+import { AccountInfo } from '@/components/wallet/AccountInfo'
+import { SignMessageForm } from '@/components/wallet/SignMessageForm'
 
-export default function App() {
-  const { account, connect, disconnect } = useMobileWallet()
+/**
+ * Home screen - wallet connection and actions.
+ */
+export default function HomeScreen() {
+  const { account } = useMobileWallet()
+  const isConnected = account !== undefined && account !== null
 
   return (
-    <View className="flex-1 bg-white dark:bg-black items-center justify-center px-8">
-      {/* Heading */}
-      <Text className="text-4xl font-extrabold text-gray-800 dark:text-white mb-3 tracking-tight">🚀 Welcome</Text>
+    <Container safe>
+      <ScrollView contentContainerClassName="px-6 py-8">
+        {/* Header */}
+        <View className="items-center mb-8">
+          <Text className="text-4xl font-extrabold text-text-primary dark:text-dark-text-primary mb-2 tracking-tight">
+            Tramplin
+          </Text>
+          <Text className="text-base text-text-secondary dark:text-dark-text-secondary text-center">
+            Solana Mobile Wallet powered by{' '}
+            <Text className="text-primary font-semibold">Expo + Uniwind + @solana/kit</Text>
+          </Text>
+        </View>
 
-      {/* Subheading */}
-      <Text className="text-xl dark:text-white text-gray-700 mb-8 text-center leading-relaxed">
-        Build beautiful apps with <Text className="text-blue-500 font-semibold">Expo + Uniwind + @solana/kit 🔥</Text>
-      </Text>
+        {/* Wallet Connection */}
+        <View className="mb-6">
+          <ConnectButton />
+        </View>
 
-      <View className="mb-8 items-center">
-        {account ? (
-          <View className="items-center">
-            <Text className="text-gray-600 dark:text-gray-400 mb-2">
-              Connected: {account.address.toString().slice(0, 8)}...
-            </Text>
-            <Pressable onPress={disconnect} className="bg-red-500 px-6 py-3 rounded-xl active:bg-red-600">
-              <Text className="text-white font-bold">Disconnect Wallet</Text>
-            </Pressable>
+        {/* Account Info (shown when connected) */}
+        {isConnected && (
+          <View className="gap-4">
+            <AccountInfo />
+            <SignMessageForm />
           </View>
-        ) : (
-          <Pressable onPress={connect} className="bg-blue-600 px-6 py-3 rounded-xl active:bg-blue-700">
-            <Text className="text-white font-bold text-lg">Connect Wallet</Text>
-          </Pressable>
         )}
-      </View>
 
-      {/* Instruction text */}
-      <Text className="text-base text-gray-600 dark:text-white text-center max-w-sm">
-        Start customizing your app by editing{' '}
-        <Text className="font-semibold text-gray-800 dark:text-white">app/index.tsx</Text>
-      </Text>
-
-      <StatusBar style="auto" />
-    </View>
+        {/* Getting started hint (shown when disconnected) */}
+        {!isConnected && (
+          <View className="items-center mt-8">
+            <Text className="text-sm text-text-tertiary dark:text-dark-text-tertiary text-center max-w-xs">
+              Connect your Solana wallet to view balance, sign messages, and interact with the blockchain.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </Container>
   )
 }

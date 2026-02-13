@@ -9,7 +9,10 @@
     "name": "tramplin-mobile",
     "slug": "tramplin-mobile",
     "android": {
-      "package": "com.anonymous.kitexpouniwind"
+      "package": "com.tramplin"
+    },
+    "ios": {
+      "bundleIdentifier": "com.tramplin"
     }
   }
 }

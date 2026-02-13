@@ -1,2 +1,93 @@
 @import 'tailwindcss';
 @import 'uniwind';
+
+/*
+ * Theme System
+ *
+ * Semantic color tokens that automatically adapt to light/dark mode.
+ * Usage: className="text-primary bg-surface" + dark: variants for overrides.
+ *
+ * The dark: variant in Uniwind/Tailwind follows the device color scheme
+ * automatically (configured via app.json userInterfaceStyle: "automatic").
+ */
+
+@theme {
+  /* ── Brand Colors ── */
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+
+  --color-secondary: #14b8a6;
+  --color-secondary-light: #2dd4bf;
+  --color-secondary-dark: #0d9488;
+
+  --color-accent: #f59e0b;
+  --color-accent-light: #fbbf24;
+  --color-accent-dark: #d97706;
+
+  /* ── Status Colors ── */
+  --color-success: #22c55e;
+  --color-success-light: #4ade80;
+  --color-success-dark: #16a34a;
+
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-dark: #d97706;
+
+  --color-error: #ef4444;
+  --color-error-light: #f87171;
+  --color-error-dark: #dc2626;
+
+  --color-info: #3b82f6;
+  --color-info-light: #60a5fa;
+  --color-info-dark: #2563eb;
+
+  /* ── Light Theme Surface Colors ── */
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-elevated: #ffffff;
+  --color-surface-muted: #f1f5f9;
+
+  /* ── Light Theme Text Colors ── */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94a3b8;
+  --color-text-inverse: #ffffff;
+
+  /* ── Light Theme Border Colors ── */
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-border-focus: #6366f1;
+
+  /* ── Dark Theme Surface Colors ── */
+  --color-dark-background: #0f172a;
+  --color-dark-surface: #1e293b;
+  --color-dark-surface-elevated: #334155;
+  --color-dark-surface-muted: #1e293b;
+
+  /* ── Dark Theme Text Colors ── */
+  --color-dark-text-primary: #f8fafc;
+  --color-dark-text-secondary: #94a3b8;
+  --color-dark-text-tertiary: #64748b;
+  --color-dark-text-inverse: #0f172a;
+
+  /* ── Dark Theme Border Colors ── */
+  --color-dark-border: #334155;
+  --color-dark-border-light: #1e293b;
+  --color-dark-border-focus: #818cf8;
+
+  /* ── Spacing Scale ── */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
