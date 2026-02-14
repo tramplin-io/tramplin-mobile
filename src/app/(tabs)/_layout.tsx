@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router'
 import { Text } from 'react-native'
+import { useCSSVariable } from 'uniwind'
 
 /**
  * Main app tab navigator.
@@ -13,8 +14,8 @@ import { Text } from 'react-native'
  *    - Hide tab bar on certain nested screens if needed
  *
  * 2. Tab bar styling:
- *    - Theme-aware background (bg-surface / dark:bg-dark-surface)
- *    - Border top line (border-border / dark:border-dark-border)
+ *    - Theme-aware background (bg-fill-secondary)
+ *    - Border top line (border-border-tertiary)
  *    - Consider custom TabBar component for full control
  *
  * 3. Dependencies (install when implementing):
@@ -25,11 +26,15 @@ import { Text } from 'react-native'
  *    - Show unread count badge (from notification store)
  */
 export default function TabsLayout() {
+  const activeTint = useCSSVariable('--color-brand-primary')
+  const inactiveTint = useCSSVariable('--color-content-tertiary')
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#6366f1',
+        tabBarActiveTintColor: activeTint,
+        tabBarInactiveTintColor: inactiveTint,
       }}
     >
       <Tabs.Screen

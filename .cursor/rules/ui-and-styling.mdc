@@ -1,25 +1,26 @@
 ---
 description: UI and styling conventions for React Native with Uniwind/Tailwind
-globs: "**/*.tsx"
+globs: '**/*.tsx'
 alwaysApply: false
 ---
 
 # UI and Styling
 
 - Use Uniwind (Tailwind CSS for React Native) via `className` prop — never inline `style` for colors, spacing, or layout
-- Always support dark mode: pair light classes with `dark:` variants
-- Use semantic theme tokens from `global.css`: `bg-background dark:bg-dark-background`, `text-text-primary dark:text-dark-text-primary`
-- Use `useTheme()` hook from `@/hooks/useTheme` only when dynamic style objects are unavoidable
+- Theme is driven by `@layer theme` with `@variant light` / `@variant dark` in `src/global.css`. Colors switch automatically; **do not** use `dark:` variants for theme tokens
+- Use design tokens from `global.css`: `text-content-primary`, `text-content-secondary`, `text-content-tertiary`, `bg-fill-primary`, `bg-fill-secondary`, `bg-fill-tertiary`, `border-border-tertiary`, `text-brand-primary`, `text-critical-primary`, and semantic aliases `bg-background`, `text-foreground`, `bg-muted`, `text-muted-foreground`, `bg-card`, `text-primary`
+- For dynamic style values (e.g. `placeholderTextColor`), use `useCSSVariable('--color-*')` from `uniwind` or `useAppTheme()` from `@/components/app-theme`
 - Reusable UI components live in `src/components/ui/` (Button, Card, Container, Badge)
 - Wallet-specific components live in `src/components/wallet/`
-- Screen containers should use the `<Container safe>` component for SafeAreaView + themed background
-- Spacing scale: `xs(4) sm(8) md(16) lg(24) xl(32) 2xl(48)` — use Tailwind classes (`p-4`, `mb-6`, etc.)
-- Border radius: `rounded-sm(8) rounded-md(12) rounded-lg(16) rounded-xl(24) rounded-full`
+- Screen containers use `<Container safe>` for SafeAreaView + themed background
+- Spacing: Tailwind scale (`p-4`, `mb-6`, `gap-4`, etc.)
+- Border radius: `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-full` (tokens in `global.css`)
 
 ```tsx
-// ✅ GOOD
-<View className="bg-surface dark:bg-dark-surface p-4 rounded-lg">
-  <Text className="text-text-primary dark:text-dark-text-primary text-base">Hello</Text>
+// ✅ GOOD — design tokens, no dark: prefix (theme switches via Uniwind)
+<View className="bg-fill-secondary p-4 rounded-lg">
+  <Text className="text-content-primary text-base">Hello</Text>
+  <Text className="text-content-tertiary text-sm">Subtitle</Text>
 </View>
 
 // ❌ BAD

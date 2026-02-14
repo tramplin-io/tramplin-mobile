@@ -30,8 +30,8 @@ export default function ManifestoScreen() {
   return (
     <Container safe>
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-3xl font-bold text-text-primary dark:text-dark-text-primary mb-6">Our Manifesto</Text>
-        <Text className="text-base text-text-secondary dark:text-dark-text-secondary leading-relaxed">
+        <Text className="text-3xl font-bold text-content-primary mb-6">Our Manifesto</Text>
+        <Text className="text-base text-content-secondary leading-relaxed">
           [Manifesto content placeholder]
         </Text>
       </ScrollView>

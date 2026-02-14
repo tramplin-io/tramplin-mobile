@@ -29,7 +29,7 @@ export default function SplashAnimationScreen() {
     <Container safe centered>
       <View className="items-center">
         <Text className="text-5xl font-extrabold text-primary">Tramplin</Text>
-        <Text className="text-base text-text-tertiary dark:text-dark-text-tertiary mt-2">Loading...</Text>
+        <Text className="text-base text-content-tertiary mt-2">Loading...</Text>
       </View>
     </Container>
   )

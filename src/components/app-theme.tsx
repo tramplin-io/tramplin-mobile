@@ -1,52 +1,34 @@
 import type { PropsWithChildren } from 'react'
-import {
-  DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationLightTheme,
-  ThemeProvider,
-} from '@react-navigation/native'
-import { useColorScheme } from 'react-native'
+import { DarkTheme, DefaultTheme } from '@react-navigation/native'
+import { useUniwind } from 'uniwind'
 import { useThemeStore } from '@/hooks/useThemeStore'
 
 /**
- * Hook to access the current app theme based on device color scheme.
+ * Hook to access the current app theme based on Uniwind's active theme.
  *
- * Returns the appropriate React Navigation theme and metadata.
- * The color scheme respects the user's theme preference stored
- * in useThemeStore (applied via Appearance.setColorScheme).
+ * ThemeProvider is mounted in app/_layout.tsx; theme state comes from
+ * Uniwind.setTheme() via useThemeStore.
  *
  * @example
  * const { isDark, theme } = useAppTheme()
  */
 export function useAppTheme() {
-  const colorScheme = useColorScheme()
-  const isDark = colorScheme === 'dark'
-  const theme = isDark ? NavigationDarkTheme : NavigationLightTheme
+  const { theme } = useUniwind()
+  const isDark = theme === 'dark'
+  const navTheme = isDark ? DarkTheme : DefaultTheme
 
   return {
-    colorScheme,
+    colorScheme: theme as 'light' | 'dark',
     isDark,
-    theme,
+    theme: navTheme,
   }
 }
 
 /**
- * Theme provider component that wraps children with React Navigation's
- * ThemeProvider, automatically switching between light/dark based on
- * device color scheme.
- *
- * Also ensures the Zustand theme store is referenced so its hydration
- * side-effect (Appearance.setColorScheme) runs early.
- *
- * @example
- * <AppTheme>
- *   <Stack />
- * </AppTheme>
+ * Ensures theme store is subscribed so its hydration (Uniwind.setTheme)
+ * runs early. ThemeProvider is in app/_layout.tsx.
  */
 export function AppTheme({ children }: Readonly<PropsWithChildren>) {
-  const { theme } = useAppTheme()
-
-  // Subscribe so Zustand hydrates and applies the persisted color scheme
   useThemeStore()
-
-  return <ThemeProvider value={theme}>{children}</ThemeProvider>
+  return <>{children}</>
 }

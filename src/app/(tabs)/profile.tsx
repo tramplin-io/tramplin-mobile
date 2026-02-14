@@ -55,16 +55,14 @@ export default function ProfileTab() {
   return (
     <Container safe>
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-6">Profile</Text>
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[Profile & settings placeholder]</Text>
+        <Text className="text-2xl font-bold text-content-primary mb-6">Profile</Text>
+        <Text className="text-content-tertiary">[Profile & settings placeholder]</Text>
         {/* Header */}
         <View className="items-center mb-8">
-          <Text className="text-4xl font-extrabold text-text-primary dark:text-dark-text-primary mb-2 tracking-tight">
-            Tramplin
-          </Text>
-          <Text className="text-base text-text-secondary dark:text-dark-text-secondary text-center">
+          <Text className="text-4xl font-extrabold text-brand-secondary mb-2 tracking-tight">Tramplin</Text>
+          <Text className="text-base text-content-tertiary text-center">
             Solana Mobile Wallet powered by{' '}
-            <Text className="text-primary font-semibold">Expo + Uniwind + @solana/kit</Text>
+            <Text className="text-brand-primary font-semibold">Expo + Uniwind + @solana/kit</Text>
           </Text>
         </View>
 
@@ -89,7 +87,7 @@ export default function ProfileTab() {
         {/* Getting started hint (shown when disconnected) */}
         {!isConnected && (
           <View className="items-center mt-8">
-            <Text className="text-sm text-text-tertiary dark:text-dark-text-tertiary text-center max-w-xs">
+            <Text className="text-sm text-content-tertiary text-center max-w-xs">
               Connect your Solana wallet to view balance, sign messages, and interact with the blockchain.
             </Text>
           </View>

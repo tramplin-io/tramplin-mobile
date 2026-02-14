@@ -29,31 +29,27 @@ export function AccountInfo() {
   return (
     <Card variant="outlined" className="w-full">
       <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-sm font-medium text-text-secondary dark:text-dark-text-secondary">Connected Wallet</Text>
+        <Text className="text-sm font-medium text-content-secondary">Connected Wallet</Text>
         <Badge label="Devnet" variant="info" />
       </View>
 
       {/* Address */}
       <Pressable onPress={() => copy(addressStr)} className="mb-3">
         <View className="flex-row items-center">
-          <Text className="text-base font-mono text-text-primary dark:text-dark-text-primary">
-            {ellipsify(addressStr, 8)}
-          </Text>
-          <Text className="ml-2 text-xs text-text-tertiary dark:text-dark-text-tertiary">
-            {copied ? 'Copied!' : 'Tap to copy'}
-          </Text>
+          <Text className="text-base font-mono text-content-primary">{ellipsify(addressStr, 8)}</Text>
+          <Text className="ml-2 text-xs text-content-tertiary">{copied ? 'Copied!' : 'Tap to copy'}</Text>
         </View>
       </Pressable>
 
       {/* Balance */}
       <Pressable onPress={refresh}>
         <View className="flex-row items-center">
-          <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
+          <Text className="text-2xl font-bold text-content-primary">
             {balanceLoading && '...'}
             {!balanceLoading && balance && `${balance.sol} SOL`}
             {!balanceLoading && !balance && '-- SOL'}
           </Text>
-          <Text className="ml-2 text-xs text-text-tertiary dark:text-dark-text-tertiary">Tap to refresh</Text>
+          <Text className="ml-2 text-xs text-content-tertiary">Tap to refresh</Text>
         </View>
       </Pressable>
     </Card>

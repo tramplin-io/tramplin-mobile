@@ -31,7 +31,7 @@ export default function EditProfileScreen() {
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Edit Profile' }} />
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[Edit profile form placeholder]</Text>
+        <Text className="text-content-secondary">[Edit profile form placeholder]</Text>
       </ScrollView>
     </Container>
   )

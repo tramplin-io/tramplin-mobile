@@ -1,6 +1,6 @@
 ---
 description: State management patterns with React Query, Zustand, and hooks
-globs: "**/*.{ts,tsx}"
+globs: '**/*.{ts,tsx}'
 alwaysApply: false
 ---
 
@@ -28,27 +28,41 @@ const { data, isLoading } = useQuery({
 
 ## Zustand (when needed)
 
-- One store per domain (auth, settings, etc.)
+- One store per domain (auth, settings, theme, etc.)
 - Use `persist` middleware with AsyncStorage for persistence
-- Keep stores in `src/stores/` directory
+- Keep stores in `src/stores/` or domain hooks in `src/hooks/` (e.g. `useThemeStore`)
+- All storage keys defined in `STORAGE_KEYS` in `@/utils/storage`
+
+Theme store example (uses Uniwind for actual theme application):
 
 ```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Uniwind } from 'uniwind'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { STORAGE_KEYS } from '@/utils/storage'
 
-export const useSettingsStore = create(
+export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
-      theme: 'system' as 'light' | 'dark' | 'system',
-      setTheme: (theme: string) => set({ theme }),
+      themeMode: 'system',
+      setThemeMode: (mode) => {
+        Uniwind.setTheme(mode)
+        set({ themeMode: mode })
+      },
     }),
-    { name: 'settings', storage: createJSONStorage(() => AsyncStorage) },
+    {
+      name: STORAGE_KEYS.THEME_MODE,
+      storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state?.themeMode) Uniwind.setTheme(state.themeMode)
+      },
+    },
   ),
 )
 ```
 
 ## AsyncStorage
 
-- Use the `storage` utility from `@/utils/storage` — never import AsyncStorage directly
-- All storage keys defined in `STORAGE_KEYS` constant
+- Prefer the `storage` utility from `@/utils/storage` when applicable
+- Use `STORAGE_KEYS` for all persisted store names and keys

@@ -39,7 +39,7 @@ export default function DeleteAccountScreen() {
         <View className="items-center mb-6">
           <Text className="text-3xl mb-2">⚠️</Text>
           <Text className="text-xl font-bold text-error mb-2">Delete Account</Text>
-          <Text className="text-text-secondary dark:text-dark-text-secondary text-center">
+          <Text className="text-content-secondary text-center">
             [Delete account flow placeholder]
           </Text>
         </View>

@@ -40,10 +40,10 @@ export default function GreetingScreen() {
   return (
     <Container safe centered>
       <View className="items-center px-8">
-        <Text className="text-3xl font-bold text-text-primary dark:text-dark-text-primary mb-4">
+        <Text className="text-3xl font-bold text-content-primary mb-4">
           Welcome to Tramplin
         </Text>
-        <Text className="text-base text-text-secondary dark:text-dark-text-secondary text-center">
+        <Text className="text-base text-content-secondary text-center">
           [Onboarding stepper placeholder - 3 steps]
         </Text>
       </View>

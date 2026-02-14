@@ -32,13 +32,13 @@ export default function SignInScreen() {
   return (
     <Container safe centered>
       <View className="items-center px-8">
-        <Text className="text-4xl font-extrabold text-text-primary dark:text-dark-text-primary mb-4">Tramplin</Text>
-        <Text className="text-base text-text-secondary dark:text-dark-text-secondary text-center mb-12">
+        <Text className="text-4xl font-extrabold text-content-primary mb-4">Tramplin</Text>
+        <Text className="text-base text-content-secondary text-center mb-12">
           Connect your Solana wallet to get started
         </Text>
 
         {/* TODO: Add ConnectButton with auth flow redirect */}
-        <Text className="text-text-tertiary dark:text-dark-text-tertiary text-sm">
+        <Text className="text-content-tertiary text-sm">
           [ConnectButton goes here]
         </Text>
       </View>

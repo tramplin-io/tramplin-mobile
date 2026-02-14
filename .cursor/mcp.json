@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "Uniwind": {
+      "url": "https://docs.uniwind.dev/mcp",
+      "transport": "streamableHttp"
+    }
+  }
+}

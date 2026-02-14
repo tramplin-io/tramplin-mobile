@@ -33,8 +33,8 @@ export default function HomeTab() {
   return (
     <Container safe>
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-6">Home</Text>
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[Dashboard placeholder]</Text>
+        <Text className="text-2xl font-bold text-content-primary mb-6">Home</Text>
+        <Text className="text-content-secondary">[Dashboard placeholder]</Text>
       </ScrollView>
     </Container>
   )

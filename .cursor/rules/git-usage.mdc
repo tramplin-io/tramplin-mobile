@@ -9,16 +9,16 @@ alwaysApply: true
 
 Use conventional commit prefixes:
 
-| Prefix | Usage |
-|---|---|
-| `fix:` | Bug fixes |
-| `feat:` | New features |
-| `perf:` | Performance improvements |
-| `docs:` | Documentation changes |
-| `style:` | Formatting changes (no logic change) |
+| Prefix      | Usage                                 |
+| ----------- | ------------------------------------- |
+| `fix:`      | Bug fixes                             |
+| `feat:`     | New features                          |
+| `perf:`     | Performance improvements              |
+| `docs:`     | Documentation changes                 |
+| `style:`    | Formatting changes (no logic change)  |
 | `refactor:` | Code refactoring (no behavior change) |
-| `test:` | Adding or updating tests |
-| `chore:` | Maintenance tasks (deps, config, CI) |
+| `test:`     | Adding or updating tests              |
+| `chore:`    | Maintenance tasks (deps, config, CI)  |
 
 ## Rules
 

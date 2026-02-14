@@ -23,7 +23,7 @@ export default function PrivacyScreen() {
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Privacy Policy' }} />
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-text-secondary dark:text-dark-text-secondary">
+        <Text className="text-content-secondary">
           [Privacy Policy content placeholder]
         </Text>
       </ScrollView>

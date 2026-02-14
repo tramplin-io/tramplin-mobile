@@ -34,8 +34,8 @@ export default function NotificationsTab() {
   return (
     <Container safe>
       <View className="px-6 py-8">
-        <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-6">Notifications</Text>
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[Notifications list placeholder]</Text>
+        <Text className="text-2xl font-bold text-content-primary mb-6">Notifications</Text>
+        <Text className="text-content-secondary">[Notifications list placeholder]</Text>
       </View>
     </Container>
   )

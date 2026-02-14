@@ -1,6 +1,6 @@
 ---
 description: API layer and Orval code generation conventions
-globs: "src/lib/api/**/*.{ts,tsx}"
+globs: 'src/lib/api/**/*.{ts,tsx}'
 alwaysApply: false
 ---
 
@@ -47,10 +47,13 @@ import { useCreateUser } from '@/lib/api/generated/restApi'
 function CreateUserForm() {
   const mutation = useCreateUser()
   const handleSubmit = (data: CreateUserBody) => {
-    mutation.mutate({ data }, {
-      onSuccess: () => Toast.show({ type: 'success', text1: 'User created' }),
-      onError: (err) => Toast.show({ type: 'error', text1: err.message }),
-    })
+    mutation.mutate(
+      { data },
+      {
+        onSuccess: () => Toast.show({ type: 'success', text1: 'User created' }),
+        onError: (err) => Toast.show({ type: 'error', text1: err.message }),
+      },
+    )
   }
 }
 ```
@@ -73,10 +76,10 @@ const response = await axiosInstance.get<MyType>('/custom-endpoint')
 
 ## Orval Config Reference
 
-| Setting | Value | Purpose |
-|---|---|---|
-| `input.target` | `${API_URL}/openapi` | OpenAPI spec source |
-| `output.mode` | `split` | Separate files for hooks and schemas |
-| `output.client` | `react-query` | Generate `@tanstack/react-query` hooks |
-| `output.clean` | `true` | Clean output dir before generating |
-| `override.mutator` | `custom-instance.ts` | Axios with auth + response unwrap |
+| Setting            | Value                | Purpose                                |
+| ------------------ | -------------------- | -------------------------------------- |
+| `input.target`     | `${API_URL}/openapi` | OpenAPI spec source                    |
+| `output.mode`      | `split`              | Separate files for hooks and schemas   |
+| `output.client`    | `react-query`        | Generate `@tanstack/react-query` hooks |
+| `output.clean`     | `true`               | Clean output dir before generating     |
+| `override.mutator` | `custom-instance.ts` | Axios with auth + response unwrap      |

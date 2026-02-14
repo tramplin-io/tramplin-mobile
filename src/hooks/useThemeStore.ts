@@ -1,5 +1,5 @@
-import { Appearance } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Uniwind } from 'uniwind'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { STORAGE_KEYS } from '@/utils/storage'
@@ -13,20 +13,10 @@ interface ThemeStore {
 }
 
 /**
- * Apply the selected theme mode via the RN Appearance API.
- *
- * - 'light' / 'dark' → force that scheme
- * - 'system' → reset to device default (null)
- */
-function applyTheme(mode: ThemeMode) {
-  Appearance.setColorScheme(mode === 'system' ? null : mode)
-}
-
-/**
  * Zustand store for user theme preference.
  *
  * Persists the choice to AsyncStorage so it survives app restarts.
- * On hydration the saved preference is re-applied via `Appearance.setColorScheme()`.
+ * On hydration the saved preference is re-applied via `Uniwind.setTheme()`.
  *
  * @example
  * const { themeMode, setThemeMode } = useThemeStore()
@@ -37,7 +27,7 @@ export const useThemeStore = create<ThemeStore>()(
     (set) => ({
       themeMode: 'system',
       setThemeMode: (mode) => {
-        applyTheme(mode)
+        Uniwind.setTheme(mode)
         set({ themeMode: mode })
       },
     }),
@@ -45,9 +35,8 @@ export const useThemeStore = create<ThemeStore>()(
       name: STORAGE_KEYS.THEME_MODE,
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        // Re-apply the persisted preference once the store is hydrated
         if (state?.themeMode) {
-          applyTheme(state.themeMode)
+          Uniwind.setTheme(state.themeMode)
         }
       },
     },

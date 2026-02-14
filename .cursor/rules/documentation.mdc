@@ -1,6 +1,6 @@
 ---
 description: Documentation standards for code comments and JSDoc
-globs: "**/*.{ts,tsx}"
+globs: '**/*.{ts,tsx}'
 alwaysApply: false
 ---
 
@@ -42,5 +42,5 @@ export function ellipsify(str: string, maxLength = 4): string {
 ## Inline Comments
 
 - Use `//` comments sparingly — only for non-obvious logic
-- Never comment what the code does; comment *why* if the reason isn't clear
+- Never comment what the code does; comment _why_ if the reason isn't clear
 - Use section comments (`{/* Header */}`) in JSX for visual grouping

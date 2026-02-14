@@ -32,7 +32,7 @@ export default function NotificationSettingsScreen() {
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Notifications' }} />
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-text-secondary dark:text-dark-text-secondary">
+        <Text className="text-content-secondary">
           [Notification settings placeholder]
         </Text>
       </ScrollView>

@@ -32,7 +32,7 @@ export default function QnaScreen() {
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Questions & Answers' }} />
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[FAQ accordion placeholder]</Text>
+        <Text className="text-content-secondary">[FAQ accordion placeholder]</Text>
       </ScrollView>
     </Container>
   )

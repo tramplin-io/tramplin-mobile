@@ -1,5 +1,6 @@
 import '../global.css'
 
+import { ThemeProvider } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Slot } from 'expo-router'
@@ -7,6 +8,7 @@ import { StatusBar } from 'expo-status-bar'
 import * as SplashScreen from 'expo-splash-screen'
 import Toast from 'react-native-toast-message'
 import { AppProviders } from '@/components/app-providers'
+import { useAppTheme } from '@/components/app-theme'
 import { initializeApi } from '@/lib/api'
 
 // Keep the splash screen visible while we load resources
@@ -50,6 +52,7 @@ SplashScreen.preventAutoHideAsync()
  */
 export default function RootLayout() {
   const [appReady, setAppReady] = useState(false)
+  const { theme } = useAppTheme()
 
   useEffect(() => {
     async function prepare() {
@@ -78,15 +81,17 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={styles.container}>
-      <AppProviders>
-        <StatusBar style="auto" />
-        <Slot />
-      </AppProviders>
-      <View style={styles.toastContainer}>
-        <Toast topOffset={60} />
+    <ThemeProvider value={theme}>
+      <View style={styles.container}>
+        <AppProviders>
+          <StatusBar style="auto" />
+          <Slot />
+        </AppProviders>
+        <View style={styles.toastContainer}>
+          <Toast topOffset={60} />
+        </View>
       </View>
-    </View>
+    </ThemeProvider>
   )
 }
 

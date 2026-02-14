@@ -32,8 +32,8 @@ export default function CommunityTab() {
   return (
     <Container safe>
       <ScrollView contentContainerClassName="px-6 py-8">
-        <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-6">Community Stats</Text>
-        <Text className="text-text-secondary dark:text-dark-text-secondary">[Community stats placeholder]</Text>
+        <Text className="text-2xl font-bold text-content-primary mb-6">Community Stats</Text>
+        <Text className="text-content-secondary">[Community stats placeholder]</Text>
       </ScrollView>
     </Container>
   )

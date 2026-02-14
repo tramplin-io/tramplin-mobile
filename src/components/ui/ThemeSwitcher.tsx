@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from 'react-native'
+import { useUniwind } from 'uniwind'
 import { useThemeStore } from '@/hooks/useThemeStore'
 import type { ThemeMode } from '@/constants/theme'
 
@@ -11,40 +12,37 @@ const OPTIONS: { mode: ThemeMode; label: string; icon: string }[] = [
 /**
  * Segmented theme switcher — System / Light / Dark.
  *
- * Reads and writes to the Zustand theme store which
- * persists the preference and applies it via `Appearance.setColorScheme()`.
- *
- * @example
- * <ThemeSwitcher />
+ * Uses Uniwind.setTheme() via the Zustand theme store.
+ * Reads active theme from useUniwind() for highlight state.
  */
 export function ThemeSwitcher() {
-  const { themeMode, setThemeMode } = useThemeStore()
+  const { setThemeMode } = useThemeStore()
+  const { theme, hasAdaptiveThemes } = useUniwind()
+  const activeMode: ThemeMode = hasAdaptiveThemes ? 'system' : (theme as ThemeMode)
 
   return (
-    <View className="flex-row bg-surface-muted dark:bg-dark-surface-muted rounded-lg p-1">
+    <View className="flex-row bg-muted rounded-lg p-1">
       {OPTIONS.map(({ mode, label, icon }) => {
-        const isActive = themeMode === mode
+        const isActive = activeMode === mode
 
         return (
           <Pressable
             key={mode}
             onPress={() => setThemeMode(mode)}
             className={`flex-1 flex-row items-center justify-center py-2.5 rounded-md ${
-              isActive ? 'bg-surface-elevated dark:bg-dark-surface-elevated shadow-sm' : ''
+              isActive ? 'bg-fill-tertiary shadow-sm' : ''
             }`}
           >
             <Text
               className={`text-base mr-1.5 ${
-                isActive ? 'text-primary' : 'text-text-tertiary dark:text-dark-text-tertiary'
+                isActive ? 'text-brand-primary' : 'text-content-tertiary'
               }`}
             >
               {icon}
             </Text>
             <Text
               className={`text-sm font-medium ${
-                isActive
-                  ? 'text-text-primary dark:text-dark-text-primary'
-                  : 'text-text-tertiary dark:text-dark-text-tertiary'
+                isActive ? 'text-content-primary' : 'text-content-tertiary'
               }`}
             >
               {label}

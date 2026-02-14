@@ -1,6 +1,6 @@
 ---
 description: TypeScript conventions and best practices
-globs: "**/*.{ts,tsx}"
+globs: '**/*.{ts,tsx}'
 alwaysApply: false
 ---
 

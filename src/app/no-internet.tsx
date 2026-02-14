@@ -32,10 +32,10 @@ export default function NoInternetScreen() {
     <Container safe centered>
       <View className="items-center px-8">
         <Text className="text-5xl mb-4">📡</Text>
-        <Text className="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-2">
+        <Text className="text-2xl font-bold text-content-primary mb-2">
           No Internet Connection
         </Text>
-        <Text className="text-base text-text-secondary dark:text-dark-text-secondary text-center mb-8">
+        <Text className="text-base text-content-secondary text-center mb-8">
           Check your connection and try again
         </Text>
         {/* TODO: Add "Try Again" button with network check */}

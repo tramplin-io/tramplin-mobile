@@ -57,7 +57,7 @@ export function ConnectButton() {
     <View className="items-center">
       {error !== null && (
         <View className="items-center mb-4">
-          <Text className="text-error dark:text-error-light text-center mb-3 px-2 text-sm">{error}</Text>
+          <Text className="text-critical-primary text-center mb-3 px-2 text-sm">{error}</Text>
           <Button label="Try Again" variant="outline" size="sm" onPress={handleConnect} loading={loading} />
         </View>
       )}
