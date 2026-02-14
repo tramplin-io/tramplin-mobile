@@ -58,18 +58,21 @@ export function ConnectButton() {
       {error !== null && (
         <View className="items-center mb-4">
           <Text className="text-critical-primary text-center mb-3 px-2 text-sm">{error}</Text>
-          <Button label="Try Again" variant="outline" size="sm" onPress={handleConnect} loading={loading} />
+          <Button variant="outline" size="sm" onPress={handleConnect}>
+            <Text>Try Again</Text>
+          </Button>
         </View>
       )}
 
       {error === null && (
         <Button
-          label={isConnected ? 'Disconnect' : 'Connect Wallet'}
-          variant={isConnected ? 'danger' : 'primary'}
+          variant={isConnected ? 'destructive' : 'default'}
           size="lg"
           onPress={isConnected ? handleDisconnect : handleConnect}
-          loading={loading}
-        />
+          disabled={loading}
+        >
+          <Text>{isConnected ? 'Disconnect' : 'Connect Wallet'}</Text>
+        </Button>
       )}
     </View>
   )

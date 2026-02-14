@@ -15,18 +15,42 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
   slug: 'tramplin-mobile',
   scheme: 'tramplin',
-  version: '1.0.0',
-  orientation: 'default',
+  version: '0.0.1',
+  orientation: 'portrait', //'default',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
+  icon: './src/assets/images/icon.png',
+  splash: {
+    image: './src/assets/images/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#ffffff',
+  },
+  // updates: {
+  //   url: 'https://u.expo.dev/example',
+  // },
+  // runtimeVersion: {
+  //   policy: 'appVersion',
+  // },
+
   android: {
     package: 'com.tramplin',
+    edgeToEdgeEnabled: true,
+    adaptiveIcon: {
+      foregroundImage: './src/assets/images/adaptive-icon.png',
+      backgroundColor: '#ffffff',
+    },
   },
   ios: {
     bundleIdentifier: 'com.tramplin',
+    supportsTablet: true,
+    // icon: {
+    //   foregroundImage: './src/assets/images/icon.png',
+    //   backgroundColor: '#ffffff',
+    // },
   },
   web: {
     output: 'static' as const,
+    favicon: './src/assets/images/favicon.png',
   },
   plugins: [
     'expo-router',
@@ -34,8 +58,8 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       'expo-splash-screen',
       {
         backgroundColor: '#ffffff',
-        image: './assets/splash-icon.png',
-        imageWidth: 200,
+        image: './src/assets/images/splash.png',
+        // imageWidth: 200,
         resizeMode: 'contain',
         dark: {
           backgroundColor: '#0f172a',

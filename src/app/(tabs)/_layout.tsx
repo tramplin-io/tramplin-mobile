@@ -33,8 +33,8 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: activeTint,
-        tabBarInactiveTintColor: inactiveTint,
+        tabBarActiveTintColor: activeTint == null ? undefined : String(activeTint),
+        tabBarInactiveTintColor: inactiveTint == null ? undefined : String(inactiveTint),
       }}
     >
       <Tabs.Screen

@@ -30,7 +30,9 @@ export function AccountInfo() {
     <Card variant="outlined" className="w-full">
       <View className="flex-row items-center justify-between mb-3">
         <Text className="text-sm font-medium text-content-secondary">Connected Wallet</Text>
-        <Badge label="Devnet" variant="info" />
+        <Badge variant="default">
+          <Text>Devnet</Text>
+        </Badge>
       </View>
 
       {/* Address */}

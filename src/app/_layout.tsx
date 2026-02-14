@@ -56,8 +56,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     async function prepare() {
+      // Minimum time to show native splash so it's visible (dev builds hide it very fast)
+      // const minSplashTime = Promise.resolve().then(() => new Promise((r) => setTimeout(r, 1500)))
+
       // Initialize API layer (restore auth token, set base URL)
       await initializeApi()
+      // await Promise.all([initializeApi(), minSplashTime]) // Wait for both to complete
 
       // Add other async initialization here:
       // - Load custom fonts

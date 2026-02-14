@@ -1,32 +1,63 @@
+import { Text, TextClassContext } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { View, type ViewProps } from 'react-native'
 
-type CardVariant = 'default' | 'elevated' | 'outlined'
+const cardVariants = cva('flex flex-col gap-6 rounded-xl', {
+  variants: {
+    variant: {
+      default: 'bg-card border-border border py-6 shadow-sm shadow-black/5 rounded-lg p-4',
+      elevated: 'bg-card border-0 py-6 shadow-md shadow-black/10 rounded-lg p-4',
+      outlined: 'bg-transparent border border-border py-6 rounded-lg p-4',
+      ghost: 'bg-transparent border-0 py-6 rounded-lg p-4',
+    },
+    padding: {
+      default: '',
+      none: '!p-0 !py-0',
+      sm: '!py-4',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    padding: 'default',
+  },
+})
 
-interface CardProps extends ViewProps {
-  /** Visual variant */
-  variant?: CardVariant
-  /** Additional className overrides */
-  className?: string
-}
+type CardProps = ViewProps & React.RefAttributes<View> & VariantProps<typeof cardVariants>
 
-const variantClasses: Record<CardVariant, string> = {
-  default: 'bg-surface dark:bg-dark-surface rounded-lg p-4',
-  elevated: 'bg-surface-elevated dark:bg-dark-surface-elevated rounded-lg p-4 shadow-sm',
-  outlined: 'bg-transparent border border-border dark:border-dark-border rounded-lg p-4',
-}
-
-/**
- * Themed card container component.
- *
- * @example
- * <Card variant="elevated">
- *   <Text>Card content</Text>
- * </Card>
- */
-export function Card({ variant = 'default', className = '', children, ...viewProps }: CardProps) {
+function Card({ className, variant, padding, ...props }: CardProps) {
   return (
-    <View className={`${variantClasses[variant]} ${className}`} {...viewProps}>
-      {children}
-    </View>
+    <TextClassContext.Provider value="text-card-foreground">
+      <View className={cn(cardVariants({ variant, padding }), className)} {...props} />
+    </TextClassContext.Provider>
   )
 }
+
+function CardHeader({ className, ...props }: ViewProps & React.RefAttributes<View>) {
+  return <View className={cn('flex flex-col gap-1.5 px-6', className)} {...props} />
+}
+
+function CardTitle({ className, variant, ...props }: React.ComponentProps<typeof Text> & React.RefAttributes<Text>) {
+  return (
+    <Text
+      variant={variant ?? 'h3'}
+      className={cn('leading-none', className)}
+      {...props}
+    />
+  )
+}
+
+function CardDescription({ className, ...props }: React.ComponentProps<typeof Text> & React.RefAttributes<Text>) {
+  return <Text className={cn('text-muted-foreground text-sm', className)} {...props} />
+}
+
+function CardContent({ className, ...props }: ViewProps & React.RefAttributes<View>) {
+  return <View className={cn('px-6', className)} {...props} />
+}
+
+function CardFooter({ className, ...props }: ViewProps & React.RefAttributes<View>) {
+  return <View className={cn('flex flex-row items-center px-6', className)} {...props} />
+}
+
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants }
+export type { CardProps }
