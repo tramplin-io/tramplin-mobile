@@ -1,0 +1,29 @@
+---
+description: UI and styling conventions for React Native with Uniwind/Tailwind
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# UI and Styling
+
+- Use Uniwind (Tailwind CSS for React Native) via `className` prop — never inline `style` for colors, spacing, or layout
+- Always support dark mode: pair light classes with `dark:` variants
+- Use semantic theme tokens from `global.css`: `bg-background dark:bg-dark-background`, `text-text-primary dark:text-dark-text-primary`
+- Use `useTheme()` hook from `@/hooks/useTheme` only when dynamic style objects are unavoidable
+- Reusable UI components live in `src/components/ui/` (Button, Card, Container, Badge)
+- Wallet-specific components live in `src/components/wallet/`
+- Screen containers should use the `<Container safe>` component for SafeAreaView + themed background
+- Spacing scale: `xs(4) sm(8) md(16) lg(24) xl(32) 2xl(48)` — use Tailwind classes (`p-4`, `mb-6`, etc.)
+- Border radius: `rounded-sm(8) rounded-md(12) rounded-lg(16) rounded-xl(24) rounded-full`
+
+```tsx
+// ✅ GOOD
+<View className="bg-surface dark:bg-dark-surface p-4 rounded-lg">
+  <Text className="text-text-primary dark:text-dark-text-primary text-base">Hello</Text>
+</View>
+
+// ❌ BAD
+<View style={{ backgroundColor: '#f8fafc', padding: 16, borderRadius: 12 }}>
+  <Text style={{ color: '#0f172a', fontSize: 16 }}>Hello</Text>
+</View>
+```

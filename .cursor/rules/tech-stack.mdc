@@ -1,0 +1,27 @@
+---
+description: Tech stack reference for the project
+alwaysApply: true
+---
+
+# Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Expo SDK 54, React Native 0.81 |
+| Routing | Expo Router 6 (file-based) |
+| Language | TypeScript (strict mode) |
+| Styling | Uniwind + Tailwind CSS 4 (`className` prop) |
+| Blockchain | Solana via `@solana/kit`, `@wallet-ui/react-native-kit` |
+| Data Fetching | `@tanstack/react-query` |
+| State | Zustand (with AsyncStorage persist middleware) |
+| Storage | `@react-native-async-storage/async-storage` (via `@/utils/storage`) |
+| Notifications | `react-native-toast-message` |
+| Splash Screen | `expo-splash-screen` |
+
+## Key Patterns
+
+- All providers wrapped in `<AppProviders>` (see `src/components/app-providers.tsx`)
+- Theme via `<AppTheme>` using `@react-navigation/native` ThemeProvider
+- Wallet connection via `useMobileWallet()` from `@wallet-ui/react-native-kit`
+- Wallet actions via `useWalletActions()` from `@/hooks/useWalletActions`
+- Toast: `import Toast from 'react-native-toast-message'` then `Toast.show({ type, text1, text2 })`

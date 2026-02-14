@@ -1,0 +1,34 @@
+---
+description: Syntax and formatting rules (Prettier config)
+alwaysApply: true
+---
+
+# Syntax and Formatting
+
+Configured via `.prettierrc`:
+
+- **No semicolons** — omit trailing semicolons
+- **Single quotes** — use `'` not `"`
+- **Trailing commas** — always (`all`)
+- **Arrow parens** — always (`(x) => x`, not `x => x`)
+- **Print width** — 120 characters
+- **Indentation** — 2 spaces
+
+## Additional Conventions
+
+- Use `const` by default. Only use `let` when reassignment is necessary. Never use `var`.
+- Prefer arrow functions for callbacks and inline functions.
+- Prefer `async/await` over `.then()` chains.
+- Use template literals over string concatenation.
+- Destructure props and objects at the call site.
+- One blank line between logical sections within a function.
+- Imports order: React/RN → third-party → `@/` aliases → relative.
+
+```typescript
+// ✅ GOOD
+import { useState, useCallback } from 'react'
+import { View, Text } from 'react-native'
+import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { Button } from '@/components/ui/Button'
+import { ellipsify } from '@/utils/format'
+```

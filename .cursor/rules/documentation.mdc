@@ -1,0 +1,46 @@
+---
+description: Documentation standards for code comments and JSDoc
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Documentation
+
+## JSDoc Comments
+
+- Add JSDoc to all exported functions, hooks, components, and types
+- Include `@example` blocks for hooks and utilities
+- Keep descriptions concise — one sentence for simple functions
+
+```typescript
+/**
+ * Truncate a string with ellipsis in the middle.
+ *
+ * @example ellipsify('7nYBabcdefgh', 4) => '7nYB...efgh'
+ */
+export function ellipsify(str: string, maxLength = 4): string {
+```
+
+## Component Documentation
+
+- Document the component's purpose and what it renders
+- List key behaviors (when it shows/hides, what it responds to)
+- Add `@example` showing basic usage in JSX
+
+```typescript
+/**
+ * Wallet connect/disconnect button with error handling.
+ *
+ * Shows "Connect Wallet" when disconnected, "Disconnect" when connected.
+ * Displays error state with retry option on failure.
+ *
+ * @example
+ * <ConnectButton />
+ */
+```
+
+## Inline Comments
+
+- Use `//` comments sparingly — only for non-obvious logic
+- Never comment what the code does; comment *why* if the reason isn't clear
+- Use section comments (`{/* Header */}`) in JSX for visual grouping

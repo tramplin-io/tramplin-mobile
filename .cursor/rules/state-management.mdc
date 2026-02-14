@@ -1,0 +1,54 @@
+---
+description: State management patterns with React Query, Zustand, and hooks
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# State Management
+
+## Hierarchy (use the simplest option that works)
+
+1. **Local state** (`useState`) — UI state within a single component
+2. **Custom hooks** — shared logic between components (e.g., `useWalletBalance`)
+3. **React Query** (`@tanstack/react-query`) — server/async state (API calls, RPC data)
+4. **Zustand** — global client state that persists or is shared across many screens
+
+## React Query
+
+- Use `useQuery` for data fetching, `useMutation` for write operations
+- Always provide a `queryKey` array for cache identification
+- Invalidate related queries on mutation success
+
+```typescript
+const { data, isLoading } = useQuery({
+  queryKey: ['balance', address],
+  queryFn: () => fetchBalance(address),
+})
+```
+
+## Zustand (when needed)
+
+- One store per domain (auth, settings, etc.)
+- Use `persist` middleware with AsyncStorage for persistence
+- Keep stores in `src/stores/` directory
+
+```typescript
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+export const useSettingsStore = create(
+  persist(
+    (set) => ({
+      theme: 'system' as 'light' | 'dark' | 'system',
+      setTheme: (theme: string) => set({ theme }),
+    }),
+    { name: 'settings', storage: createJSONStorage(() => AsyncStorage) },
+  ),
+)
+```
+
+## AsyncStorage
+
+- Use the `storage` utility from `@/utils/storage` — never import AsyncStorage directly
+- All storage keys defined in `STORAGE_KEYS` constant

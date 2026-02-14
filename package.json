@@ -13,9 +13,11 @@
     "lint": "expo lint --fix",
     "lint:check": "expo lint",
     "start": "expo start",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "generate-api": "orval",
+    "postinstall": "test -f .env || cp .env.example .env"
   },
-  "displayName": "Uniwind Mobile Kit Expo example",
+  "displayName": "Tramplin Mobile",
   "description": "A template for building a Solana mobile app with Expo, React Native, Solana Kit, and Uniwind.",
   "usecase": "Mobile",
   "keywords": [
@@ -29,28 +31,36 @@
   "main": "./index.js",
   "version": "1.0.0",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@solana/kit": "^5.5.0",
+    "@tanstack/react-query": "^5.90.21",
     "@wallet-ui/react-native-kit": "^3.1.0",
+    "axios": "^1.13.5",
     "expo": "~54.0.22",
     "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "^6.0.20",
     "expo-linking": "~8.0.11",
     "expo-router": "~6.0.14",
+    "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.8",
-    "react": "^19.1.0",
+    "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-quick-crypto": "^1.0.7",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "~4.16.0",
+    "react-native-toast-message": "^2.3.3",
     "tailwindcss": "~4.1.16",
-    "uniwind": "~1.0.0"
+    "uniwind": "~1.0.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "dotenv": "^17.3.1",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "orval": "^7.13.2",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2"
   },

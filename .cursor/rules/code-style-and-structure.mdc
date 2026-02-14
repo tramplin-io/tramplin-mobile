@@ -1,0 +1,34 @@
+---
+description: Code style and project structure conventions
+alwaysApply: true
+---
+
+# Code Style and Structure
+
+## Project Structure
+
+```
+src/
+  app/             # Expo Router pages (file-based routing only)
+  assets/          # Static files: images/, svg/, videos/, fonts/
+  components/
+    ui/            # Reusable themed UI primitives (Button, Card, etc.)
+    icons/         # Icon components
+    wallet/        # Wallet-specific components
+    app-providers.tsx  # Root provider wrapper
+    app-theme.tsx      # Theme provider
+    error-boundary.tsx # Error boundary
+  constants/       # App config, theme colors, Solana constants
+  hooks/           # Custom React hooks
+  types/           # TypeScript type definitions
+  utils/           # Helper/utility functions
+```
+
+## Rules
+
+- Only route files belong in `src/app/` — all other code goes in components, hooks, utils, etc.
+- One component per file. File name matches the exported component.
+- Barrel exports (`index.ts`) in each folder for clean imports.
+- Use `@/` path alias for all imports from `src/` (e.g., `import { Button } from '@/components/ui/Button'`).
+- Keep files under 200 lines. Extract logic into hooks/utils if a file grows large.
+- Colocate related code: wallet components near wallet hooks, etc.

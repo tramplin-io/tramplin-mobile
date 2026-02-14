@@ -1,0 +1,22 @@
+---
+description: Naming conventions for files, components, hooks, and variables
+alwaysApply: true
+---
+
+# Naming Conventions
+
+| Entity | Convention | Example |
+|---|---|---|
+| Components | PascalCase | `ConnectButton.tsx`, `AccountInfo.tsx` |
+| Hooks | camelCase with `use` prefix | `useWalletBalance.ts`, `useTheme.ts` |
+| Utilities | camelCase | `format.ts`, `wallet.ts` |
+| Constants | camelCase file, UPPER_SNAKE for values | `solana.ts` → `LAMPORTS_PER_SOL` |
+| Types/Interfaces | PascalCase | `WalletAccount`, `BalanceInfo` |
+| Enum-like objects | PascalCase keys or UPPER_SNAKE values | `STORAGE_KEYS.THEME_MODE` |
+| Route files | kebab-case | `group-detail/[id].tsx` |
+| Asset files | kebab-case | `splash-icon.png`, `wallet-icon.svg` |
+| Barrel exports | `index.ts` | `components/ui/index.ts` |
+
+- Boolean variables/props: prefix with `is`, `has`, `should` (e.g., `isConnected`, `hasError`)
+- Event handlers: prefix with `handle` (e.g., `handleConnect`, `handleSign`)
+- Async functions: name should describe the action (e.g., `fetchBalance`, `signMessage`)

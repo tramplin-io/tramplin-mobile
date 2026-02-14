@@ -1,0 +1,43 @@
+---
+description: Git workflow and commit message conventions
+alwaysApply: true
+---
+
+# Git Usage
+
+## Commit Message Format
+
+Use conventional commit prefixes:
+
+| Prefix | Usage |
+|---|---|
+| `fix:` | Bug fixes |
+| `feat:` | New features |
+| `perf:` | Performance improvements |
+| `docs:` | Documentation changes |
+| `style:` | Formatting changes (no logic change) |
+| `refactor:` | Code refactoring (no behavior change) |
+| `test:` | Adding or updating tests |
+| `chore:` | Maintenance tasks (deps, config, CI) |
+
+## Rules
+
+- Write commit messages in imperative mood: `fix: resolve wallet disconnect crash` not `fixed the crash`
+- Keep the first line under 72 characters
+- Add a blank line + body for complex changes
+- Reference issue numbers when applicable: `fix: handle null balance (#42)`
+- One logical change per commit — don't mix refactoring with features
+
+```
+feat: add sign message form with signature display
+
+- Created SignMessageForm component with text input
+- Integrated useWalletActions hook for signing
+- Shows hex-encoded signature on success
+```
+
+## Branch Naming
+
+- `feat/description` for features
+- `fix/description` for bug fixes
+- `chore/description` for maintenance
