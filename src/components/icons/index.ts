@@ -1,4 +1,6 @@
 export { WalletIcon } from './WalletIcon'
 export { CheckIcon } from './CheckIcon'
 export { CopyIcon } from './CopyIcon'
+export { Logo, LogoSmall } from './Logo'
 export { SendIcon } from './SendIcon'
+export { ThreeDotsIcon } from './ThreeDotsIcon'

@@ -1,7 +1,5 @@
 ---
-description: UI and styling conventions for React Native with Uniwind/Tailwind
-globs: '**/*.tsx'
-alwaysApply: false
+alwaysApply: true
 ---
 
 # UI and Styling

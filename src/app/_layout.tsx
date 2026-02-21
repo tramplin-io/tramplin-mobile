@@ -1,15 +1,27 @@
 import '../global.css'
 
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
 import { ThemeProvider } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
-import { Slot } from 'expo-router'
+import { Slot, Stack, usePathname } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import * as SplashScreen from 'expo-splash-screen'
 import Toast from 'react-native-toast-message'
 import { AppProviders } from '@/components/app-providers'
+import { AuthGuard } from '@/components/auth-guard'
 import { useAppTheme } from '@/components/app-theme'
-import { initializeApi } from '@/lib/api'
+import { initializeApi, queryClient } from '@/lib/api'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { Header } from '@/components/general'
+
+function AppHeader() {
+  return <Header variant="app" />
+}
 
 // Keep the splash screen visible while we load resources
 SplashScreen.preventAutoHideAsync()
@@ -29,23 +41,15 @@ SplashScreen.preventAutoHideAsync()
  * ────────────────────────────────────────────
  * 1. In prepare(), after initializeApi():
  *    - Restore auth session: const hasToken = await initializeApi()
- *    - Hydrate onboarding state: await useOnboardingStore.persist.rehydrate()
+ *    - Hydrate greeting state when applicable
  *    - Hydrate theme: await useThemeStore.persist.rehydrate()
  *    - Load custom fonts (expo-font)
  *    - Check network status (useNetworkStatus)
  *
- * 2. Create AuthGuard component (src/components/auth-guard.tsx):
- *    - Wrap <Slot /> with auth redirect logic
- *    - Read from useAuthStore + useOnboardingStore
- *    - Handle redirects (see src/app/index.tsx TODO for logic)
- *    - Pattern: see fem-fast AuthGuard component
+ * 2. AuthGuard (src/components/auth-guard.tsx): wallet-based route protection.
+ *    - Extend later with useAuthStore when API is added.
  *
- * 3. Replace <Slot /> with:
- *    <AuthGuard>
- *      <Slot />
- *    </AuthGuard>
- *
- * 4. Network monitoring:
+ * 3. Network monitoring:
  *    - Subscribe to network status changes in this layout
  *    - On disconnect → router.push('/no-internet')
  *    - On reconnect → router.back()
@@ -53,6 +57,8 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const [appReady, setAppReady] = useState(false)
   const { theme } = useAppTheme()
+
+  const hideHeader = usePathname() === '/greeting'
 
   useEffect(() => {
     async function prepare() {
@@ -64,7 +70,6 @@ export default function RootLayout() {
       // await Promise.all([initializeApi(), minSplashTime]) // Wait for both to complete
 
       // Add other async initialization here:
-      // - Load custom fonts
       // - Fetch initial config from server
       // - Restore user preferences from storage
 
@@ -85,17 +90,54 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={theme}>
-      <View style={styles.container}>
-        <AppProviders>
-          <StatusBar style="auto" />
-          <Slot />
-        </AppProviders>
-        <View style={styles.toastContainer}>
-          <Toast topOffset={60} />
-        </View>
-      </View>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ActionSheetProvider>
+        <BottomSheetModalProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={theme}>
+              <View style={styles.container}>
+                <AppProviders>
+                  {/* <StatusBar
+                  style="auto"
+                  // networkActivityIndicatorVisible={false}
+                  // hidden
+                  // animated
+                  // backgroundColor="transparent"
+                  // translucent
+                /> */}
+                  <AuthGuard>
+                    {/* <Slot /> */}
+                    <Stack
+                      screenOptions={{
+                        headerShown: !hideHeader,
+                        header: AppHeader,
+                        animation: 'slide_from_right',
+                        gestureEnabled: false, // Disable swipe back gesture
+                      }}
+                    >
+                      <Stack.Screen name="index" />
+                      <Stack.Screen name="greeting" />
+                      <Stack.Screen name="auth/sign-in" />
+                      <Stack.Screen name="tabs" />
+                      <Stack.Screen name="profile/index" />
+                      <Stack.Screen name="screens" />
+                      <Stack.Screen name="no-internet" />
+                      <Stack.Screen name="splash/index" />
+
+                      <Stack.Screen name="terms/terms" />
+                      <Stack.Screen name="terms/privacy" />
+                    </Stack>
+                  </AuthGuard>
+                </AppProviders>
+                <View style={styles.toastContainer}>
+                  <Toast topOffset={60} />
+                </View>
+              </View>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </BottomSheetModalProvider>
+      </ActionSheetProvider>
+    </GestureHandlerRootView>
   )
 }
 

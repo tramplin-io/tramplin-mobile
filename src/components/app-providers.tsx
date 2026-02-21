@@ -47,15 +47,15 @@ export function AppProviders({ children }: Readonly<PropsWithChildren>) {
 
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <AppTheme>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <AppTheme>
             <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
               {children}
             </MobileWalletProvider>
-          </QueryClientProvider>
-        </AppTheme>
-      </SafeAreaProvider>
+          </AppTheme>
+        </SafeAreaProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   )
 }

@@ -3,6 +3,10 @@
     "Uniwind": {
       "url": "https://docs.uniwind.dev/mcp",
       "transport": "streamableHttp"
+    },
+    "solanaMcp": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://mcp.solana.com/mcp"]
     }
   }
 }

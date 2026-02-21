@@ -66,6 +66,18 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
         },
       },
     ],
+    [
+      'expo-font',
+      {
+        fonts: [
+          './src/assets/fonts/fh-lecturis/FHLecturisRounded-Regular.otf',
+          './src/assets/fonts/GT-Standard-L-Standard-Regular.ttf',
+          './src/assets/fonts/GT-Standard-L-Standard-Bold.ttf',
+          './src/assets/fonts/GT-Standard-M-Standard-Regular.ttf',
+          './src/assets/fonts/GT-Standard-M-Standard-Bold.ttf',
+        ],
+      },
+    ],
   ],
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL,

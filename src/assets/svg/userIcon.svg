@@ -1,0 +1,41 @@
+<svg viewBox="0 0 21 21" fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_8019_23376)">
+        <rect x="0.5" y="0.5" width="20" height="20" rx="10" fill="url(#paint0_linear_8019_23376)"/>
+        <rect x="0.5" y="0.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="0.5" y="4.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="0.5" y="8.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="0.5" y="12.5" width="4" height="4" rx="2" fill="#CCCFD2" stroke="black"/>
+        <rect x="0.5" y="16.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="8.5" y="0.5" width="4" height="4" rx="2" fill="#CCCFD2" stroke="black"/>
+        <rect x="8.5" y="4.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="8.5" y="8.5" width="4" height="4" rx="2" fill="#CCCFD2" stroke="black"/>
+        <rect x="8.5" y="12.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="8.5" y="16.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="4.5" y="0.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="4.5" y="4.5" width="4" height="4" rx="2" fill="#CCCFD2" stroke="black"/>
+        <rect x="4.5" y="8.5" width="4" height="4" rx="2" fill="#DABC58" stroke="black"/>
+        <rect x="4.5" y="12.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="4.5" y="16.5" width="4" height="4" rx="2" fill="#DABC58" stroke="black"/>
+        <rect x="12.5" y="0.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="12.5" y="4.5" width="4" height="4" rx="2" fill="#DABC58" stroke="black"/>
+        <rect x="12.5" y="8.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="12.5" y="12.5" width="4" height="4" rx="2" fill="#DABC58" stroke="black"/>
+        <rect x="12.5" y="16.5" width="4" height="4" rx="2" fill="#CCCFD2" stroke="black"/>
+        <rect x="16.5" y="0.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="16.5" y="4.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+        <rect x="16.5" y="8.5" width="4" height="4" rx="2" fill="#DABC58" stroke="black"/>
+        <rect x="16.5" y="12.5" width="4" height="4" rx="2" fill="#FF9494" stroke="black"/>
+        <rect x="16.5" y="16.5" width="4" height="4" rx="2" fill="#8682F7" stroke="black"/>
+    </g>
+    <rect x="0.25" y="0.25" width="20.5" height="20.5" rx="10.25" stroke="black" stroke-width="0.5"/>
+    <defs>
+        <linearGradient id="paint0_linear_8019_23376" x1="10.5" y1="0.5" x2="10.5" y2="20.5" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#AAB292"/>
+            <stop offset="1" stop-color="#4F5101"/>
+        </linearGradient>
+        <clipPath id="clip0_8019_23376">
+            <rect x="0.5" y="0.5" width="20" height="20" rx="10" fill="white"/>
+        </clipPath>
+    </defs>
+</svg>

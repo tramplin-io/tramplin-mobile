@@ -16,11 +16,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          'bg-primary active:bg-primary/90 shadow-sm shadow-black/5',
+          'rounded-full border border-brand-tertiary text-fill-tertiary',
+          '[background-image:linear-gradient(to_bottom,#E7E7E7,#8682f7)]',
+          'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-primary/90' }),
         ),
         destructive: cn(
-          'bg-destructive active:bg-destructive/90 dark:bg-destructive/60 shadow-sm shadow-black/5',
+          'rounded-full border border-critical-secondary text-fill-tertiary',
+          '[background-image:linear-gradient(to_bottom,#E7E7E7,#FF9494)]',
+          'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({
             web: 'hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
           }),
@@ -45,6 +49,7 @@ const buttonVariants = cva(
         default: cn('h-10 px-4 py-2 sm:h-9', Platform.select({ web: 'has-[>svg]:px-3' })),
         sm: cn('h-9 gap-1.5 rounded-md px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
         lg: cn('h-11 rounded-md px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
+        xl: cn('h-15 rounded-full px-6 sm:h-15', Platform.select({ web: 'has-[>svg]:px-4' })),
         icon: 'h-10 w-10 sm:h-9 sm:w-9',
       },
     },
@@ -55,37 +60,42 @@ const buttonVariants = cva(
   },
 )
 
-const buttonTextVariants = cva(
-  cn('text-foreground text-sm font-medium', Platform.select({ web: 'pointer-events-none transition-colors' })),
-  {
-    variants: {
-      variant: {
-        default: 'text-primary-foreground',
-        destructive: 'text-white',
-        outline: cn(
-          'group-active:text-accent-foreground',
-          Platform.select({ web: 'group-hover:text-accent-foreground' }),
-        ),
-        secondary: 'text-secondary-foreground',
-        ghost: 'group-active:text-accent-foreground',
-        link: cn(
-          'text-primary group-active:underline',
-          Platform.select({ web: 'underline-offset-4 hover:underline group-hover:underline' }),
-        ),
-      },
-      size: {
-        default: '',
-        sm: '',
-        lg: '',
-        icon: '',
-      },
+// 'bg-destructive active:bg-destructive/90 dark:bg-destructive/60 rounded-full',
+// 'shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
+
+const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none transition-colors' })), {
+  variants: {
+    variant: {
+      default:
+        'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
+      destructive:
+        'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
+      outline: cn(
+        'text-foreground text-sm font-medium',
+        'group-active:text-accent-foreground',
+        Platform.select({ web: 'group-hover:text-accent-foreground' }),
+      ),
+      secondary: 'text-foreground text-sm font-medium text-secondary-foreground',
+      ghost: 'text-foreground text-sm font-medium group-active:text-accent-foreground',
+      link: cn(
+        'text-foreground text-sm font-medium',
+        'text-primary group-active:underline',
+        Platform.select({ web: 'underline-offset-4 hover:underline group-hover:underline' }),
+      ),
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
+    size: {
+      default: '',
+      sm: '',
+      lg: '',
+      xl: '',
+      icon: '',
     },
   },
-)
+  defaultVariants: {
+    variant: 'default',
+    size: 'default',
+  },
+})
 
 type ButtonProps = React.ComponentProps<typeof Pressable> &
   React.RefAttributes<typeof Pressable> &

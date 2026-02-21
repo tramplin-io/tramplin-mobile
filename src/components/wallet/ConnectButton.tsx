@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { View, Text } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 const NO_WALLET_MESSAGE =
   'No Solana wallet app found. Install a compatible wallet (e.g. Phantom) that supports the mobile wallet protocol.'

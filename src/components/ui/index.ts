@@ -1,5 +1,5 @@
-export { Button } from './Button'
-export { Card } from './Card'
+export { Button } from './button'
+export { Card } from './card'
 export { Container } from './Container'
-export { Badge } from './Badge'
+export { Badge } from './badge'
 export { ThemeSwitcher } from './ThemeSwitcher'

@@ -47,3 +47,7 @@ export function getErrorMessage(error: unknown): string {
 export function addressToString(address: Address): string {
   return address.toString()
 }
+
+export function formatWalletAddress(walletAddress: string): string {
+  return `${walletAddress?.slice(0, 4)}…${walletAddress?.slice(-4)}`
+}

@@ -34,7 +34,7 @@ Components in `src/components/ui/`. Each should follow existing patterns:
   - **Props:** `title`, `showBack?`, `rightAction?` (ReactNode), `onBack?`
   - **Layout:** Row with optional back arrow, centered title, optional right slot
   - **Behavior:** Back button calls `router.back()` from expo-router
-  - **Usage:** Top of every screen in `(screens)/` group, optional in tabs
+  - **Usage:** Top of every screen in screens group, optional in tabs
 
 - **Divider.tsx** (optional)
   - **Status:** Use `Separator` from `separator.tsx` as the divider. Add a thin wrapper or alias only if you want a dedicated `Divider` export (e.g. default `className`: `my-4`).
@@ -78,9 +78,9 @@ Components in `src/components/ui/`. Each should follow existing patterns:
 
 ## Implementation order (recommended)
 
-1. **Header, ListItem** — needed by Profile tab and all `(screens)/` pages (use `Separator` for dividers).
+1. **Header, ListItem** — needed by Profile tab and all screens pages (use `Separator` for dividers).
 2. **Input + Label** — already exist; add a small **FormField** wrapper with `label`, `error`, and `Input` if you want a single component for forms.
-3. **Avatar** — done; use in Profile, welcome, community.
+3. **Avatar** — done; use in Profile, community.
 4. **StatCard, EmptyState** — Home tab, Community tab, Notifications tab.
 5. **Stepper** — onboarding greeting.
 6. **Modal, Accordion** — done (use `Dialog` and `accordion.tsx`).
