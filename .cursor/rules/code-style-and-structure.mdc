@@ -15,13 +15,20 @@ src/
     ui/            # Reusable themed UI primitives (Button, Card, etc.)
     icons/         # Icon components
     wallet/        # Wallet-specific components
+    general/       # Header, ScreenWrapper, WalletIdenticon, UserIcon, etc.
+    profile/       # LogDisplay, ContactUs, DeveloperPanel
     app-providers.tsx  # Root provider wrapper
     app-theme.tsx      # Theme provider
     error-boundary.tsx # Error boundary
+    auth-guard.tsx    # Auth redirect logic
   constants/       # App config, theme colors, Solana constants
-  hooks/           # Custom React hooks
+  hooks/           # Custom React hooks + Zustand stores
   types/           # TypeScript type definitions
   utils/           # Helper/utility functions
+  lib/
+    api/           # API layer (Orval, Axios, token store)
+    network/       # Network status (e.g. useNetworkStatus)
+    utils.ts       # Shared utils (e.g. cn)
 ```
 
 ## Rules

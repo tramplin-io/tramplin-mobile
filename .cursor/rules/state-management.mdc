@@ -30,7 +30,7 @@ const { data, isLoading } = useQuery({
 
 - One store per domain (auth, settings, theme, etc.)
 - Use `persist` middleware with AsyncStorage for persistence
-- Keep stores in `src/stores/` or domain hooks in `src/hooks/` (e.g. `useThemeStore`)
+- Keep Zustand stores in `src/hooks/` (e.g. `useThemeStore.ts`) — no separate `stores/` folder
 - All storage keys defined in `STORAGE_KEYS` in `@/utils/storage`
 
 Theme store example (uses Uniwind for actual theme application):

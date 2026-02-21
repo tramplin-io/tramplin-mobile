@@ -1,6 +1,6 @@
 # Tramplin Mobile — Implementation Plan
 
-**Last recheck:** Routes and file structure verified; UI checklist synced with `src/components/ui/TODO.md`; hooks/stores and auth-guard still pending.
+**Last recheck:** Structure aligned with current codebase: `splash/`, `greeting/` (with slides), `tabs` (Stake, Leader, Q&A), `profile/`, `terms/`, `screens/`, `lib/network/`, `components/general/` and `components/profile/`. UI checklist synced with `src/components/ui/TODO.md`; hooks/stores and auth-guard wiring still pending.
 
 ## Architecture Overview
 
@@ -8,25 +8,40 @@
 src/
   app/                          # Expo Router (file-based routing)
     auth/                       # Auth flow (wallet sign-in)
-    onboarding/                 # First-time user flow (splash, greeting, manifesto)
-    tabs/                       # Main app with bottom tabs (home, community, notifications, profile)
-    screens/                    # Stack screens pushed from tabs (edit-profile, settings, etc.)
-    no-internet.tsx             # Standalone offline screen
-    index.tsx                   # Entry point — redirects based on auth/onboarding state
+    splash/                     # Splash screen (index)
+    greeting/                   # First-time user flow
+      slides/                   # Slide1–Slide8 + index
+      index.tsx                 # Greeting entry
+    tabs/                       # Main app with bottom tabs
+      index.tsx                 # Stake tab
+      leaderboard.tsx           # Leader tab
+      questions.tsx             # Q&A tab
+      profile.tsx               # Profile tab
+      _layout.tsx               # Tab bar (Stake, Leader, Q&A)
+    profile/                    # Profile stack/screen (index)
+    screens/                    # Stack screens (edit-profile, settings, etc.)
+    terms/                      # Legal: terms.tsx, privacy.tsx
+    no-internet/                # Offline screen (index)
+    index.tsx                   # Entry — redirects based on auth/onboarding state
     _layout.tsx                 # Root layout (providers, splash, toast)
   components/
-    ui/                         # Reusable themed UI components (see ui/TODO.md)
+    ui/                         # Reusable themed UI (see ui/TODO.md)
     wallet/                     # Wallet-specific components
     icons/                      # Icon components
+    general/                    # Header, HeaderGrating, WalletIdenticon, UserIcon
+    profile/                    # LogDisplay, ContactUs, DeveloperPanel
     app-providers.tsx           # Provider tree wrapper
     app-theme.tsx               # Theme provider
     error-boundary.tsx          # Error boundary
-    auth-guard.tsx              # [TODO] Auth redirect logic
+    auth-guard.tsx              # Auth redirect logic (exists; wire in index)
   hooks/                        # Custom hooks + Zustand stores
   constants/                    # App config, theme, Solana constants
   types/                        # TypeScript types
-  utils/                        # Helpers (format, storage, wallet)
-  lib/api/                      # API layer (Orval, Axios, token store)
+  utils/                        # Helpers (format, storage)
+  lib/
+    api/                        # API layer (Orval, Axios, token store)
+    network/                    # Network status (e.g. useNetworkStatus)
+    utils.ts                    # Shared utils (e.g. cn)
   assets/                       # Static files (images, svg, videos, fonts)
 ```
 
@@ -36,134 +51,124 @@ src/
 
 ### P0 — Foundation (do first)
 
-| Task                                                      | Files                             | Depends On                        |
-| --------------------------------------------------------- | --------------------------------- | --------------------------------- |
-| Core UI: Header, Input, ListItem, Avatar, Switch, Divider | `src/components/ui/`              | See `ui/TODO.md`                  |
-| Auth store (useAuthStore)                                 | `src/hooks/useAuthStore.ts`       | Zustand, AsyncStorage, tokenStore |
-| Onboarding store (useOnboardingStore)                     | `src/hooks/useOnboardingStore.ts` | Zustand, AsyncStorage             |
-| Profile store (useProfileStore)                           | `src/hooks/useProfileStore.ts`    | Zustand, AsyncStorage             |
-| Network status hook                                       | `src/hooks/useNetworkStatus.ts`   | expo-network                      |
-| Auth guard component                                      | `src/components/auth-guard.tsx`   | useAuthStore, useOnboardingStore  |
-| Wire up entry redirect                                    | `src/app/index.tsx`               | Auth guard, stores                |
+| Task                                                      | Files                                      | Depends On                        |
+| --------------------------------------------------------- | ------------------------------------------ | --------------------------------- |
+| Core UI: Header, Input, ListItem, Avatar, Switch, Divider | `src/components/ui/`, `general/Header.tsx` | See `ui/TODO.md`                  |
+| Auth store (useAuthStore)                                 | `src/hooks/useAuthStore.ts`                | Zustand, AsyncStorage, tokenStore |
+| Onboarding store (useOnboardingStore)                     | `src/hooks/useOnboardingStore.ts`          | Zustand, AsyncStorage             |
+| Profile store (useProfileStore)                           | `src/hooks/useProfileStore.ts`             | Zustand, AsyncStorage             |
+| Network status hook                                       | `src/hooks/useNetworkStatus.ts`            | expo-network, lib/network         |
+| Auth guard component                                      | `src/components/auth-guard.tsx`            | useAuthStore, useOnboardingStore  |
+| Wire up entry redirect                                    | `src/app/index.tsx`                        | Auth guard, stores                |
 
 ### P1 — Auth & Onboarding
 
-| Task                            | Files                                | Depends On                       |
-| ------------------------------- | ------------------------------------ | -------------------------------- |
-| Sign-in screen (wallet connect) | `src/app/auth/sign-in.tsx`         | ConnectButton, useAuthStore      |
-| Animated splash                 | `src/app/onboarding/splash.tsx`    | Brand assets, optional Lottie    |
-| Greeting stepper (3 steps)      | `src/app/onboarding/greeting.tsx`  | Stepper component, illustrations |
-| Manifesto screen                | `src/app/onboarding/manifesto.tsx` | Static content                   |
+| Task                            | Files                                    | Depends On                    |
+| ------------------------------- | ---------------------------------------- | ----------------------------- |
+| Sign-in screen (wallet connect) | `src/app/auth/sign-in.tsx`               | ConnectButton, useAuthStore   |
+| Splash screen                   | `src/app/splash/index.tsx`               | Brand assets, optional Lottie |
+| Greeting flow (slides)          | `src/app/greeting/index.tsx` + `slides/` | Stepper, illustrations        |
+| Manifesto / final onboarding    | In greeting or dedicated screen          | Static content                |
 
 ### P2 — Main Tabs
 
-| Task                                    | Files                              | Depends On                      |
-| --------------------------------------- | ---------------------------------- | ------------------------------- |
-| Home / Dashboard tab                    | `src/app/tabs/index.tsx`         | AccountInfo, StatCard, Header   |
-| Community Stats tab                     | `src/app/tabs/community.tsx`     | StatCard, ListItem, API data    |
-| Notifications tab                       | `src/app/tabs/notifications.tsx` | NotificationItem, EmptyState    |
-| Profile tab                             | `src/app/tabs/profile.tsx`       | Avatar, ListItem, Divider       |
-| Tab bar icons                           | `src/app/tabs/_layout.tsx`       | @expo/vector-icons or SVG icons |
-| Extra UI: StatCard, EmptyState, Stepper | `src/components/ui/`               | See `ui/TODO.md`                |
+| Task                                    | Files                          | Depends On                                  |
+| --------------------------------------- | ------------------------------ | ------------------------------------------- |
+| Stake tab                               | `src/app/tabs/index.tsx`       | AccountInfo, Header                         |
+| Leaderboard tab                         | `src/app/tabs/leaderboard.tsx` | StatCard, ListItem, API data                |
+| Q&A tab                                 | `src/app/tabs/questions.tsx`   | Accordion, EmptyState                       |
+| Profile tab                             | `src/app/tabs/profile.tsx`     | Avatar, ListItem, Divider                   |
+| Tab bar icons                           | `src/app/tabs/_layout.tsx`     | icons (BigCupIcon, LogoSmall, QuestionIcon) |
+| Extra UI: StatCard, EmptyState, Stepper | `src/components/ui/`           | See `ui/TODO.md`                            |
 
-### P3 — Profile Sub-screens
+### P3 — Profile & Screens
 
-| Task                  | Files                                         | Depends On                   |
-| --------------------- | --------------------------------------------- | ---------------------------- |
-| Edit profile form     | `src/app/screens/edit-profile.tsx`          | Input, Avatar, API mutation  |
-| Notification settings | `src/app/screens/notification-settings.tsx` | Switch, ListItem             |
-| Contact us form       | `src/app/screens/contact-us.tsx`            | Input, Button                |
-| Terms of use          | `src/app/screens/terms.tsx`                 | Static or API content        |
-| Privacy policy        | `src/app/screens/privacy.tsx`               | Static or API content        |
-| Delete account flow   | `src/app/screens/delete-account.tsx`        | Modal, Input, API mutation   |
-| Q&A / FAQ             | `src/app/screens/qna.tsx`                   | Accordion                    |
-| No internet screen    | `src/app/no-internet.tsx`                     | EmptyState, useNetworkStatus |
+| Task                  | Files                                       | Depends On                    |
+| --------------------- | ------------------------------------------- | ----------------------------- |
+| Profile screen        | `src/app/profile/index.tsx`                 | Avatar, ListItem              |
+| Edit profile form     | `src/app/screens/edit-profile.tsx`          | Input, Avatar, API mutation   |
+| Notification settings | `src/app/screens/notification-settings.tsx` | Switch, ListItem              |
+| Contact us form       | `src/app/screens/contact-us.tsx`            | Input, Button                 |
+| Q&A / FAQ             | `src/app/screens/qna.tsx`                   | Accordion                     |
+| Terms of use          | `src/app/terms/terms.tsx`                   | Static or API content         |
+| Privacy policy        | `src/app/terms/privacy.tsx`                 | Static or API content         |
+| Delete account flow   | `src/app/screens/delete-account.tsx`        | [To create] Modal, Input, API |
+| No internet screen    | `src/app/no-internet/index.tsx`             | EmptyState, useNetworkStatus  |
 
 ### P4 — Polish & Extras
 
-| Task                    | Files                             | Depends On              |
-| ----------------------- | --------------------------------- | ----------------------- |
-| Skeleton loading states | `src/components/ui/skeleton.tsx`  | react-native-reanimated |
-| Modal / Dialog          | `src/components/ui/dialog.tsx`    | (done)                  |
-| Accordion animation     | `src/components/ui/accordion.tsx` | react-native-reanimated |
-| Push notifications      | `src/hooks/useNotifications.ts`   | expo-notifications      |
-| Custom fonts            | `src/hooks/useFonts.ts`           | expo-font               |
-| Tab bar icon SVGs       | `src/components/icons/`           | react-native-svg        |
+| Task                    | Files                             | Depends On         |
+| ----------------------- | --------------------------------- | ------------------ |
+| Skeleton loading states | `src/components/ui/skeleton.tsx`  | (done)             |
+| Modal / Dialog          | `src/components/ui/dialog.tsx`    | (done)             |
+| Accordion animation     | `src/components/ui/accordion.tsx` | (done)             |
+| Push notifications      | `src/hooks/useNotifications.ts`   | expo-notifications |
+| Custom fonts            | `src/hooks/useFonts.ts`           | expo-font          |
 
 ---
 
 ## Dependencies to Install (per phase)
 
-### P0 — Already installed
+### P0 — Foundation
 
-All current deps are sufficient for P0. `react-native-reanimated` is used by UI (e.g. `skeleton.tsx`, `accordion.tsx`) and is typically provided by `@rn-primitives/*`.
+```bash
+npx expo install expo-network
+```
+
+(As of recheck, `expo-network` may need to be added if not in package.json.)
 
 ### P1 — Onboarding
 
 ```bash
-npx expo install expo-network
 # Optional for animated splash:
-npx expo install lottie-react-native react-native-reanimated
-```
-
-(As of recheck, `expo-network` is not yet in package.json.)
-
-### P2 — Main tabs
-
-```bash
-npx expo install @expo/vector-icons
-# Already included with Expo, but verify
+npx expo install lottie-react-native
 ```
 
 ### P4 — Polish
 
 ```bash
 npx expo install expo-notifications expo-font
-# react-native-reanimated: from P1 or via @rn-primitives
 ```
-
-(As of recheck, `expo-notifications` and `expo-font` are not yet in package.json.)
 
 ---
 
 ## Key Patterns to Follow
 
-1. **Every page file has a TODO block** — read it before implementing
-2. **UI components** — see `src/components/ui/TODO.md` for specs
-3. **Stores** — see TODO block in `src/hooks/index.ts` for specs
-4. **Auth flow** — see TODO blocks in `src/app/_layout.tsx` and `src/app/index.tsx`
-5. **API calls** — use Orval-generated hooks (see `.cursor/rules/api-and-orval.mdc`)
-6. **Styling** — always use Uniwind classes with `dark:` variants (see `.cursor/rules/ui-and-styling.mdc`)
-7. **Commits** — use conventional commits (see `.cursor/rules/git-usage.mdc`)
+1. **Every page file has a TODO block** — read it before implementing.
+2. **UI components** — see `src/components/ui/TODO.md` for specs. Header lives in `src/components/general/Header.tsx`.
+3. **Stores** — see TODO block in `src/hooks/index.ts` for specs.
+4. **Auth flow** — see TODO blocks in `src/app/_layout.tsx` and `src/app/index.tsx`.
+5. **API calls** — use Orval-generated hooks (see `.cursor/rules/api-and-orval.mdc`).
+6. **Styling** — use Uniwind classes with design tokens from `global.css`; theme switches via `@variant light` / `@variant dark` — **do not** use `dark:` variants for theme tokens (see `.cursor/rules/ui-and-styling.mdc`).
+7. **Commits** — use conventional commits (see `.cursor/rules/git-usage.mdc`).
 
 ---
 
 ## File Checklist
 
-### Route Files (all created with TODO instructions)
+### Route Files (current structure)
 
 - [x] `src/app/index.tsx` — entry redirect
 - [x] `src/app/_layout.tsx` — root layout
-- [x] `src/app/no-internet.tsx`
+- [x] `src/app/no-internet/index.tsx`
 - [x] `src/app/auth/_layout.tsx`
 - [x] `src/app/auth/sign-in.tsx`
-- [x] `src/app/onboarding/_layout.tsx`
-- [x] `src/app/onboarding/splash.tsx`
-- [x] `src/app/onboarding/greeting.tsx`
-- [x] `src/app/onboarding/manifesto.tsx`
+- [x] `src/app/splash/index.tsx`
+- [x] `src/app/greeting/index.tsx`
+- [x] `src/app/greeting/slides/` (Slide1–Slide8, index)
 - [x] `src/app/tabs/_layout.tsx`
-- [x] `src/app/tabs/index.tsx`
-- [x] `src/app/tabs/community.tsx`
-- [x] `src/app/tabs/notifications.tsx`
+- [x] `src/app/tabs/index.tsx` — Stake
+- [x] `src/app/tabs/leaderboard.tsx`
+- [x] `src/app/tabs/questions.tsx`
 - [x] `src/app/tabs/profile.tsx`
-- [x] `src/app/screens/_layout.tsx`
+- [x] `src/app/profile/index.tsx`
 - [x] `src/app/screens/edit-profile.tsx`
 - [x] `src/app/screens/notification-settings.tsx`
 - [x] `src/app/screens/contact-us.tsx`
 - [x] `src/app/screens/qna.tsx`
-- [x] `src/app/screens/terms.tsx`
-- [x] `src/app/screens/privacy.tsx`
-- [x] `src/app/screens/delete-account.tsx`
+- [x] `src/app/terms/terms.tsx`
+- [x] `src/app/terms/privacy.tsx`
+- [ ] `src/app/screens/delete-account.tsx` — to create
 
 ### Components (see `src/components/ui/TODO.md`)
 
@@ -177,10 +182,10 @@ Implemented (use from `@/components/ui` or primitives):
 - [x] **Modal** — use `Dialog` from `dialog.tsx`
 - [x] **Skeleton** — `skeleton.tsx`
 - [x] **Accordion** — `accordion.tsx`
+- [x] **Header** — `src/components/general/Header.tsx`, `HeaderGrating.tsx`
 
-Still to implement:
+Still to implement (UI):
 
-- [ ] Header
 - [ ] StatCard
 - [ ] ListItem
 - [ ] EmptyState
@@ -201,6 +206,5 @@ To create:
 
 ### Other
 
-- [ ] auth-guard.tsx — redirect logic (auth/onboarding); not yet created
+- [x] auth-guard.tsx — component exists; wire in `src/app/index.tsx`
 - [ ] Custom fonts setup (P4)
-- [ ] Tab bar SVG icons (P4)

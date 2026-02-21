@@ -19,6 +19,8 @@ alwaysApply: false
  * @example ellipsify('7nYBabcdefgh', 4) => '7nYB...efgh'
  */
 export function ellipsify(str: string, maxLength = 4): string {
+  // ...
+}
 ```
 
 ## Component Documentation
