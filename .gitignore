@@ -46,3 +46,5 @@ app_builds/
 # env files
 .env
 .env*.local
+
+.pnpm-store/
