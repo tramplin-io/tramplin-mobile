@@ -84,7 +84,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     solanaNetwork: process.env.EXPO_PUBLIC_SOLANA_NETWORK ?? 'devnet',
     solanaRpcUrl: process.env.EXPO_PUBLIC_SOLANA_RPC_URL,
     eas: {
-      projectId: '',
+      projectId: '18858ee1-1db1-4d41-9a74-9d0f62e1716b',
     },
   },
 })
