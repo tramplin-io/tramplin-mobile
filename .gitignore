@@ -41,6 +41,7 @@ app-example
 # build output
 android/
 ios/
+app_builds/
 
 # env files
 .env
