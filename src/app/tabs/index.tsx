@@ -32,7 +32,7 @@ import { Container } from '@/components/ui/Container'
 export default function HomeTab() {
   return (
     <Container safe={false}>
-      <ScrollView contentContainerClassName="px-6 py-8 bg-brand-primary">
+      <ScrollView contentContainerClassName="px-6 py-8 bg-brand-primary" showsVerticalScrollIndicator={false}>
         <Text className="text-2xl font-bold text-content-primary mb-6">Stake</Text>
         <Text className="text-content-secondary">[Stake placeholder]</Text>
         <View className=" h-[200vh]" />

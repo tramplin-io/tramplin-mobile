@@ -37,7 +37,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: './src/assets/images/adaptive-icon.png',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#8682F7',
     },
   },
   ios: {
@@ -45,7 +45,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     // icon: {
     //   foregroundImage: './src/assets/images/icon.png',
-    //   backgroundColor: '#ffffff',
+    //   backgroundColor: '#8682F7',
     // },
   },
   web: {
@@ -57,12 +57,13 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#ffffff',
-        image: './src/assets/images/splash.png',
-        // imageWidth: 200,
+        backgroundColor: '#8682F7',
+        image: './src/assets/images/icon.png',
+        imageWidth: '100%',
+        imageHeight: '100%',
         resizeMode: 'contain',
         dark: {
-          backgroundColor: '#0f172a',
+          backgroundColor: '#9F9CF9',
         },
       },
     ],
@@ -78,6 +79,20 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
         ],
       },
     ],
+    [
+      'expo-video',
+      {
+        supportsBackgroundPlayback: true,
+        supportsPictureInPicture: true,
+      },
+    ],
+    // [
+    //   'expo-navigation-bar',
+    //   {
+    //     backgroundColor: '#00000000',
+    //     position: 'absolute',
+    //   },
+    // ],
   ],
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL,

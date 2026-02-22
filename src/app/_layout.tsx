@@ -18,6 +18,10 @@ import { useAppTheme } from '@/components/app-theme'
 import { initializeApi, queryClient } from '@/lib/api'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Header } from '@/components/general'
+import { toastConfig } from '@/components/ToastConfig'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useCSSVariable } from 'uniwind'
+import * as NavigationBar from 'expo-navigation-bar'
 
 function AppHeader() {
   return <Header variant="app" />
@@ -57,6 +61,14 @@ SplashScreen.preventAutoHideAsync()
 export default function RootLayout() {
   const [appReady, setAppReady] = useState(false)
   const { theme } = useAppTheme()
+  const insets = useSafeAreaInsets()
+  const bgColor = useCSSVariable('--color-fill-primary')
+
+  const visibility = NavigationBar.useVisibility()
+  const color = NavigationBar.getBackgroundColorAsync()
+
+  console.log('visibility', visibility)
+  console.log('color', color)
 
   const hideHeader = usePathname() === '/greeting'
 
@@ -95,16 +107,22 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider value={theme}>
-              <View style={styles.container}>
+              <View
+                style={[
+                  styles.container,
+                  { backgroundColor: 'transparent' },
+                  bgColor != null && { backgroundColor: bgColor as string },
+                ]}
+              >
                 <AppProviders>
-                  {/* <StatusBar
-                  style="auto"
-                  // networkActivityIndicatorVisible={false}
-                  // hidden
-                  // animated
-                  // backgroundColor="transparent"
-                  // translucent
-                /> */}
+                  <StatusBar
+                    style="auto"
+                    // networkActivityIndicatorVisible={false}
+                    // hidden
+                    // animated
+                    // backgroundColor="transparent"
+                    // translucent
+                  />
                   <AuthGuard>
                     {/* <Slot /> */}
                     <Stack
@@ -120,18 +138,20 @@ export default function RootLayout() {
                       <Stack.Screen name="auth/sign-in" />
                       <Stack.Screen name="tabs" />
                       <Stack.Screen name="profile/index" />
-                      <Stack.Screen name="screens" />
-                      <Stack.Screen name="no-internet" />
+                      <Stack.Screen name="screens/qna" />
+                      <Stack.Screen name="screens/contact-us" />
+                      <Stack.Screen name="screens/edit-profile" />
+                      <Stack.Screen name="screens/notification-settings" />
+                      <Stack.Screen name="no-internet/index" />
                       <Stack.Screen name="splash/index" />
-
                       <Stack.Screen name="terms/terms" />
                       <Stack.Screen name="terms/privacy" />
                     </Stack>
                   </AuthGuard>
                 </AppProviders>
-                <View style={styles.toastContainer}>
-                  <Toast topOffset={60} />
-                </View>
+                {/* <View style={styles.toastContainer}> */}
+                <Toast topOffset={40 + insets.top} config={toastConfig} />
+                {/* </View> */}
               </View>
             </ThemeProvider>
           </QueryClientProvider>

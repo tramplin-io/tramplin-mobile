@@ -30,7 +30,7 @@ export default function EditProfileScreen() {
   return (
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Edit Profile' }} />
-      <ScrollView contentContainerClassName="px-6 py-8">
+      <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
         <Text className="text-content-secondary">[Edit profile form placeholder]</Text>
       </ScrollView>
     </Container>

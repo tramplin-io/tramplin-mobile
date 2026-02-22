@@ -109,6 +109,14 @@
       --color-card-foreground: oklch(0 0 0); /* # */
       --color-destructive: oklch(0.84 0.09 15); /* # */
 
+      /* State Colors */
+      --color-error: oklch(0.6493 0.1718 8.91); /* ##e25979 */
+      --color-success: oklch(0.7334 0.1236 140.83); /* #7cbc71 */
+      --color-warning: oklch(0.7695 0.1382 57.93); /* #f59c53 */
+      --color-error-bg: oklch(0.8306 0.094164 19.2558); /* #FFAFAF */
+      --color-success-bg: oklch(0.9473 0.0242 141.52); /* #e5f2e3 */
+      --color-warning-bg: oklch(0.9507 0.0271 60.37); /* #fdebdd */
+
       /* Tramplin Design Tokens - Light Theme */
       --color-liliac-light: oklch(0.7329 0.1331 284.08); /* #9f9cf9; */
       --color-soft-pink-light: oklch(0.8306 0.094164 19.2558); /* #ffafaf; */
@@ -173,6 +181,14 @@
       --color-card: oklch(0.16 0 0);
       --color-card-foreground: oklch(1 0 0);
       --color-destructive: oklch(0.77 0.13 15);
+
+      /* State Colors */
+      --color-error: oklch(0.6493 0.1718 8.91); /* #e25979 */
+      --color-success: oklch(0.7334 0.1236 140.83); /* #7cbc71 */
+      --color-warning: oklch(0.7695 0.1382 57.93); /* #f59c53 */
+      --color-error-bg: oklch(0.8306 0.094164 19.2558); /* #FFAFAF */
+      --color-success-bg: oklch(0.9473 0.0242 141.52); /* #e5f2e3 */
+      --color-warning-bg: oklch(0.9507 0.0271 60.37); /* #fdebdd */
 
       /* Tramplin Design Tokens - Dark Theme */
       --color-liliac-light: oklch(0.7329 0.1331 284.08); /* #9f9cf9; */

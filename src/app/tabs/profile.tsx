@@ -1,10 +1,13 @@
-import { View, Text, ScrollView } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, Button as RNButton } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { Container } from '@/components/ui/Container'
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
 import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { AccountInfo } from '@/components/wallet/AccountInfo'
 import { SignMessageForm } from '@/components/wallet/SignMessageForm'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import { Button } from '@/components/ui'
+import * as Haptics from 'expo-haptics'
 
 /**
  * Profile Tab — user info + settings menu.
@@ -54,7 +57,7 @@ export default function ProfileTab() {
   const isConnected = account !== undefined && account !== null
   return (
     <Container safe={false}>
-      <ScrollView contentContainerClassName="px-6 pt-6 pb-20">
+      <ScrollView contentContainerClassName="px-6 pt-6 pb-20" showsVerticalScrollIndicator={false}>
         <Text className="text-2xl font-bold text-content-primary mb-6">Profile</Text>
         <Text className="text-content-tertiary">[Profile & settings placeholder]</Text>
         {/* Header */}
@@ -92,7 +95,134 @@ export default function ProfileTab() {
             </Text>
           </View>
         )}
+
+        {/* Toast Test */}
+        <View className="mt-8 gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onPress={() => {
+              Toast.show({
+                type: 'success',
+                text1: 'Success!',
+              })
+            }}
+            className="w-1/2"
+          >
+            <Text>Show Success Toast</Text>
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onPress={() => {
+              Toast.show({
+                type: 'warning',
+                text1: 'Warning!',
+              })
+            }}
+            className="w-1/2"
+          >
+            <Text>Show Warning Toast</Text>
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onPress={() => {
+              Toast.show({
+                type: 'error',
+                text1: 'Error!',
+              })
+            }}
+            className="w-1/2"
+          >
+            <Text>Show Error Toast</Text>
+          </Button>
+        </View>
+        {/* Toast Test */}
+        <View style={styles.container}>
+          <Text>Haptics.selectionAsync</Text>
+          <View style={styles.buttonContainer}>
+            <RNButton title="Selection" onPress={() => Haptics.selectionAsync()} />
+          </View>
+          <Text>Haptics.notificationAsync</Text>
+
+          <View className="mt-8 gap-2">
+            <RNButton
+              title="Success"
+              onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)}
+            />
+            <RNButton title="Error" onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)} />
+            <RNButton
+              title="Warning"
+              onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)}
+            />
+          </View>
+
+          <Text>Haptics.impactAsync</Text>
+          <View className="mt-8 gap-2">
+            <RNButton title="Light" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)} />
+            <RNButton title="Medium" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)} />
+            <RNButton title="Heavy" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)} />
+            <RNButton title="Rigid" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)} />
+            <RNButton title="Soft" onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)} />
+          </View>
+
+          <Text>Haptics.AndroidHaptics</Text>
+          <View className="mt-8 gap-2">
+            <RNButton
+              title="Clock_Tick"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Clock_Tick)}
+            />
+            <RNButton
+              title="Confirm"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Confirm)}
+            />
+            <RNButton
+              title="Context_Click"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Context_Click)}
+            />
+            <RNButton
+              title="Drag_Start"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Drag_Start)}
+            />
+            <RNButton
+              title="Gesture_End"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Gesture_End)}
+            />
+            <RNButton
+              title="Gesture_Start"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Gesture_Start)}
+            />
+            <RNButton
+              title="Keyboard_Press"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Keyboard_Press)}
+            />
+            <RNButton
+              title="Virtual_Key"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Virtual_Key)}
+            />
+            <RNButton
+              title="Reject"
+              onPress={() => Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Reject)}
+            />
+          </View>
+        </View>
       </ScrollView>
     </Container>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 10,
+    marginBottom: 30,
+    justifyContent: 'space-between',
+  },
+})

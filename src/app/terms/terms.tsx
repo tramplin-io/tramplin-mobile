@@ -22,7 +22,7 @@ export default function TermsScreen() {
   return (
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Terms of Use' }} />
-      <ScrollView contentContainerClassName="px-6 py-8">
+      <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
         <Text className="text-content-secondary">[Terms of Use content placeholder]</Text>
       </ScrollView>
     </Container>

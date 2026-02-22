@@ -3,9 +3,9 @@ import { extendTailwindMerge } from 'tailwind-merge'
 
 /**
  * Custom theme scales so tailwind-merge correctly resolves conflicts when
- * combining variant classes with className (e.g. Text variant="h4" className="text-olive").
+ * combining variant classes with className (e.g. Text variant="h4" className="text-olive-light").
  * - theme.text: typography scale (--text-*) so text-h4, text-body etc. stay in font-size group.
- * - theme.color: design tokens (--color-*) so text-content-primary vs text-olive merge correctly.
+ * - theme.color: design tokens (--color-*) so text-content-primary vs text-olive-light merge correctly.
  */
 const twMerge = extendTailwindMerge({
   extend: {

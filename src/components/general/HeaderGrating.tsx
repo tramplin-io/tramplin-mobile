@@ -38,13 +38,13 @@ export function HeaderGrating({ showLogo = true }: Readonly<HeaderProps>) {
       >
         <LinearGradient
           colors={[borderPrimary as string, 'rgba(134, 130, 247, 0.01)']}
-          locations={[0, 1]}
+          locations={[0.05, 0.95]}
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
-            height: 60,
+            height: 40,
           }}
         />
         <View className={cn('flex-row items-center justify-between px-4 py-2 w-full h-8')}>

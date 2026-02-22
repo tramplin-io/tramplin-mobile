@@ -27,7 +27,7 @@ export default function ContactUsScreen() {
   return (
     <Container safe={false}>
       <Stack.Screen options={{ title: 'Contact Us' }} />
-      <ScrollView contentContainerClassName="px-6 py-8">
+      <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
         <Text className="text-content-secondary">[Contact form placeholder]</Text>
       </ScrollView>
     </Container>

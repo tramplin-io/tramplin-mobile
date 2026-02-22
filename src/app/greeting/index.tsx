@@ -7,8 +7,9 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Container } from '@/components/ui/Container'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/app/greeting/slides'
+import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/components/greeting/slides'
 import { HeaderGrating } from '@/components/general'
+import Toast from 'react-native-toast-message'
 
 const SLIDE_COMPONENTS = [
   { key: 'splash', Slide: Slide1 },
@@ -18,7 +19,7 @@ const SLIDE_COMPONENTS = [
   { key: 'redistribution', Slide: Slide5 },
   { key: 'unstake', Slide: Slide6 },
   { key: 'manifesto-teaser', Slide: Slide7 },
-  { key: 'manifesto', Slide: Slide8 },
+  // { key: 'manifesto', Slide: Slide8 },
 ] as const
 
 /**
@@ -51,18 +52,22 @@ export default function GreetingScreen() {
     try {
       await connect()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect wallet')
+      Toast.show({
+        type: 'error',
+        text1: err instanceof Error ? err.message : 'Failed to connect wallet',
+      })
+      // setError(err instanceof Error ? err.message : 'Failed to connect wallet')
     } finally {
       setConnecting(false)
     }
   }, [connect])
 
   const renderSlide = useCallback(
-    ({ item }: { item: (typeof SLIDE_COMPONENTS)[number] }) => {
+    ({ item, index }: { item: (typeof SLIDE_COMPONENTS)[number]; index: number }) => {
       const { Slide } = item
-      return <Slide width={width} />
+      return <Slide width={width} isActive={index === currentIndex} />
     },
-    [width],
+    [width, currentIndex],
   )
 
   return (
@@ -83,7 +88,6 @@ export default function GreetingScreen() {
           bottom: 0,
           left: 0,
           right: 0,
-          // height: 150 + 12 + insets.bottom,
         }}
       />
       <HeaderGrating showLogo={currentIndex !== 0} />
