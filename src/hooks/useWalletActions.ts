@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react'
+import { AppState } from 'react-native'
 import type { SignatureBytes, Transaction } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import type { SignMessageResult, WalletActionResult } from '@/types/wallet'
+import { LOGIN_PAYLOAD } from '@/constants/auth'
 import { encodeMessage, toHexString } from '@/utils/format'
 import { getErrorMessage } from '@/utils/wallet'
 
@@ -31,12 +33,85 @@ export function useWalletActions() {
   const [error, setError] = useState<string | null>(null)
   const [lastResult, setLastResult] = useState<WalletActionResult | null>(null)
 
+  const isAuthRequestFailed = useCallback((err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err)
+    return msg.includes('authorization request failed')
+  }, [])
+
+  const ensureForeground = useCallback(() => {
+    // MWA requests can fail if the app is backgrounded during the intent round-trip
+    if (AppState.currentState !== 'active') {
+      throw new Error('App must be in the foreground to sign')
+    }
+  }, [])
+
+  const withReauthorizeRetry = useCallback(async <T>(fn: () => Promise<T>): Promise<T> => {
+    try {
+      ensureForeground()
+      return await fn()
+    } catch (err) {
+      if (!isAuthRequestFailed(err)) throw err
+
+      // Solflare/Android can return a protocol-level auth failure if the cached session is stale.
+      // Reset session and try once more. We cannot call deauthorizeSession here (it requires
+      // a DeauthorizeAPI wallet reference we don't have in this path); disconnect + connect
+      // clears our side and establishes a fresh session.
+      await wallet.disconnect?.().catch(() => undefined)
+      await wallet.connect()
+
+      ensureForeground()
+      return await fn()
+    }
+  }, [wallet, ensureForeground, isAuthRequestFailed])
+
   /**
    * Clear any existing error state.
    */
   const clearError = useCallback(() => {
     setError(null)
   }, [])
+
+  /**
+   * Sign the login payload (expiresAt + LOGIN_PAYLOAD) for auth.
+   * Used by greeting screen to create a session.
+   *
+   * @returns The signed message result with digest as the signed JSON string, or null if signing failed
+   */
+  const signLoginMessage = useCallback(async (): Promise<SignMessageResult | null> => {
+    if (!wallet.account) {
+      setError('No wallet connected')
+      return null
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const expiresAt = Date.now() + 1 * 60 * 1000
+      const dataSignObject = { expiresAt, payload: LOGIN_PAYLOAD }
+      const dataSign = JSON.stringify(dataSignObject)
+
+      const messageBytes = new TextEncoder().encode(dataSign)
+      console.log('signLoginMessage - messageBytes', messageBytes)
+      if (!wallet?.signMessage) {
+        throw new Error('Wallet does not support message signing')
+      }
+
+      const signature = await withReauthorizeRetry(() => wallet.signMessage(messageBytes))
+
+      const result: SignMessageResult = { message: dataSign, signature }
+      setLastResult({ data: result, error: null, loading: false })
+      return result
+    } catch (err) {
+      console.log('signLoginMessage - err', err)
+      const errorMsg = getErrorMessage(err)
+      setError(errorMsg)
+      setLastResult({ data: null, error: errorMsg, loading: false })
+      return null
+    } finally {
+      setLoading(false)
+    }
+  }, [wallet, withReauthorizeRetry])
 
   /**
    * Sign a text message with the connected wallet.
@@ -56,7 +131,12 @@ export function useWalletActions() {
 
       try {
         const encodedMessage = encodeMessage(message)
-        const signature = await wallet.signMessage(encodedMessage)
+        if (!wallet?.signMessage) {
+          throw new Error('Wallet does not support message signing')
+        }
+        console.log('signMessage - encodedMessage', encodedMessage)
+        const signature = await withReauthorizeRetry(() => wallet.signMessage(encodedMessage))
+        console.log('signMessage - signature', signature)
 
         const result: SignMessageResult = { message, signature }
         setLastResult({ data: result, error: null, loading: false })
@@ -70,7 +150,7 @@ export function useWalletActions() {
         setLoading(false)
       }
     },
-    [wallet],
+    [wallet, withReauthorizeRetry],
   )
 
   /**
@@ -90,7 +170,7 @@ export function useWalletActions() {
       setError(null)
 
       try {
-        const signed = await wallet.signTransaction(transaction)
+        const signed = await withReauthorizeRetry(() => wallet.signTransaction(transaction))
         setLastResult({ data: signed, error: null, loading: false })
         return signed
       } catch (err) {
@@ -102,7 +182,7 @@ export function useWalletActions() {
         setLoading(false)
       }
     },
-    [wallet],
+    [wallet, withReauthorizeRetry],
   )
 
   /**
@@ -113,10 +193,7 @@ export function useWalletActions() {
    * @returns Array of signature bytes, or null if failed
    */
   const signAndSendTransaction = useCallback(
-    async (
-      transaction: Transaction | Transaction[],
-      minContextSlot: bigint,
-    ): Promise<SignatureBytes[] | null> => {
+    async (transaction: Transaction | Transaction[], minContextSlot: bigint): Promise<SignatureBytes[] | null> => {
       if (!wallet.account) {
         setError('No wallet connected')
         return null
@@ -126,7 +203,7 @@ export function useWalletActions() {
       setError(null)
 
       try {
-        const signatures = await wallet.signAndSendTransaction(transaction, minContextSlot)
+        const signatures = await withReauthorizeRetry(() => wallet.signAndSendTransaction(transaction, minContextSlot))
         setLastResult({ data: { signatures }, error: null, loading: false })
         return signatures
       } catch (err) {
@@ -138,7 +215,7 @@ export function useWalletActions() {
         setLoading(false)
       }
     },
-    [wallet],
+    [wallet, withReauthorizeRetry],
   )
 
   /**
@@ -159,7 +236,7 @@ export function useWalletActions() {
       setError(null)
 
       try {
-        const signature = await wallet.sendTransaction(instructions)
+        const signature = await withReauthorizeRetry(() => wallet.sendTransaction(instructions))
         setLastResult({ data: { signature }, error: null, loading: false })
         return signature
       } catch (err) {
@@ -171,7 +248,7 @@ export function useWalletActions() {
         setLoading(false)
       }
     },
-    [wallet],
+    [wallet, withReauthorizeRetry],
   )
 
   /**
@@ -189,6 +266,8 @@ export function useWalletActions() {
   )
 
   return {
+    /** Sign the login payload for auth (expiresAt + LOGIN_PAYLOAD) */
+    signLoginMessage,
     /** Sign a text message */
     signMessage,
     /** Sign a transaction without sending */
