@@ -2,6 +2,7 @@ import { View, StyleSheet } from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { Text } from '@/components/ui/text'
 import { Logo } from '@/components/icons'
+import { CommunityStats } from '@/components/main'
 
 const tramplinHeroMobileColored = require('@/assets/videos/tramplin_hero_mobile_colored.mp4')
 
@@ -13,15 +14,12 @@ interface Slide1Props {
 /**
  * Slide 1: Greeting hero. Video background (full-bleed), logo and copy from design.
  */
-export function Slide1({ width, isActive = true }: Slide1Props) {
+export function Slide1({ width, isActive: _isActive = true }: Slide1Props) {
   const player = useVideoPlayer(tramplinHeroMobileColored, (p) => {
     p.loop = true
     p.muted = true
     p.play()
   })
-
-  const stakedByCommunity = 19457889
-  const distributionPool = 150000
 
   return (
     <View style={[styles.slide, { width }]}>
@@ -45,25 +43,13 @@ export function Slide1({ width, isActive = true }: Slide1Props) {
           </Text>
         </View>
 
-        <View className="gap-2 mt-16">
-          <View className="flex-row justify-between items-baseline">
-            <Text variant="small" className="text-fill-primary">
-              Staked
-            </Text>
-            <Text variant="h4Digits" className="text-fill-primary">
-              ${stakedByCommunity.toLocaleString()}
-            </Text>
-          </View>
-          <View className="h-px bg-white/40" />
-          <View className="flex-row justify-between items-baseline">
-            <Text variant="small" className="text-fill-primary">
-              Distributed
-            </Text>
-            <Text variant="h4Digits" className="text-fill-primary">
-              ${distributionPool.toLocaleString()}
-            </Text>
-          </View>
-        </View>
+        <CommunityStats
+          className="mt-16"
+          stakedLabel="Staked"
+          distributionLabel="Distributed"
+          textClassName="text-fill-primary"
+          dividerClassName="bg-white/40"
+        />
       </View>
     </View>
   )
