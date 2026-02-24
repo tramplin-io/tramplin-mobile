@@ -2,8 +2,8 @@ import { router } from 'expo-router'
 import { useCallback, useState } from 'react'
 import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Logo, ThreeDotsIcon } from '@/components/icons'
 import { UserIcon } from '@/components/general/UserIcon'
 import { formatWalletAddress } from '@/utils/wallet'
@@ -21,9 +21,8 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { BackButton } from '@/components/general/BackButton'
-
-const TERMS_OF_USE_URL = 'https://example.com/terms'
-const PRIVACY_POLICY_URL = 'https://example.com/privacy'
+import { Card } from '@/components/ui'
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
 
 interface MenuSectionItem {
   title: string
@@ -33,27 +32,27 @@ interface MenuSectionItem {
   onPress?: () => void
 }
 
-function ProfileHeader() {
-  const { account } = useMobileWallet()
-  const addressStr = account?.address?.toString()
+// function ProfileHeader() {
+//   const { account } = useMobileWallet()
+//   const addressStr = account?.address?.toString()
 
-  return (
-    <View className="flex-row items-center justify-between w-full px-4 py-3">
-      <View className="flex-row items-center" style={{ maxWidth: 180 }} pointerEvents="none">
-        <Logo width={100} height={19} />
-      </View>
-      {addressStr ? (
-        <View className="flex-row items-center gap-1.5">
-          <ThreeDotsIcon size={24} />
-          <Text className="text-content-primary text-sm font-bold" style={{ lineHeight: 18 }} numberOfLines={1}>
-            {formatWalletAddress(addressStr)}
-          </Text>
-          <UserIcon size={20} />
-        </View>
-      ) : null}
-    </View>
-  )
-}
+//   return (
+//     <View className="flex-row items-center justify-between w-full px-4 py-3">
+//       <View className="flex-row items-center" style={{ maxWidth: 180 }} pointerEvents="none">
+//         <Logo width={100} height={19} />
+//       </View>
+//       {addressStr ? (
+//         <View className="flex-row items-center gap-1.5">
+//           <ThreeDotsIcon size={24} />
+//           <Text className="text-content-primary text-sm font-bold" style={{ lineHeight: 18 }} numberOfLines={1}>
+//             {formatWalletAddress(addressStr)}
+//           </Text>
+//           <UserIcon size={20} />
+//         </View>
+//       ) : null}
+//     </View>
+//   )
+// }
 
 function MenuItem({
   title,
@@ -74,7 +73,9 @@ function MenuItem({
       className={`flex-row justify-between items-center py-4 ${isLast ? '' : 'border-b border-border-tertiary'}`}
       activeOpacity={0.7}
     >
-      <Text className={`text-base text-content-primary ${textClassName ?? ''}`}>{title}</Text>
+      <Text variant="body" className={`${textClassName ?? ''}`}>
+        {title}
+      </Text>
       {showChevron && (
         <Text className="text-brand-primary text-lg font-semibold" style={{ lineHeight: 20 }}>
           ›
@@ -87,8 +88,10 @@ function MenuItem({
 function Section({ title, items }: Readonly<{ title: string; items: MenuSectionItem[] }>) {
   return (
     <View className="gap-2">
-      <Text className="text-content-tertiary text-sm font-semibold uppercase tracking-wide">{title}</Text>
-      <View className="rounded-xl bg-fill-primary overflow-hidden">
+      <Text variant="body" className="text-content-primary uppercase tracking-wide">
+        {title}
+      </Text>
+      <Card variant="profile">
         {items.map((item, index) => (
           <MenuItem
             key={item.title}
@@ -99,7 +102,7 @@ function Section({ title, items }: Readonly<{ title: string; items: MenuSectionI
             onPress={item.onPress}
           />
         ))}
-      </View>
+      </Card>
     </View>
   )
 }
@@ -153,6 +156,7 @@ function DeleteAccountDialog({
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets()
   const { disconnect } = useMobileWallet()
+  const logout = useAuthStore((s) => s.logout)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false)
@@ -168,7 +172,7 @@ export default function ProfileScreen() {
     {
       title: 'Subscription',
       onPress: () => {
-        router.push('/screens/notification-settings') // TODO: subscription screen
+        router.push('/screens/subscription')
       },
     },
   ]
@@ -204,8 +208,8 @@ export default function ProfileScreen() {
   ]
 
   const handleSignOut = useCallback(() => {
-    void disconnect().then(() => router.replace('/'))
-  }, [disconnect])
+    void logout({ disconnect, router })
+  }, [logout, disconnect])
 
   const handleDeleteConfirm = useCallback(() => {
     setIsDeleting(true)
@@ -238,9 +242,6 @@ export default function ProfileScreen() {
           <Section title="LEGAL" items={legalItems} />
 
           <Button variant="destructive" size="xl" onPress={handleSignOut}>
-            <Text>Sign Out</Text>
-          </Button>
-          <Button variant="default" size="xl">
             <Text>Sign Out</Text>
           </Button>
         </View>
