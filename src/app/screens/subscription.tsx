@@ -91,7 +91,8 @@ export default function SubscriptionScreen() {
   }, [userProfile])
 
   const handleBack = useCallback(() => {
-    router.push('/profile')
+    router.back()
+    // router.push('/profile')
   }, [])
 
   const handleCategoryPress = useCallback((category: NotificationType) => {

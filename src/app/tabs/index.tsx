@@ -12,10 +12,6 @@ import {
  * Welcome header, staking prompt, your-stake placeholder, community stats.
  */
 export default function HomeTab() {
-  const handleSubscribe = () => {
-    // Navigate to subscription or open link when implemented
-  }
-
   const handleMore = () => {
     // Open notifications or more info when implemented
   }
@@ -26,7 +22,7 @@ export default function HomeTab() {
         contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
       >
-        <DashboardHeader onSubscribePress={handleSubscribe} className="mb-6" />
+        <DashboardHeader className="mb-6" />
         {/* <StakePromptCard onMorePress={handleMore} className="mb-6" /> */}
         <YourStake className="mb-6" />
 
