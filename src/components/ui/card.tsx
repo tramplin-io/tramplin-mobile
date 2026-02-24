@@ -7,6 +7,8 @@ const cardVariants = cva('flex flex-col gap-6 rounded-xl', {
   variants: {
     variant: {
       default: 'bg-card border-border border py-6 shadow-sm shadow-black/5 rounded-lg p-4',
+      profile:
+        'bg-border-quaternary border-border-quaternary border shadow-sm shadow-black/5 rounded-lg py-2 px-5 gap-0',
       elevated: 'bg-card border-0 py-6 shadow-md shadow-black/10 rounded-lg p-4',
       outlined: 'bg-transparent border border-border py-6 rounded-lg p-4',
       ghost: 'bg-transparent border-0 py-6 rounded-lg p-4',
@@ -38,13 +40,7 @@ function CardHeader({ className, ...props }: ViewProps & React.RefAttributes<Vie
 }
 
 function CardTitle({ className, variant, ...props }: React.ComponentProps<typeof Text> & React.RefAttributes<Text>) {
-  return (
-    <Text
-      variant={variant ?? 'h3'}
-      className={cn('leading-none', className)}
-      {...props}
-    />
-  )
+  return <Text variant={variant ?? 'h3'} className={cn('leading-none', className)} {...props} />
 }
 
 function CardDescription({ className, ...props }: React.ComponentProps<typeof Text> & React.RefAttributes<Text>) {

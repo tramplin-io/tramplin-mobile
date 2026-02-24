@@ -29,6 +29,23 @@ const buttonVariants = cva(
             web: 'hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
           }),
         ),
+        gold: cn(
+          'rounded-full border border-reward-large-primary',
+          '[background-image:linear-gradient(to_bottom,#7E650D,#7E650D00)]',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-reward-large-primary/90' }),
+        ),
+        black: cn(
+          'rounded-full border border-[#C1C1C1]',
+          'bg-content-primary',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-content-primary/90' }),
+        ),
+        tertiary: cn(
+          'rounded-full border border-content-tertiary bg-fill-tertiary',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-content-tertiary/90' }),
+        ),
         outline: cn(
           'border-border bg-background active:bg-accent dark:bg-input/30 dark:border-input dark:active:bg-input/50 border shadow-sm shadow-black/5',
           Platform.select({
@@ -70,6 +87,9 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
         'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
       destructive:
         'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
+      gold: 'text-body text-reward-large-primary',
+      black: 'text-body text-content-tertiary',
+      tertiary: 'text-body text-content-tertiary',
       outline: cn(
         'text-foreground text-sm font-medium',
         'group-active:text-accent-foreground',
