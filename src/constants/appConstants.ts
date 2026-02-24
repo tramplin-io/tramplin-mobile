@@ -17,7 +17,7 @@ const BUILD_NUMBER: number = Number.parseInt(Application.nativeBuildVersion || '
 //   `itms-apps://itunes.apple.com/app/id${ITUNES_ITEM_ID}`
 
 const API_URLS = {
-  PROD: process.env.EXPO_PUBLIC_API_URL || 'https://develop-api.tramplin.io/api',
+  PROD: process.env.EXPO_PUBLIC_API_URL || 'https://api.tramplin.io/api',
   DEV: process.env.EXPO_PUBLIC_API_URL || 'https://develop-api.tramplin.io/api',
 } as const
 
