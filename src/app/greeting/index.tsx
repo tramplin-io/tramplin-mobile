@@ -10,6 +10,9 @@ import { Text } from '@/components/ui/text'
 import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/components/greeting/slides'
 import { HeaderGrating } from '@/components/general'
 import Toast from 'react-native-toast-message'
+import { useWalletActions } from '@/hooks/useWalletActions'
+import { useAuthStore } from '@/lib/stores/auth-store'
+import { signatureToBase58 } from '@/utils/format'
 
 const SLIDE_COMPONENTS = [
   { key: 'splash', Slide: Slide1 },
@@ -28,11 +31,14 @@ const SLIDE_COMPONENTS = [
  * "Launch App" → connect wallet; AuthGuard then redirects to tabs.
  */
 export default function GreetingScreen() {
-  const { connect } = useMobileWallet()
+  const { connect, account } = useMobileWallet()
+  const { signLoginMessage } = useWalletActions()
+  const loginWithWallet = useAuthStore((s) => s.loginWithWallet)
   const insets = useSafeAreaInsets()
   const { width } = useWindowDimensions()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [connecting, setConnecting] = useState(false)
+  const [signingIn, setSigningIn] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const flatListRef = useRef<FlatList>(null)
 
@@ -48,19 +54,54 @@ export default function GreetingScreen() {
 
   const handleLaunchApp = useCallback(async () => {
     setError(null)
-    setConnecting(true)
+    console.log('handleLaunchApp')
+    console.log('handleLaunchApp - account', account)
+
+    if (!account) {
+      setConnecting(true)
+      try {
+        await connect()
+      } catch (err) {
+        console.log('handleLaunchApp - err', err)
+        Toast.show({
+          type: 'error',
+          text1: err instanceof Error ? err.message : 'Failed to connect wallet',
+        })
+      } finally {
+        setConnecting(false)
+      }
+      return
+    }
+
+    setSigningIn(true)
+
+    console.log('handleLaunchApp - 2')
     try {
-      await connect()
+      const result = await signLoginMessage()
+      console.log('handleLaunchApp - result', result)
+      if (!result) {
+        Toast.show({ type: 'error', text1: 'Signing failed' })
+        return
+      }
+      const signatureBase58 = signatureToBase58(result.signature)
+      const publicKey = typeof account.address === 'string' ? account.address : String(account.address)
+      const success = await loginWithWallet({
+        digest: result.message,
+        signature: signatureBase58,
+        publicKey,
+      })
+      if (!success) {
+        Toast.show({ type: 'error', text1: 'Login failed' })
+      }
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: err instanceof Error ? err.message : 'Failed to connect wallet',
+        text1: err instanceof Error ? err.message : 'Failed to sign in',
       })
-      // setError(err instanceof Error ? err.message : 'Failed to connect wallet')
     } finally {
-      setConnecting(false)
+      setSigningIn(false)
     }
-  }, [connect])
+  }, [account, connect, loginWithWallet, signLoginMessage])
 
   const renderSlide = useCallback(
     ({ item, index }: { item: (typeof SLIDE_COMPONENTS)[number]; index: number }) => {
@@ -130,10 +171,10 @@ export default function GreetingScreen() {
           variant="default"
           size="xl"
           onPress={handleLaunchApp}
-          disabled={connecting}
+          disabled={connecting || signingIn}
           className="w-full border-brand-primary"
         >
-          <Text>{connecting ? 'Connecting…' : 'Launch App'}</Text>
+          <Text>{connecting ? 'Connecting…' : signingIn ? 'Signing in…' : account ? 'Sign in' : 'Launch App'}</Text>
         </Button>
       </View>
     </Container>
