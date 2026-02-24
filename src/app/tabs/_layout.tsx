@@ -6,33 +6,39 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useCSSVariable } from 'uniwind'
 
-import { BigCupIcon, QuestionIcon } from '@/components/icons/icons'
+import { BigCupIcon, FilterIcon, PlusIcon, SmallCupIcon } from '@/components/icons/icons'
 import { LogoSmall } from '@/components/icons/Logo'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui'
+import { Text } from '@/components/ui/text'
 
 function LeaderTabIcon({ color }: { readonly color: string }) {
-  return <BigCupIcon size={24} color={color} />
+  return <BigCupIcon size={30} color={color} />
 }
 
 function StakeTabIcon({ color }: { readonly color: string }) {
-  return <LogoSmall width={24} height={24} color={color} />
+  return <LogoSmall width={30} height={24} color={color} />
 }
 
-function QuestionsTabIcon({ color }: { readonly color: string }) {
-  return <QuestionIcon size={24} color={color} />
+function RewardsTabIcon({ color }: { readonly color: string }) {
+  return <SmallCupIcon size={30} color={color} />
 }
 
-const TAB_BUTTON_WIDTH = 65
-const TAB_BUTTON_HEIGHT = 55
-const TAB_BUTTON_PADDING = 4
-const TAB_BUTTON_RADIUS = 8
-const TAB_BAR_SHADOW = {
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 0 },
-  shadowOpacity: 0.15,
-  shadowRadius: 30,
-  elevation: 4,
+function DevTabIcon({ color }: { readonly color: string }) {
+  return <FilterIcon size={30} color={color} />
 }
+
+// const TAB_BUTTON_WIDTH = 65
+// const TAB_BUTTON_HEIGHT = 55
+// const TAB_BUTTON_PADDING = 4
+// const TAB_BUTTON_RADIUS = 8
+// const TAB_BAR_SHADOW = {
+//   shadowColor: '#000',
+//   shadowOffset: { width: 0, height: 0 },
+//   shadowOpacity: 0.15,
+//   shadowRadius: 30,
+//   elevation: 4,
+// }
 
 type TabBarButtonProps = PressableProps & {
   focused?: boolean
@@ -47,7 +53,7 @@ function TabBarButton({ focused, children, style, ...rest }: TabBarButtonProps) 
     <Pressable
       {...rest}
       className={cn(
-        'w-14 h-14 p-1 flex-col justify-between items-center rounded-lg bg-fill-tertiary shadow-xl/20',
+        'w-14 h-14 p-1 flex-col justify-center items-center rounded-lg bg-fill-tertiary shadow-xl/20',
         focused ? 'bg-fill-tertiary' : 'bg-fill-secondary',
       )}
       // style={[
@@ -131,10 +137,11 @@ export default function TabsLayout() {
             paddingLeft: 30,
           },
           tabBarLabelStyle: {
-            fontSize: 10,
-            letterSpacing: 0,
-            marginBottom: 6,
-            textTransform: 'uppercase',
+            display: 'none', // hide label text
+            // fontSize: 10,
+            // letterSpacing: 0,
+            // marginBottom: 6,
+            // textTransform: 'uppercase',
           },
           tabBarActiveTintColor: activeTint == null ? undefined : String(activeTint),
           tabBarInactiveTintColor: inactiveTint == null ? undefined : String(inactiveTint),
@@ -144,25 +151,53 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="leaderboard"
           options={{
-            title: 'Leader',
+            title: 'Leadboard',
             tabBarIcon: LeaderTabIcon,
           }}
         />
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Stake',
+            title: 'Home',
             tabBarIcon: StakeTabIcon,
           }}
         />
         <Tabs.Screen
-          name="questions"
+          name="rewards"
           options={{
-            title: 'Q&A',
-            tabBarIcon: QuestionsTabIcon,
+            title: 'Rewards',
+            tabBarIcon: RewardsTabIcon,
+          }}
+        />
+        <Tabs.Screen
+          name="DEV"
+          options={{
+            title: 'Dev',
+            tabBarIcon: DevTabIcon,
           }}
         />
       </Tabs>
+
+      <View
+        className="items-center justify-center px-6 gap-5 z-50"
+        style={{
+          position: 'absolute',
+          bottom: 90 + insets.bottom,
+          left: 0,
+          right: 0,
+        }}
+      >
+        <Button
+          variant="default"
+          size="xl"
+          // onPress={handleLaunchApp}
+          // disabled={connecting || signingIn}
+          className="w-full border-brand-primary"
+        >
+          <PlusIcon size={20} className="drop-shadow-md" />
+          <Text variant="body">Stake SOL</Text>
+        </Button>
+      </View>
     </View>
   )
 }
