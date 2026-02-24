@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react'
 import { View, Text } from 'react-native'
+import { useRouter } from 'expo-router'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { Button } from '@/components/ui/button'
+import { useAuthStore } from '@/lib/stores/auth-store'
 
 const NO_WALLET_MESSAGE =
   'No Solana wallet app found. Install a compatible wallet (e.g. Phantom) that supports the mobile wallet protocol.'
@@ -18,7 +20,9 @@ const NO_WALLET_MESSAGE =
  * <ConnectButton />
  */
 export function ConnectButton() {
+  const router = useRouter()
   const { account, connect, disconnect } = useMobileWallet()
+  const logout = useAuthStore((s) => s.logout)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,18 +42,11 @@ export function ConnectButton() {
     }
   }, [connect])
 
-  const handleDisconnect = useCallback(async () => {
+  const handleDisconnect = useCallback(() => {
     setLoading(true)
-    try {
-      await disconnect()
-      setError(null)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to disconnect'
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
-  }, [disconnect])
+    setError(null)
+    void logout({ disconnect, router }).finally(() => setLoading(false))
+  }, [logout, disconnect, router])
 
   const isConnected = account !== undefined && account !== null
 
