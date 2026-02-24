@@ -40,7 +40,10 @@ export const AppConfig = {
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
 
   /** App URI for wallet adapter identity */
-  uri: process.env.EXPO_PUBLIC_APP_URI ?? 'https://github.com/beeman/tramplin-mobile',
+  uri: process.env.EXPO_PUBLIC_APP_URI ?? 'https://tramplin.io/',
+
+  /** App icon path (matches app.config.ts); use EXPO_PUBLIC_APP_ICON for full URL in wallet identity */
+  icon: process.env.EXPO_PUBLIC_APP_ICON ?? './src/assets/images/icon.png',
 
   /** App scheme for deep linking */
   scheme: 'tramplin',
@@ -53,9 +56,13 @@ export const AppConfig = {
 
   /** Wallet adapter identity */
   get identity() {
+    // name: 'Tramplin',
+    // uri: 'tramplin://',
+    // icon: 'https://tramplin.io/icon.png',
     return {
       name: AppConfig.name,
       uri: AppConfig.uri,
+      icon: AppConfig.icon,
     }
   },
 } as const
