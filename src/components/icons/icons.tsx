@@ -1,5 +1,6 @@
 import React from 'react'
 import Svg, { Circle, Line, Path, Rect, type SvgProps } from 'react-native-svg'
+import { useCSSVariable } from 'uniwind'
 
 /**
  * Social Icons Component Library (React Native — react-native-svg)
@@ -30,9 +31,20 @@ export interface IconProps extends SvgProps {
 
 const createIconComponent = (name: string, children: React.ReactNode) => {
   const IconComponent = React.forwardRef<React.ComponentRef<typeof Svg>, IconProps>(
-    ({ size = 24, className, ...props }, ref) => {
+    ({ size = 24, className, color, ...props }, ref) => {
+      const themeColor = useCSSVariable('--color-content-primary') as string | undefined
+      const resolvedColor = color ?? (className ? undefined : themeColor)
       return (
-        <Svg ref={ref} width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} {...props}>
+        <Svg
+          ref={ref}
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="none"
+          color={resolvedColor}
+          className={className}
+          {...props}
+        >
           {children}
         </Svg>
       )
@@ -213,18 +225,24 @@ export const DropdownExpandIcon = createIconComponent(
 // Expand Icon
 export const ExpandIcon = createIconComponent(
   'ExpandIcon',
+
   <Path
-    d="M8 3H5C3.89543 3 3 3.89543 3 5V8M21 8V5C21 3.89543 20.1046 3 19 3H16M16 21H19C20.1046 21 21 20.1046 21 19V16M3 16V19C3 20.1046 3.89543 21 5 21H8"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
+    d="M16.5 8C16.5 7.72386 16.2761 7.5 16 7.5L11.5 7.5C11.2239 7.5 11 7.72386 11 8C11 8.27614 11.2239 8.5 11.5 8.5L15.5 8.5L15.5 12.5C15.5 12.7761 15.7239 13 16 13C16.2761 13 16.5 12.7761 16.5 12.5L16.5 8ZM7.5 16C7.5 16.2761 7.72386 16.5 8 16.5L12.5 16.5C12.7761 16.5 13 16.2761 13 16C13 15.7239 12.7761 15.5 12.5 15.5L8.5 15.5L8.5 11.5C8.5 11.2239 8.27614 11 8 11C7.72386 11 7.5 11.2239 7.5 11.5L7.5 16ZM16 8L15.6464 7.64645L7.64645 15.6464L8 16L8.35355 16.3536L16.3536 8.35355L16 8Z"
+    fill="currentColor"
   />,
 )
 
 // Filter Icon
 export const FilterIcon = createIconComponent(
   'FilterIcon',
-  <Path d="M4 6H20M7 12H17M10 18H14" stroke="currentColor" strokeWidth="2" fill="none" />,
+  <>
+    <Path d="M6.5 6.5H17.5" stroke="currentColor" stroke-linecap="round" />
+    <Path d="M5.5 16.5H16.5" stroke="currentColor" stroke-linecap="round" />
+    <Path d="M5.5 11.5H17.5" stroke="currentColor" stroke-linecap="round" />
+    <Circle cx="12" cy="11.3994" r="1.5" fill="white" stroke="currentColor" />
+    <Circle cx="7" cy="6.39941" r="1.5" fill="white" stroke="currentColor" />
+    <Circle cx="16" cy="16.5" r="1.5" fill="white" stroke="currentColor" />
+  </>,
 )
 
 // Forward Icon
@@ -240,7 +258,14 @@ export const ForwardIcon = createIconComponent(
 // Important Icon
 export const ImportantIcon = createIconComponent(
   'ImportantIcon',
-  <Path d="M12 2L2 22H22L12 2ZM12 8V14M12 18H12.01" stroke="currentColor" strokeWidth="2" fill="none" />,
+  <>
+    <Rect x="5" y="5" width="14" height="14" rx="7" stroke="currentColor" />
+    <Circle cx="12" cy="14.8125" r="0.9375" fill="currentColor" />
+    <Path
+      d="M12 7.625C12.3452 7.625 12.625 7.90482 12.625 8.25L12.625 11.6875C12.625 12.0327 12.3452 12.3125 12 12.3125C11.6548 12.3125 11.375 12.0327 11.375 11.6875L11.375 8.25C11.375 7.90482 11.6548 7.625 12 7.625Z"
+      fill="currentColor"
+    />
+  </>,
 )
 
 // Leave Icon
@@ -415,11 +440,26 @@ export const SearchIcon = createIconComponent(
 // SmallCup Icon
 export const SmallCupIcon = createIconComponent(
   'SmallCupIcon',
-  <Path
-    d="M6 6L8 4H16L18 6V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V6Z"
-    fill="currentColor"
-    stroke="currentColor"
-  />,
+  <>
+    <Path
+      d="M17.4999 8.2108L17.4999 6.29217L7.49992 6.29217L7.50017 8.2104C7.50017 11.2382 9.34548 13.4904 12.3732 13.4904C15.4009 13.4904 17.4999 11.2386 17.4999 8.2108Z"
+      stroke="currentColor"
+    />
+    <Path
+      d="M7.5 17.292C11.25 17.292 12.5 13.292 12.5 13.292C12.5 13.292 13.7499 17.292 17.5 17.292H7.5Z"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="bevel"
+    />
+    <Path
+      d="M17.5 6.29199H19.5C20.6046 6.29199 21.5 7.18742 21.5 8.29199C21.5 9.39656 20.6046 10.292 19.5 10.292H17"
+      stroke="currentColor"
+    />
+    <Path
+      d="M7.5 6.29199H5.5C4.39543 6.29199 3.5 7.18742 3.5 8.29199C3.5 9.39656 4.39543 10.292 5.5 10.292H7.5"
+      stroke="currentColor"
+    />
+  </>,
 )
 
 // Solana Icon
@@ -496,6 +536,17 @@ export const TramplinCircleIcon = createIconComponent(
   </>,
 )
 
+// // Tramplin Icon
+// export const TramplinIcon = createIconComponent(
+//   'TramplinCircleIcon',
+//   <>
+// <Circle cx="8" cy="8" r="8" fill="black"/>
+// <Path d="M7.61914 5.1543C7.61913 5.60307 7.58783 6.03999 7.5293 6.45996L7.47559 6.7998C7.4451 6.97023 7.40861 7.13712 7.36914 7.30078C7.33063 7.46065 7.2898 7.61783 7.24316 7.77051C7.12317 8.16295 6.97517 8.52954 6.80664 8.86621C6.77308 8.93324 6.74039 8.99992 6.70508 9.06445C6.70257 9.06904 6.69978 9.07355 6.69727 9.07812C6.69621 9.08004 6.69539 9.08207 6.69434 9.08398H6.69824C6.65353 9.16523 6.60696 9.24419 6.55957 9.32129L6.41309 9.54688C6.18602 9.87743 5.93234 10.1619 5.65918 10.3916H5.65527C5.51093 10.5126 5.36091 10.619 5.20605 10.708L5.06348 10.7842C4.72718 10.9521 4.37013 11.043 4 11.043V9.07812C4.03045 9.07812 4.06064 9.07506 4.09082 9.07324H4C4.43938 9.07324 4.85123 8.88261 5.20605 8.54883V8.55273C5.37258 8.39612 5.52675 8.20768 5.66504 7.99316L5.79883 7.76953L5.7998 7.76758H5.79883C5.95458 7.48453 6.08517 7.16438 6.18555 6.81641L6.27539 6.45996L6.27637 6.45801H6.27539C6.36432 6.04896 6.41307 5.60891 6.41309 5.15039V4.5H7.61914V5.1543Z" fill="#CCCFD1"/>
+// <Path d="M8.38086 5.1543C8.38087 5.60307 8.41217 6.03999 8.4707 6.45996L8.52441 6.7998C8.5549 6.97023 8.59139 7.13712 8.63086 7.30078C8.66937 7.46065 8.7102 7.61783 8.75684 7.77051C8.87683 8.16295 9.02483 8.52954 9.19336 8.86621C9.22692 8.93324 9.25961 8.99992 9.29492 9.06445C9.29743 9.06904 9.30022 9.07355 9.30273 9.07812C9.30379 9.08004 9.30461 9.08207 9.30566 9.08398H9.30176C9.34647 9.16523 9.39304 9.24419 9.44043 9.32129L9.58691 9.54688C9.81398 9.87743 10.0677 10.1619 10.3408 10.3916H10.3447C10.4891 10.5126 10.6391 10.619 10.7939 10.708L10.9365 10.7842C11.2728 10.9521 11.6299 11.043 12 11.043V9.07812C11.9695 9.07812 11.9394 9.07506 11.9092 9.07324H12C11.5606 9.07324 11.1488 8.88261 10.7939 8.54883V8.55273C10.6274 8.39612 10.4732 8.20768 10.335 7.99316L10.2012 7.76953L10.2002 7.76758H10.2012C10.0454 7.48453 9.91483 7.16438 9.81445 6.81641L9.72461 6.45996L9.72363 6.45801H9.72461C9.63568 6.04896 9.58693 5.60891 9.58691 5.15039V4.5H8.38086V5.1543Z" fill="#CCCFD1"/>
+
+//   </>,
+// )
+
 // Telegram Icon
 export const TelegramIcon = createIconComponent(
   'TelegramIcon',
@@ -503,6 +554,18 @@ export const TelegramIcon = createIconComponent(
     d="M19.624 5.30518C19.7962 5.33157 19.9625 5.39965 20.1055 5.50537L20.1064 5.50439C20.2145 5.58404 20.3074 5.68533 20.376 5.8042L20.4365 5.9292L20.4775 6.06299C20.5084 6.1993 20.5082 6.34191 20.4746 6.47998H20.4736C20.2023 7.59233 19.7054 9.69798 19.2002 11.8345C18.6954 13.9691 18.183 16.1345 17.8838 17.3618L17.8828 17.3638C17.8317 17.5695 17.7244 17.7537 17.5781 17.9019C17.4322 18.0496 17.2518 18.1578 17.0566 18.2222H17.0557C16.8611 18.2857 16.6533 18.3059 16.4502 18.2827C16.2472 18.2595 16.0494 18.1928 15.875 18.0845C15.1762 17.6501 14.2119 17.0397 13.4238 16.5386C13.0297 16.2879 12.6788 16.0647 12.4268 15.9038C12.3915 15.8813 12.3584 15.8593 12.3271 15.8394L10.4795 17.3628V17.3638C10.3425 17.4761 10.1803 17.5515 10.0107 17.5894C9.8411 17.6271 9.66365 17.6268 9.49414 17.5884H9.49219C9.14057 17.5076 8.85201 17.2669 8.72363 16.937C8.46275 16.2663 8.08316 15.2718 7.76855 14.4468C7.61123 14.0342 7.4699 13.6636 7.36816 13.396C7.34033 13.3228 7.31542 13.2572 7.29395 13.2007C7.25913 13.1911 7.22093 13.1808 7.17969 13.1694C6.95435 13.1075 6.63672 13.0207 6.26855 12.9204L3.78125 12.2544C3.37406 12.1477 3.01934 11.804 3.00098 11.3315L3 11.3276C2.99296 11.1015 3.06861 10.8865 3.20312 10.7134L3.3125 10.5942C3.42944 10.4851 3.56935 10.405 3.71875 10.3569L11.6914 7.76221C14.7236 6.77293 17.6649 5.81414 19.1074 5.34814V5.34717C19.274 5.2931 19.4517 5.27883 19.624 5.30518ZM9.17969 12.686L9.48828 13.5747L9.50879 13.4077L9.6709 13.2798L13.4434 10.3101L9.17969 12.686Z"
     fill="currentColor"
   />,
+)
+
+// Twitter Icon
+export const TwitterIcon = createIconComponent(
+  'TwitterIcon',
+  <>
+    <Rect width="15.5" height="15" transform="translate(5 3.75)" fill="currentColor" />
+    <Path
+      d="M13.6062 10.4842L16.9566 6.25H16.1626L13.2536 9.9266L10.93 6.25H8.25L11.7635 11.8096L8.25 16.25H9.04395L12.116 12.3672L14.57 16.25H17.25L13.6059 10.4842H13.6062ZM12.5187 11.8586L12.1627 11.305L9.33 6.8998H10.5496L12.8356 10.4548L13.1916 11.0084L16.163 15.6296H14.9434L12.5187 11.8586Z"
+      fill="black"
+    />
+  </>,
 )
 
 // ThreeDots Icon
