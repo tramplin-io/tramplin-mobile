@@ -16,12 +16,13 @@ import { AppProviders } from '@/components/app-providers'
 import { AuthGuard } from '@/components/auth-guard'
 import { useAppTheme } from '@/components/app-theme'
 import { initializeApi, queryClient } from '@/lib/api'
+import { setNotificationHandler } from '@/lib/notifications/utils'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Header } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
-import * as NavigationBar from 'expo-navigation-bar'
+// import * as NavigationBar from 'expo-navigation-bar'
 
 function AppHeader() {
   return <Header variant="app" />
@@ -29,6 +30,9 @@ function AppHeader() {
 
 // Keep the splash screen visible while we load resources
 SplashScreen.preventAutoHideAsync()
+
+// Configure how notifications are presented (required for foreground display on Android/iOS)
+setNotificationHandler()
 
 /**
  * Root layout component.
@@ -64,11 +68,11 @@ export default function RootLayout() {
   const insets = useSafeAreaInsets()
   const bgColor = useCSSVariable('--color-fill-primary')
 
-  const visibility = NavigationBar.useVisibility()
-  const color = NavigationBar.getBackgroundColorAsync()
+  // const visibility = NavigationBar.useVisibility()
+  // const color = NavigationBar.getBackgroundColorAsync()
 
-  console.log('visibility', visibility)
-  console.log('color', color)
+  // console.log('visibility', visibility)
+  // console.log('color', color)
 
   const hideHeader = usePathname() === '/greeting'
 
