@@ -164,7 +164,10 @@ export default function RewardsTab() {
 
   return (
     <Container safe={false}>
-      <ScrollView contentContainerClassName="px-6 pb-40 py-8" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
+        showsVerticalScrollIndicator={false}
+      >
         {/* <RewardsHeader /> */}
 
         <DashboardHeader title="Congratulations!" className="mb-6" />
