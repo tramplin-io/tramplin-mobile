@@ -1,5 +1,5 @@
-import axios, { isAxiosError } from 'axios'
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios'
+import axios from 'axios' //, { isAxiosError }
 import { tokenStore } from '../token-store'
 
 /**
@@ -14,7 +14,6 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? ''
  * - Request interceptor: attaches Bearer token from tokenStore
  * - Response interceptor: returns response.data directly
  *
- * Pattern from fem-fast-mobile.
  */
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -43,7 +42,11 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = tokenStore.getToken()
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      if (!config.headers) {
+        config.headers = {} as AxiosRequestHeaders
+      }
+
+      config.headers.auth = token
     }
     return config
   },
@@ -54,9 +57,18 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   (error) => {
-    if (isAxiosError(error) && error.response?.status === 401) {
-      tokenStore.clearToken()
-      // Handle 401: token cleared, UI should react to auth state change
+    // if (isAxiosError(error) && error.response?.status === 401) {
+    //   tokenStore.clearToken()
+    //   // Handle 401: token cleared, UI should react to auth state change
+    // }
+    const isCanceled = error.code === 'ERR_CANCELED' || error.message === 'canceled'
+    if (!isCanceled) {
+      console.error('API Error:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        message: error.message,
+        data: error.response?.data,
+      })
     }
     return Promise.reject(error)
   },
