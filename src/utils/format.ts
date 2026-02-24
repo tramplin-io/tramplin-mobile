@@ -1,4 +1,5 @@
 import { LAMPORTS_PER_SOL, SOL_DECIMALS } from '@/constants/solana'
+import bs58 from 'bs58'
 
 /**
  * Truncate an address or string with ellipsis in the middle.
@@ -72,8 +73,51 @@ export function toHexString(bytes: Uint8Array): string {
 }
 
 /**
+ * Encode signature bytes to base58 (e.g. for WalletCredentials).
+ */
+export function signatureToBase58(bytes: Uint8Array): string {
+  return bs58.encode(bytes)
+}
+
+/**
  * Format a timestamp to a locale string.
  */
 export function formatTimestamp(timestamp: number): string {
   return new Date(timestamp * 1000).toLocaleString()
+}
+
+/**
+ * Format prize SOL (number from API) for display.
+ *
+ * @example formatPrizeSol(0.0059) => '0.0059'
+ */
+export function formatPrizeSol(sol: number | undefined, maxDecimals = 5): string {
+  if (sol == null || Number.isNaN(sol)) return '0'
+  const s = sol.toFixed(maxDecimals)
+  const trimmed = s.replace(/\.?0+$/, '')
+  return trimmed || '0'
+}
+
+/**
+ * Format prize USD (cents from API) for display.
+ *
+ * @example formatPrizeUSD(123) => '1.23'
+ */
+export function formatPrizeUSD(cents: number | undefined): string {
+  if (cents == null || Number.isNaN(cents)) return '0'
+  return (cents / 100).toFixed(2)
+}
+
+/**
+ * Format a date string to "X DAYS AGO" or "AWARDED X DAYS AGO".
+ */
+export function formatAwardedAgo(dateStr: string | undefined, prefix = 'AWARDED '): string {
+  if (!dateStr) return `${prefix}—`
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const days = Math.floor(diffMs / (24 * 60 * 60 * 1000))
+  if (days <= 0) return `${prefix}TODAY`
+  if (days === 1) return `${prefix}1 DAY AGO`
+  return `${prefix}${days} DAYS AGO`
 }
