@@ -1,41 +1,42 @@
-import { View, Text, ScrollView } from 'react-native'
+import { ScrollView } from 'react-native'
 import { Container } from '@/components/ui/Container'
+import {
+  CommunityStats,
+  DashboardHeader,
+  // StakePromptCard,
+  YourStake,
+} from '@/components/main'
 
 /**
  * Home / Dashboard Tab.
- *
- * TODO: Implementation
- * ─────────────────────
- * 1. Layout:
- *    - Header with "Tramplin" title + optional settings icon
- *    - Wallet card (AccountInfo component — address, balance)
- *    - Quick actions row (Send, Receive, Sign, etc.)
- *    - Community stats preview cards (StatCard components)
- *    - Recent activity / notifications preview
- *
- * 2. Components needed:
- *    - Header (new: @/components/ui/Header)
- *    - AccountInfo (existing: @/components/wallet/AccountInfo)
- *    - StatCard (new: @/components/ui/StatCard)
- *    - Card (existing)
- *    - Quick action buttons (small icon buttons in a row)
- *
- * 3. Data:
- *    - Wallet balance from useWalletBalance()
- *    - Community stats from API (useQuery)
- *    - Recent notifications (from notification store or API)
- *
- * 4. Pull-to-refresh:
- *    - RefreshControl on ScrollView
- *    - Invalidate balance + stats queries
+ * Welcome header, staking prompt, your-stake placeholder, community stats.
  */
 export default function HomeTab() {
+  const handleSubscribe = () => {
+    // Navigate to subscription or open link when implemented
+  }
+
+  const handleMore = () => {
+    // Open notifications or more info when implemented
+  }
+
   return (
     <Container safe={false}>
-      <ScrollView contentContainerClassName="px-6 py-8 bg-brand-primary" showsVerticalScrollIndicator={false}>
-        <Text className="text-2xl font-bold text-content-primary mb-6">Stake</Text>
-        <Text className="text-content-secondary">[Stake placeholder]</Text>
-        <View className=" h-[200vh]" />
+      <ScrollView
+        contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
+        showsVerticalScrollIndicator={false}
+      >
+        <DashboardHeader onSubscribePress={handleSubscribe} className="mb-6" />
+        {/* <StakePromptCard onMorePress={handleMore} className="mb-6" /> */}
+        <YourStake className="mb-6" />
+
+        <CommunityStats
+          // className="mt-16"
+          stakedLabel="Staked"
+          distributionLabel="Distributed"
+          // textClassName="text-fill-primary"
+          dividerClassName="bg-border-quaternary"
+        />
       </ScrollView>
     </Container>
   )
