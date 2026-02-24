@@ -16,9 +16,7 @@ export default defineConfig({
   api: {
     input: {
       /** OpenAPI spec URL or local file path */
-      target: process.env.EXPO_PUBLIC_API_URL
-        ? `${process.env.EXPO_PUBLIC_API_URL}/openapi`
-        : './openapi.json',
+      target: 'https://develop-api.tramplin.io/api/openapi',
     },
     output: {
       /** Generate separate files for hooks and schemas */
