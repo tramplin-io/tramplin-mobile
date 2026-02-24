@@ -9,7 +9,17 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://develop-api.tramplin.io/api",
+        "EXPO_PUBLIC_SOLANA_NETWORK": "mainnet-beta",
+        "EXPO_PUBLIC_SOLANA_RPC_URL": "https://lb.drpc.org/solana-devnet/AikqCOD5x0xinaePzv2sbWSbkWVXNCwR8IPg2gG4MHGt",
+        "EXPO_PUBLIC_APP_NAME": "Tramplin",
+        "EXPO_PUBLIC_APP_URI": "https://tramplin.io/"
+      }
     },
     "production": {
       "autoIncrement": true
