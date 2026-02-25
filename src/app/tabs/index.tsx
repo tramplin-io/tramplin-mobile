@@ -6,6 +6,7 @@ import {
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
+import { ScreenWrapper } from '@/components/general'
 
 /**
  * Home / Dashboard Tab.
@@ -17,7 +18,7 @@ export default function HomeTab() {
   }
 
   return (
-    <Container safe={false}>
+    <ScreenWrapper>
       <ScrollView
         contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
@@ -34,6 +35,6 @@ export default function HomeTab() {
           dividerClassName="bg-border-quaternary"
         />
       </ScrollView>
-    </Container>
+    </ScreenWrapper>
   )
 }

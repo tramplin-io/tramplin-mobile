@@ -8,6 +8,7 @@ import { getIndexMyWinsQueryKey, useIndexMyWins } from '@/lib/api/generated/rest
 import type { Win } from '@/lib/api/generated/restApi.schemas'
 import { useQueryClient } from '@tanstack/react-query'
 import { DashboardHeader } from '@/components/main'
+import { ScreenWrapper } from '@/components/general'
 
 // const SUBSCRIBE_URL = 'https://tramplin.com/notifications'
 
@@ -163,7 +164,7 @@ export default function RewardsTab() {
   const showAsStack = regularWins.length > 1
 
   return (
-    <Container safe={false}>
+    <ScreenWrapper>
       <ScrollView
         contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
@@ -207,6 +208,6 @@ export default function RewardsTab() {
           </View>
         )}
       </ScrollView>
-    </Container>
+    </ScreenWrapper>
   )
 }

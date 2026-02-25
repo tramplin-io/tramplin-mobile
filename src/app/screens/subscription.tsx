@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import { router, Stack } from 'expo-router'
 import Toast from 'react-native-toast-message'
 import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
@@ -11,6 +11,7 @@ import { ImportantIcon, BigCupIcon, PointsIcon } from '@/components/icons/icons'
 import { useProfileStore } from '@/lib/stores/profile-store'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { ScreenWrapper } from '@/components/general'
 
 function ContactRow({
   label,
@@ -123,60 +124,66 @@ export default function SubscriptionScreen() {
   }, [notificationTypes, email, telegramUsername, updateUserProfile])
 
   return (
-    <Container safe={false} className="bg-fill-secondary">
-      <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
-        <BackButton onPress={handleBack} className="mb-0 z-10" />
-        <Text className="text-h4 text-center text-content-primary w-full -ml-10">Subscription</Text>
-      </View>
-      <Stack.Screen options={{ title: 'Subscription' }} />
-      <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
-        <View className="gap-6">
-          <View className="gap-4">
-            <ContactRow
-              label="EMAIL"
-              value={email}
-              placeholder="johndoe@gmail.com"
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <ContactRow
-              label="TELEGRAM"
-              value={telegramUsername}
-              placeholder="@johndoe"
-              onChangeText={setTelegramUsername}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-
-          <View className="flex-row gap-1">
-            <SegmentButton
-              label="Product"
-              icon={ImportantIcon}
-              isSelected={notificationTypes.includes('product')}
-              onPress={() => handleCategoryPress('product')}
-            />
-            <SegmentButton
-              label="Rewards"
-              icon={BigCupIcon}
-              isSelected={notificationTypes.includes('rewards')}
-              onPress={() => handleCategoryPress('rewards')}
-            />
-            <SegmentButton
-              label="Points"
-              icon={PointsIcon}
-              isSelected={notificationTypes.includes('points')}
-              onPress={() => handleCategoryPress('points')}
-            />
-          </View>
-
-          <Button size="xl" onPress={handleSave} disabled={isSaving}>
-            <Text>{isSaving ? 'Saving…' : 'Save'}</Text>
-          </Button>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <ScreenWrapper>
+        <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
+          <BackButton onPress={handleBack} className="mb-0 z-10" />
+          <Text className="text-h4 text-center text-content-primary w-full -ml-10">Subscription</Text>
         </View>
-      </ScrollView>
-    </Container>
+        <Stack.Screen options={{ title: 'Subscription' }} />
+        <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
+          <View className="gap-6">
+            <View className="gap-4">
+              <ContactRow
+                label="EMAIL"
+                value={email}
+                placeholder="johndoe@gmail.com"
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <ContactRow
+                label="TELEGRAM"
+                value={telegramUsername}
+                placeholder="@johndoe"
+                onChangeText={setTelegramUsername}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+
+            <View className="flex-row gap-1">
+              <SegmentButton
+                label="Product"
+                icon={ImportantIcon}
+                isSelected={notificationTypes.includes('product')}
+                onPress={() => handleCategoryPress('product')}
+              />
+              <SegmentButton
+                label="Rewards"
+                icon={BigCupIcon}
+                isSelected={notificationTypes.includes('rewards')}
+                onPress={() => handleCategoryPress('rewards')}
+              />
+              <SegmentButton
+                label="Points"
+                icon={PointsIcon}
+                isSelected={notificationTypes.includes('points')}
+                onPress={() => handleCategoryPress('points')}
+              />
+            </View>
+
+            <Button size="xl" onPress={handleSave} disabled={isSaving}>
+              <Text>{isSaving ? 'Saving…' : 'Save'}</Text>
+            </Button>
+          </View>
+        </ScrollView>
+      </ScreenWrapper>
+    </KeyboardAvoidingView>
   )
 }

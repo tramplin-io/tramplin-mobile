@@ -12,6 +12,7 @@ import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 import { useCSSVariable } from 'uniwind'
 import { DashboardHeader } from '@/components/main'
+import { ScreenWrapper } from '@/components/general'
 
 const PAGE_SIZE = 5
 const CLUSTER = (process.env.EXPO_PUBLIC_SOLANA_NETWORK as 'devnet' | 'mainnet-beta' | 'testnet') ?? 'devnet'
@@ -230,7 +231,7 @@ export default function LeaderboardTab() {
   }, [])
 
   return (
-    <Container safe={false}>
+    <ScreenWrapper>
       <ScrollView
         contentContainerClassName="px-6 pb-30 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
@@ -266,6 +267,6 @@ export default function LeaderboardTab() {
           </TabsContent>
         </Tabs>
       </ScrollView>
-    </Container>
+    </ScreenWrapper>
   )
 }

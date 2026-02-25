@@ -8,6 +8,7 @@ import { Card } from '@/components/ui'
 import { Text } from '@/components/ui/text'
 import { Switch } from '@/components/ui/switch'
 import { useProfileStore } from '@/lib/stores/profile-store'
+import { ScreenWrapper } from '@/components/general'
 
 export default function NotificationSettingsScreen() {
   const {
@@ -32,6 +33,8 @@ export default function NotificationSettingsScreen() {
   }, [])
 
   const handlePushToggle = useCallback(
+    // TODO: add check for system push permission
+
     async (checked: boolean) => {
       setIsPushNotificationsOn(checked)
       const ok = await updateUserProfile({ isPushNotificationsOn: checked })
@@ -40,7 +43,7 @@ export default function NotificationSettingsScreen() {
         Toast.show({ type: 'error', text1: 'Could not update push notifications' })
       }
     },
-    [updateUserProfile, setIsPushNotificationsOn]
+    [updateUserProfile, setIsPushNotificationsOn],
   )
 
   const handleEmailToggle = useCallback(
@@ -52,11 +55,11 @@ export default function NotificationSettingsScreen() {
         Toast.show({ type: 'error', text1: 'Could not update email notifications' })
       }
     },
-    [updateUserProfile, setIsEmailNotificationsOn]
+    [updateUserProfile, setIsEmailNotificationsOn],
   )
 
   return (
-    <Container safe={false} className="bg-fill-primary">
+    <ScreenWrapper>
       <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
         <BackButton onPress={handleBack} className="mb-0 z-10" />
         <Text className="text-h4 text-center text-content-primary w-full -ml-10">Notifications</Text>
@@ -78,6 +81,6 @@ export default function NotificationSettingsScreen() {
           </Card>
         </View>
       </ScrollView>
-    </Container>
+    </ScreenWrapper>
   )
 }
