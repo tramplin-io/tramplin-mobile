@@ -4,6 +4,11 @@ import { useRouter, useSegments } from 'expo-router'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useProfileStore } from '@/lib/stores/profile-store'
 import { useNotificationObserver, useSystemPushPermission } from '@/lib/notifications/hooks'
+import { setSentryUser } from '@/lib/sentry'
+import { ForceUpdateModal, UpdateAvailableModal } from './general'
+
+// import { ForceUpdateModal } from '@/components/ForceUpdateModal'
+// import { UpdateAvailableModal } from '@/components/UpdateAvailableModal'
 
 /**
  * Route protection based on API session (wallet sign-in).
@@ -18,7 +23,7 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
   const router = useRouter()
   const segments = useSegments()
 
-  const { isAuthenticated, isForceUpdateModalVisible, isUpdateAvailableModalVisible, dismissUpdateAvailable } =
+  const { isAuthenticated, session, isForceUpdateModalVisible, isUpdateAvailableModalVisible, dismissUpdateAvailable } =
     useAuthStore()
   const { createDeviceToken, fetchUserProfile } = useProfileStore()
 
@@ -49,6 +54,11 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
 
   useNotificationObserver()
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: need to use session?.userId
+  useEffect(() => {
+    setSentryUser()
+  }, [session?.userId])
+
   useEffect(() => {
     const firstSegment = segments[0]
     const inAuthGroup = firstSegment === 'auth'
@@ -68,5 +78,11 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
     }
   }, [isAuthenticated, segments, router])
 
-  return <>{children}</>
+  return (
+    <>
+      {children}
+      <ForceUpdateModal visible={isForceUpdateModalVisible} />
+      <UpdateAvailableModal visible={isUpdateAvailableModalVisible} onClose={dismissUpdateAvailable} />
+    </>
+  )
 }
