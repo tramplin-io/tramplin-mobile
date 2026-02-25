@@ -219,16 +219,16 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
       snapPoints={['80%']}
     >
       <BottomSheetView>
-        <ScrollView className="px-4" showsVerticalScrollIndicator={false}>
-          <Text variant="h2" className="text-center mb-2 mt-2">
+        <ScrollView className="px-4 pb-60" showsVerticalScrollIndicator={false}>
+          <Text variant="h3" className="text-center mb-2 mt-2">
             🔧 Developer Tools
           </Text>
           <Text variant="body" className="text-center text-textSecondary mb-6">
             Development and debugging tools
           </Text>
 
-          <View className="gap-6">
-            <View className="gap-3">
+          <View className="gap-4">
+            <View className="gap-2">
               <Text variant="h4" className="text-secondaryPink">
                 Route Path Overlay
               </Text>
@@ -245,7 +245,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
               </View>
             </View>
 
-            <View className="gap-3 mb-4">
+            <View className="gap-2 mb-4">
               <Text variant="h4" className="text-secondaryPink">
                 Testing Tools
               </Text>
@@ -296,7 +296,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
               <LogDisplay />
             </View>
 
-            <View className="gap-3">
+            {/* <View className="gap-2">
               <Text variant="h4" className="text-secondaryPink">
                 API Source
               </Text>
@@ -321,10 +321,10 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                   )
                 })}
               </View>
-            </View>
+            </View> */}
 
-            <View className="gap-3">
-              <Text variant="h3" className="text-secondaryPink">
+            <View className="gap-2">
+              <Text variant="h4" className="text-secondaryPink">
                 API URL
               </Text>
 
@@ -335,22 +335,22 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 editable={isCustomSelected}
                 className={isCustomSelected ? '' : 'opacity-60'}
               />
+
+              {validationError && (
+                <View className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <Text variant="h4" className="text-red-800">
+                    ❌ Health Check Failed
+                  </Text>
+                  <Text variant="body" className="text-red-700 mt-2">
+                    {validationError}
+                  </Text>
+                </View>
+              )}
+
+              <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
+                <Text>{isValidating ? 'Validating API...' : 'Save Changes'}</Text>
+              </Button>
             </View>
-
-            {validationError && (
-              <View className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <Text variant="h4" className="text-red-800">
-                  ❌ Health Check Failed
-                </Text>
-                <Text variant="body" className="text-red-700 mt-2">
-                  {validationError}
-                </Text>
-              </View>
-            )}
-
-            <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
-              <Text>{isValidating ? 'Validating API...' : 'Save Changes'}</Text>
-            </Button>
 
             {showLogoutWarning && (
               <View className="gap-4 p-4 bg-red-50 border border-red-200 rounded-lg">
