@@ -1,6 +1,6 @@
 import { router } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -23,6 +23,9 @@ import { Input } from '@/components/ui/input'
 import { BackButton } from '@/components/general/BackButton'
 import { Card } from '@/components/ui'
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
+import { ScreenWrapper } from '@/components/general'
+import { APP_VERSION, BUILD_NUMBER } from '@/constants/appConstants'
+import { DeveloperPanel } from '@/components/profile/DeveloperPanel'
 
 interface MenuSectionItem {
   title: string
@@ -129,27 +132,66 @@ function DeleteAccountDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogTitle className="text-center">Delete My Account & Revoke Consent</DialogTitle>
+        <DialogTitle>Delete My Account & Revoke Consent</DialogTitle>
         <DialogDescription className="text-center">
-          <Text className="text-content-primary">
-            This action will permanently delete your account and all personal data. This cannot be undone.
+          <Text variant="body" className="text-content-primary">
+            This action will permanently delete your account and all personal data.
+          </Text>{' '}
+          {'\n'}
+          <Text variant="body" className="font-bold">
+            This cannot be undone.
           </Text>
           {'\n\n'}
+          {/* <Text variant="small" className="text-content-tertiary">
+            Type "DELETE" below to confirm:
+          </Text> */}
           <Text variant="small" className="text-content-tertiary">
-            {'Type "DELETE" below to confirm:'}
+            Type{' '}
+            <Text variant="body" className="text-content-primary">
+              &quot;DELETE&quot;
+            </Text>{' '}
+            below to confirm:
           </Text>
         </DialogDescription>
-        <Input value={deleteInput} onChangeText={setDeleteInput} />
+
+        <Input value={deleteInput} placeholder="DELETE" onChangeText={setDeleteInput} className="w-full" />
+
         <DialogFooter className="gap-3">
-          <Button onPress={onConfirm} disabled={!isDelete || isLoading}>
-            <Text className="text-primary-foreground">{isLoading ? 'Deleting...' : 'Confirm'}</Text>
+          <Button variant="destructive" size="xl" onPress={onConfirm} disabled={!isDelete || isLoading}>
+            <Text>{isLoading ? 'Deleting...' : 'Confirm'}</Text>
           </Button>
           <Button variant="ghost" onPress={handleClose} disabled={isLoading}>
-            <Text>Cancel</Text>
+            <Text className="font-bold">Cancel</Text>
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function DeleteSuccessDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+}: Readonly<{
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: () => void
+}>) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="gap-8">
+        <AlertDialogTitle>Your account has been deleted</AlertDialogTitle>
+        <AlertDialogDescription className="text-center">
+          <Text variant="body">All your data and preferences have been erased.</Text>
+        </AlertDialogDescription>
+        <AlertDialogFooter>
+          <Button size="xl" onPress={onConfirm}>
+            <Text>Back to Start</Text>
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
 
@@ -161,6 +203,11 @@ export default function ProfileScreen() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Developer panel state
+  const [showDeveloperPanel, setShowDeveloperPanel] = useState(false)
+  const [versionTapCount, setVersionTapCount] = useState(0)
+  const [lastTapTime, setLastTapTime] = useState(0)
 
   const generalItems: MenuSectionItem[] = [
     {
@@ -207,6 +254,26 @@ export default function ProfileScreen() {
     },
   ]
 
+  const handleVersionTap = () => {
+    const currentTime = Date.now()
+    const timeDiff = currentTime - lastTapTime
+
+    // Reset counter if more than 2 seconds between taps
+    if (timeDiff > 2000) {
+      setVersionTapCount(1)
+    } else {
+      setVersionTapCount((prev) => prev + 1)
+    }
+
+    setLastTapTime(currentTime)
+
+    // Open developer panel after 7 taps
+    if (versionTapCount >= 6) {
+      setShowDeveloperPanel(true)
+      setVersionTapCount(0)
+    }
+  }
+
   const handleSignOut = useCallback(() => {
     void logout({ disconnect, router })
   }, [logout, disconnect])
@@ -229,8 +296,7 @@ export default function ProfileScreen() {
   }, [])
 
   return (
-    <Container safe={false} className="bg-fill-primary">
-      {/* <ProfileHeader /> */}
+    <ScreenWrapper>
       <ScrollView
         className="flex-1 px-4 pt-6"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
@@ -244,8 +310,15 @@ export default function ProfileScreen() {
           <Button variant="destructive" size="xl" onPress={handleSignOut}>
             <Text>Sign Out</Text>
           </Button>
+          <Pressable onPress={handleVersionTap} className="items-center mb-4">
+            <Text variant="small" className="text-textAdditional">
+              Version {APP_VERSION} ({BUILD_NUMBER})
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
+
+      <DeveloperPanel open={showDeveloperPanel} onOpenChange={setShowDeveloperPanel} />
 
       <DeleteAccountDialog
         open={showDeleteDialog}
@@ -254,19 +327,11 @@ export default function ProfileScreen() {
         isLoading={isDeleting}
       />
 
-      <AlertDialog open={showDeleteSuccess} onOpenChange={setShowDeleteSuccess}>
-        <AlertDialogContent className="py-8">
-          <AlertDialogTitle className="text-center">Your account has been deleted</AlertDialogTitle>
-          <AlertDialogDescription>
-            <Text className="text-center text-content-primary">All your data and preferences have been erased.</Text>
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogAction onPress={handleDeleteSuccessClose}>
-              <Text>Back to Start</Text>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Container>
+      <DeleteSuccessDialog
+        open={showDeleteSuccess}
+        onOpenChange={setShowDeleteSuccess}
+        onConfirm={handleDeleteSuccessClose}
+      />
+    </ScreenWrapper>
   )
 }
