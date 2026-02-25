@@ -1,18 +1,16 @@
 import { router } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
+import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { useDeleteMyProfile } from '@/lib/api/generated/restApi'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Logo, ThreeDotsIcon } from '@/components/icons'
-import { UserIcon } from '@/components/general/UserIcon'
-import { formatWalletAddress } from '@/utils/wallet'
-import { Container } from '@/components/ui/Container'
+
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -20,7 +18,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { BackButton } from '@/components/general/BackButton'
 import { Card } from '@/components/ui'
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
 import { ScreenWrapper } from '@/components/general'
@@ -202,7 +199,19 @@ export default function ProfileScreen() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+
+  const { mutate: deleteProfile, isPending: isDeleting } = useDeleteMyProfile({
+    mutation: {
+      onSuccess: () => {
+        setShowDeleteDialog(false)
+        void logout({ disconnect, router })
+        setShowDeleteSuccess(true)
+      },
+      onError: () => {
+        Toast.show({ type: 'error', text1: 'Could not delete account' })
+      },
+    },
+  })
 
   // Developer panel state
   const [showDeveloperPanel, setShowDeveloperPanel] = useState(false)
@@ -279,16 +288,8 @@ export default function ProfileScreen() {
   }, [logout, disconnect])
 
   const handleDeleteConfirm = useCallback(() => {
-    setIsDeleting(true)
-    // TODO: wire delete account API when available
-    void Promise.resolve()
-      .then(() => new Promise((r) => setTimeout(r, 800)))
-      .then(() => {
-        setIsDeleting(false)
-        setShowDeleteDialog(false)
-        setShowDeleteSuccess(true)
-      })
-  }, [])
+    deleteProfile()
+  }, [deleteProfile])
 
   const handleDeleteSuccessClose = useCallback(() => {
     setShowDeleteSuccess(false)
