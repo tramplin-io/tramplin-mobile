@@ -75,6 +75,12 @@ export interface UpdateJobInput {
   defaultIntervalInMinutes?: number
 }
 
+export interface ContactUsInput {
+  reason?: string
+  title: string
+  message: string
+}
+
 export interface CreateMyDeviceTokenInput {
   deviceToken: string
 }

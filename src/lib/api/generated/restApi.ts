@@ -23,6 +23,7 @@ import type {
 
 import type {
   AttemptCredentials,
+  ContactUsInput,
   CreateMyDeviceTokenInput,
   CreateMyDeviceTokenParams,
   DeleteMyDeviceTokenParams,
@@ -694,6 +695,57 @@ export const useUpdateJob = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 
+/**
+ * Send support request.
+ * @summary Send support request.
+ */
+export const contactUs = (contactUsInput: ContactUsInput, signal?: AbortSignal) => {
+  return customInstance<void>({
+    url: `/contactUs`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: contactUsInput,
+    signal,
+  })
+}
+
+export const getContactUsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof contactUs>>, TError, { data: ContactUsInput }, TContext>
+}): UseMutationOptions<Awaited<ReturnType<typeof contactUs>>, TError, { data: ContactUsInput }, TContext> => {
+  const mutationKey = ['contactUs']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof contactUs>>, { data: ContactUsInput }> = (props) => {
+    const { data } = props ?? {}
+
+    return contactUs(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type ContactUsMutationResult = NonNullable<Awaited<ReturnType<typeof contactUs>>>
+export type ContactUsMutationBody = ContactUsInput
+export type ContactUsMutationError = unknown
+
+/**
+ * @summary Send support request.
+ */
+export const useContactUs = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof contactUs>>, TError, { data: ContactUsInput }, TContext>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof contactUs>>, TError, { data: ContactUsInput }, TContext> => {
+  const mutationOptions = getContactUsMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
 export const createMyDeviceToken = (
   createMyDeviceTokenInput: CreateMyDeviceTokenInput,
   params?: CreateMyDeviceTokenParams,
@@ -823,6 +875,47 @@ export const useDeleteMyDeviceToken = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getDeleteMyDeviceTokenMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Delete profile and user sessions.
+ * @summary Delete profile and user sessions.
+ */
+export const deleteMyProfile = () => {
+  return customInstance<void>({ url: `/deleteMyProfile`, method: 'DELETE' })
+}
+
+export const getDeleteMyProfileMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteMyProfile>>, TError, void, TContext>
+}): UseMutationOptions<Awaited<ReturnType<typeof deleteMyProfile>>, TError, void, TContext> => {
+  const mutationKey = ['deleteMyProfile']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteMyProfile>>, void> = () => {
+    return deleteMyProfile()
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteMyProfileMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMyProfile>>>
+
+export type DeleteMyProfileMutationError = unknown
+
+/**
+ * @summary Delete profile and user sessions.
+ */
+export const useDeleteMyProfile = <TError = unknown, TContext = unknown>(
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteMyProfile>>, TError, void, TContext> },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof deleteMyProfile>>, TError, void, TContext> => {
+  const mutationOptions = getDeleteMyProfileMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
