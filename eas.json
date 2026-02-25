@@ -18,7 +18,8 @@
         "EXPO_PUBLIC_SOLANA_NETWORK": "mainnet-beta",
         "EXPO_PUBLIC_SOLANA_RPC_URL": "https://lb.drpc.org/solana-devnet/AikqCOD5x0xinaePzv2sbWSbkWVXNCwR8IPg2gG4MHGt",
         "EXPO_PUBLIC_APP_NAME": "Tramplin",
-        "EXPO_PUBLIC_APP_URI": "https://tramplin.io/"
+        "EXPO_PUBLIC_APP_URI": "https://tramplin.io/",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://d23bf865ed2b4a787871626a4c0c6760@o4509627651194880.ingest.de.sentry.io/4509627659321424"
       }
     },
     "production": {
