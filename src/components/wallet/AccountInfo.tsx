@@ -24,7 +24,10 @@ export function AccountInfo() {
 
   if (!account) return null
 
-  const addressStr = account.address.toString()
+  const address = account?.address
+  if (address == null) return null
+
+  const addressStr = typeof address.toString === 'function' ? address.toString() : String(address)
 
   return (
     <Card variant="outlined" className="w-full">
