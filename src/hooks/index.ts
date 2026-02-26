@@ -1,8 +1,9 @@
-export { useTheme } from './useTheme'
 export { useThemeStore } from './useThemeStore'
 export { useWalletBalance } from './useWalletBalance'
 export { useWalletActions } from './useWalletActions'
 export { useCopyToClipboard } from './useCopyToClipboard'
+export { useUnstake } from './useUnstake'
+export { useUserStakeAccounts } from './useUserStakeAccounts'
 
 /**
  * TODO (Phase 4 — State & Data): Create these new hooks/stores:
