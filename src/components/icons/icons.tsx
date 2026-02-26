@@ -271,12 +271,17 @@ export const ImportantIcon = createIconComponent(
 // Leave Icon
 export const LeaveIcon = createIconComponent(
   'LeaveIcon',
-  <Path
-    d="M9 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3H9M16 17L21 12M21 12L16 7M21 12H9"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-  />,
+  <>
+    <Path
+      d="M17.3536 12.3536C17.5488 12.1583 17.5488 11.8417 17.3536 11.6464L14.1716 8.46447C13.9763 8.2692 13.6597 8.2692 13.4645 8.46447C13.2692 8.65973 13.2692 8.97631 13.4645 9.17157L16.2929 12L13.4645 14.8284C13.2692 15.0237 13.2692 15.3403 13.4645 15.5355C13.6597 15.7308 13.9763 15.7308 14.1716 15.5355L17.3536 12.3536ZM10 12V12.5H17V12V11.5H10V12Z"
+      fill="currentColor"
+    />
+    <Path
+      d="M11.9425 7.98845L6.94287 8.0459L7.03479 16.0454L12.0345 15.9879"
+      stroke="currentColor"
+      stroke-linejoin="round"
+    />
+  </>,
 )
 
 // Link Icon
