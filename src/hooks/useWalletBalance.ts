@@ -22,7 +22,13 @@ export function useWalletBalance() {
   const [error, setError] = useState<string | null>(null)
 
   const fetchBalance = useCallback(async () => {
-    if (!account) {
+    if (!account?.address) {
+      setBalance(null)
+      return
+    }
+
+    const rpc = client?.rpc
+    if (!rpc) {
       setBalance(null)
       return
     }
@@ -31,9 +37,11 @@ export function useWalletBalance() {
     setError(null)
 
     try {
-      const result = await client.rpc
-        .getBalance(account.address, { commitment: 'confirmed' })
-        .send()
+      console.log('fetchBalance - account.address', account.address)
+      console.log('fetchBalance - rpc', rpc)
+      const result = await rpc.getBalance(account.address, { commitment: 'confirmed' }).send()
+
+      console.log('fetchBalance - result', result)
 
       const lamports = result.value
       setBalance({
@@ -47,7 +55,7 @@ export function useWalletBalance() {
     } finally {
       setLoading(false)
     }
-  }, [account, client.rpc])
+  }, [account, client?.rpc])
 
   // Auto-fetch balance when account changes
   useEffect(() => {
