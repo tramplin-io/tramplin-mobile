@@ -7,7 +7,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useCSSVariable } from 'uniwind'
 
-import { BigCupIcon, FilterIcon, PlusIcon, SmallCupIcon } from '@/components/icons/icons'
+import {
+  BigCupIcon,
+  // FilterIcon,
+  PlusIcon,
+  SmallCupIcon,
+} from '@/components/icons/icons'
 import { LogoSmall } from '@/components/icons/Logo'
 import { StakeModal } from '@/components/stake'
 import { Button } from '@/components/ui'
@@ -26,9 +31,9 @@ function RewardsTabIcon({ color }: { readonly color: string }) {
   return <SmallCupIcon size={30} color={color} />
 }
 
-function DevTabIcon({ color }: { readonly color: string }) {
-  return <FilterIcon size={30} color={color} />
-}
+// function DevTabIcon({ color }: { readonly color: string }) {
+//   return <FilterIcon size={30} color={color} />
+// }
 
 // const TAB_BUTTON_WIDTH = 65
 // const TAB_BUTTON_HEIGHT = 55
@@ -79,18 +84,22 @@ function TabBarButton({ focused, children, style, ...rest }: TabBarButtonProps) 
 }
 
 /** Wrapper for tab bar button that derives focused from accessibilityState (passed by React Navigation). */
-function TabBarButtonWrapper(
-  props: React.ComponentProps<React.ElementType> & {
-    children?: React.ReactNode
-    accessibilityState?: { selected?: boolean }
-  },
-) {
+function TabBarButtonWrapper({
+  children,
+  style,
+  ...props
+}: React.ComponentProps<React.ElementType> & {
+  children?: React.ReactNode
+  accessibilityState?: { selected?: boolean }
+}) {
   const focused = props['aria-selected'] ?? false
 
   return (
-    <TabBarButton focused={focused} {...props}>
-      {props.children}
-    </TabBarButton>
+    <View style={[style, { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
+      <TabBarButton focused={focused} {...props}>
+        {children}
+      </TabBarButton>
+    </View>
   )
 }
 
@@ -173,13 +182,6 @@ export default function TabsLayout() {
             tabBarIcon: RewardsTabIcon,
           }}
         />
-        <Tabs.Screen
-          name="DEV"
-          options={{
-            title: 'Dev',
-            tabBarIcon: DevTabIcon,
-          }}
-        />
       </Tabs>
 
       <View
@@ -191,12 +193,7 @@ export default function TabsLayout() {
           right: 0,
         }}
       >
-        <Button
-          variant="default"
-          size="xl"
-          onPress={handleOpenStake}
-          className="w-full border-brand-primary"
-        >
+        <Button variant="default" size="xl" onPress={handleOpenStake} className="w-full border-brand-primary">
           <PlusIcon size={20} className="drop-shadow-md" />
           <Text variant="body">Stake SOL</Text>
         </Button>

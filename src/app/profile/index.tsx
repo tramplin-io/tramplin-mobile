@@ -308,6 +308,18 @@ export default function ProfileScreen() {
           <Section title="NEED HELP?" items={helpItems} />
           <Section title="LEGAL" items={legalItems} />
 
+          {__DEV__ && (
+            <Section
+              title="DEV"
+              items={[
+                {
+                  title: 'Dev Test Screen',
+                  onPress: () => router.push('/screens/devTest'),
+                },
+              ]}
+            />
+          )}
+
           <Button variant="destructive" size="xl" onPress={handleSignOut}>
             <Text>Sign Out</Text>
           </Button>

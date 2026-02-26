@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, Button as RNButton } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, Button as RNButton, TouchableOpacity } from 'react-native'
+import { router } from 'expo-router'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { Container } from '@/components/ui/Container'
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
@@ -14,6 +15,7 @@ import { useAuthStore } from '@/lib/stores/auth-store'
 import { useProfileStore } from '@/lib/stores/profile-store'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { getExpoPushToken } from '@/lib/notifications/utils'
+import { BackButton } from '@/components/general/BackButton'
 
 /**
  * Profile Tab — user info + settings menu.
@@ -131,9 +133,11 @@ export default function ProfileTab() {
 
   return (
     <Container safe={false}>
-      <ScrollView contentContainerClassName="px-6 pt-6 pb-20" showsVerticalScrollIndicator={false}>
-        <Text className="text-2xl font-bold text-content-primary mb-6">DEV TAB</Text>
-        <Text className="text-content-tertiary">[Profile & settings placeholder]</Text>
+      <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
+        <BackButton onPress={() => router.back()} className="mb-0 z-10" />
+        <Text className="text-h4 text-center text-content-primary w-full -ml-10">DEV PAGE</Text>
+      </View>
+      <ScrollView contentContainerClassName="px-6 pt-2 pb-20" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="items-center mb-8">
           <Text className="text-4xl font-extrabold text-brand-secondary mb-2 tracking-tight">Tramplin</Text>

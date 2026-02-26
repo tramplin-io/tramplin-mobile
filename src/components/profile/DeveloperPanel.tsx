@@ -15,6 +15,7 @@ import React from 'react'
 import { useCallback, useRef, useState } from 'react'
 import { Alert, ScrollView, TouchableOpacity, View } from 'react-native'
 import { LogDisplay } from './LogDisplay'
+import { AppConfig } from '@/constants/app-config'
 
 export type ApiSource = 'Production' | 'Development' | 'Custom'
 
@@ -83,6 +84,7 @@ type Props = {
 
 export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
   const { apiUrl, setApiUrl } = useApiConfigStore()
+  console.log('apiUrl', apiUrl)
   const { logout, isAuthenticated } = useAuthStore()
   const { isRoutePathOverlayEnabled, setIsRoutePathOverlayEnabled } = useDeveloperStore()
 
@@ -113,6 +115,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
     if (open) {
       bottomSheetRef.current?.present()
       const currentSource = getApiSourceFromUrl(apiUrl)
+      console.log('currentSource', currentSource)
       setPendingSource(currentSource)
       setPendingCustomUrl(currentSource === 'Custom' ? apiUrl || '' : '')
     } else {
@@ -253,7 +256,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
               {/* Sentry */}
               <View className="flex-row gap-3 w-full">
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   size="sm"
                   onPress={() => {
                     try {
@@ -273,7 +276,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                   <Text>Send Error to Sentry</Text>
                 </Button>
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   size="sm"
                   onPress={() => {
                     try {
@@ -347,9 +350,9 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 </View>
               )}
 
-              <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
+              {/* <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
                 <Text>{isValidating ? 'Validating API...' : 'Save Changes'}</Text>
-              </Button>
+              </Button> */}
             </View>
 
             {showLogoutWarning && (
@@ -379,13 +382,15 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
               </Text>
               <View className="p-3 bg-background-cards rounded-lg">
                 <Text variant="body" className="text-textSecondary">
-                  Source: {currentSource}
-                  {'\n'}
+                  {/* Source: {currentSource} */}
+                  {/* {'\n'} */}
                   URL: {currentUrl}
                   {'\n'}
                   Environment: {__DEV__ ? 'Development' : 'Production'}
                   {'\n'}
                   Route Overlay: {isRoutePathOverlayEnabled ? 'Enabled' : 'Disabled'}
+                  {'\n'}
+                  Cluster: {AppConfig.networkCluster}
                 </Text>
               </View>
 
