@@ -54,6 +54,9 @@ export const AppConfig = {
   /** Solana network configuration */
   network: solanaNetwork,
 
+  /** Solana network cluster */
+  networkCluster: (process.env.EXPO_PUBLIC_SOLANA_NETWORK ?? 'devnet') as 'devnet' | 'testnet' | 'mainnet-beta',
+
   /** Wallet adapter identity */
   get identity() {
     // name: 'Tramplin',
