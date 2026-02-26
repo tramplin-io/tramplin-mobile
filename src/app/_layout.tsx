@@ -2,7 +2,6 @@ import '../global.css'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { ThemeProvider } from '@react-navigation/native'
@@ -115,60 +114,58 @@ function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ActionSheetProvider>
-        <BottomSheetModalProvider>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={theme}>
-              <View
-                style={[
-                  styles.container,
-                  { backgroundColor: 'transparent' },
-                  bgColor != null && { backgroundColor: bgColor as string },
-                ]}
-              >
-                <AppProviders>
-                  <StatusBar
-                    style="auto"
-                    // networkActivityIndicatorVisible={false}
-                    // hidden
-                    // animated
-                    // backgroundColor="transparent"
-                    // translucent
-                  />
-                  <AuthGuard>
-                    {/* <Slot /> */}
-                    <Stack
-                      screenOptions={{
-                        headerShown: !hideHeader,
-                        header: AppHeader,
-                        animation: 'slide_from_right',
-                        gestureEnabled: false, // Disable swipe back gesture
-                      }}
-                    >
-                      <Stack.Screen name="index" />
-                      <Stack.Screen name="greeting" />
-                      <Stack.Screen name="auth/sign-in" />
-                      <Stack.Screen name="tabs" />
-                      <Stack.Screen name="profile/index" />
-                      <Stack.Screen name="screens/qna" />
-                      <Stack.Screen name="screens/contact-us" />
-                      <Stack.Screen name="screens/edit-profile" />
-                      <Stack.Screen name="screens/notification-settings" />
-                      <Stack.Screen name="no-internet/index" />
-                      <Stack.Screen name="splash/index" />
-                      <Stack.Screen name="terms/terms" />
-                      <Stack.Screen name="terms/privacy" />
-                    </Stack>
-                  </AuthGuard>
-                  <PortalHost />
-                </AppProviders>
-                {/* <View style={styles.toastContainer}> */}
-                <Toast topOffset={40 + insets.top} config={toastConfig} />
-                <RoutePathOverlay visible={isRoutePathOverlayEnabled} />
-                {/* </View> */}
-              </View>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={theme}>
+            <View
+              style={[
+                styles.container,
+                { backgroundColor: 'transparent' },
+                bgColor != null && { backgroundColor: bgColor as string },
+              ]}
+            >
+              <AppProviders>
+                <StatusBar
+                  style="auto"
+                  // networkActivityIndicatorVisible={false}
+                  // hidden
+                  // animated
+                  // backgroundColor="transparent"
+                  // translucent
+                />
+                <AuthGuard>
+                  {/* <Slot /> */}
+                  <Stack
+                    screenOptions={{
+                      headerShown: !hideHeader,
+                      header: AppHeader,
+                      animation: 'slide_from_right',
+                      gestureEnabled: false, // Disable swipe back gesture
+                    }}
+                  >
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="greeting" />
+                    <Stack.Screen name="auth/sign-in" />
+                    <Stack.Screen name="tabs" />
+                    <Stack.Screen name="profile/index" />
+                    <Stack.Screen name="screens/qna" />
+                    <Stack.Screen name="screens/contact-us" />
+                    <Stack.Screen name="screens/edit-profile" />
+                    <Stack.Screen name="screens/notification-settings" />
+                    <Stack.Screen name="no-internet/index" />
+                    <Stack.Screen name="splash/index" />
+                    <Stack.Screen name="terms/terms" />
+                    <Stack.Screen name="terms/privacy" />
+                  </Stack>
+                </AuthGuard>
+                <PortalHost />
+              </AppProviders>
+              {/* <View style={styles.toastContainer}> */}
+              <Toast topOffset={40 + insets.top} config={toastConfig} />
+              <RoutePathOverlay visible={isRoutePathOverlayEnabled} />
+              {/* </View> */}
+            </View>
+          </ThemeProvider>
+        </QueryClientProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>
   )

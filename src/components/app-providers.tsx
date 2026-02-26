@@ -3,6 +3,7 @@ import { AppState, Platform } from 'react-native'
 import type { AppStateStatus } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { QueryClientProvider, focusManager } from '@tanstack/react-query'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { MobileWalletProvider } from '@wallet-ui/react-native-kit'
 import { AppTheme } from '@/components/app-theme'
 import { ErrorBoundary } from '@/components/error-boundary'
@@ -28,7 +29,8 @@ function onAppStateChange(status: AppStateStatus) {
  *       -> AppTheme (React Navigation theme)
  *         -> QueryClientProvider (TanStack React Query)
  *           -> MobileWalletProvider (Solana Wallet)
- *             -> {children}
+ *             -> BottomSheetModalProvider (so modal content has wallet context)
+ *               -> {children}
  *
  * QueryClient is created in lib/api/api-setup.ts so it can be
  * shared with Orval-generated hooks and used outside React components.
@@ -51,7 +53,7 @@ export function AppProviders({ children }: Readonly<PropsWithChildren>) {
         <SafeAreaProvider>
           <AppTheme>
             <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
-              {children}
+              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
             </MobileWalletProvider>
           </AppTheme>
         </SafeAreaProvider>
