@@ -14,7 +14,7 @@
   "scripts": {
     "android": "expo run:android",
     "android:build": "expo prebuild -p android",
-    "android:build:local:app": "eas build --platform android --profile preview --local && mv *.apk app_builds/",
+    "android:build:local:app": "npx dotenv-cli -e .env.preview -- eas build --platform android --profile preview --local && mv *.apk app_builds/",
     "build": "tsc --noEmit && npm run android:build",
     "ci": "tsc --noEmit && npm run lint:check && npm run fmt:check && npm run android:build",
     "dev": "expo start --clear --dev-client --reset-cache",
@@ -70,6 +70,8 @@
     "@rn-primitives/toggle-group": "^1.2.0",
     "@rn-primitives/tooltip": "^1.2.0",
     "@sentry/react-native": "~7.2.0",
+    "@solana-program/stake": "^0.5.0",
+    "@solana-program/system": "^0.10.0",
     "@solana/kit": "^5.5.0",
     "@tanstack/react-query": "^5.90.21",
     "@wallet-ui/react-native-kit": "^3.1.0",
