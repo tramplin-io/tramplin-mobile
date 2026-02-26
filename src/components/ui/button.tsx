@@ -46,6 +46,17 @@ const buttonVariants = cva(
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-content-tertiary/90' }),
         ),
+        gray: cn(
+          'rounded-full border border-border-quaternary',
+          '[background-image:linear-gradient(to_bottom,#E7E7E7,#FFFFFF)]',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-content-tertiary/90' }),
+        ),
+        preset: cn(
+          'rounded-full px-2 py-1 border border-border-quaternary flex-row items-center',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-content-tertiary/90' }),
+        ),
         outline: cn(
           'border-border bg-background active:bg-accent dark:bg-input/30 dark:border-input dark:active:bg-input/50 border shadow-sm shadow-black/5',
           Platform.select({
@@ -64,8 +75,8 @@ const buttonVariants = cva(
       },
       size: {
         default: cn('h-10 px-4 py-2 sm:h-9', Platform.select({ web: 'has-[>svg]:px-3' })),
-        sm: cn('h-9 gap-1.5 rounded-md px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
-        lg: cn('h-11 rounded-md px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
+        sm: cn('h-9 gap-1.5 rounded-full px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
+        lg: cn('h-11 rounded-full px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
         xl: cn('h-15 rounded-full px-6 sm:h-15', Platform.select({ web: 'has-[>svg]:px-4' })),
         icon: 'h-10 w-10 sm:h-9 sm:w-9',
       },
@@ -90,6 +101,8 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
       gold: 'text-body text-reward-large-primary',
       black: 'text-body text-content-tertiary',
       tertiary: 'text-body text-content-tertiary',
+      gray: 'text-body text-content-tertiary',
+      preset: 'text-smallBold',
       outline: cn(
         'text-foreground text-sm font-medium',
         'group-active:text-accent-foreground',
