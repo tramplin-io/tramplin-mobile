@@ -33,12 +33,30 @@ export function getExplorerUrl(
 }
 
 /**
+ * Get Solscan transaction URL for a given signature.
+ */
+export function getSolscanTxUrl(signature: string, cluster: 'devnet' | 'testnet' | 'mainnet-beta' = 'devnet'): string {
+  const base = 'https://solscan.io'
+  const path = cluster === 'mainnet-beta' ? `tx/${signature}` : `tx/${signature}?cluster=${cluster}`
+  return `${base}/${path}`
+}
+
+/**
  * Type guard to check if an error is an instance of Error.
  */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message
   if (typeof error === 'string') return error
   return 'An unknown error occurred'
+}
+
+/**
+ * Detect wallet/signing cancellation (e.g. user dismissed the signing UI).
+ * Native Android can throw java.util.concurrent.CancellationException, bridged to JS.
+ */
+export function isCancellationError(error: unknown): boolean {
+  const msg = error instanceof Error ? error.message : String(error)
+  return /cancelation|cancellation|cancelled|canceled/i.test(msg)
 }
 
 /**
