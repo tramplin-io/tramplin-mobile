@@ -14,7 +14,7 @@
   "scripts": {
     "android": "expo run:android",
     "android:build": "expo prebuild -p android",
-    "android:build:local:app": "npx dotenv-cli -e .env.preview -- eas build --platform android --profile preview --local && mv *.apk app_builds/",
+    "android:build:local:app": "eas build --platform android --profile preview --local && mv *.apk app_builds/",
     "build": "tsc --noEmit && npm run android:build",
     "ci": "tsc --noEmit && npm run lint:check && npm run fmt:check && npm run android:build",
     "dev": "expo start --clear --dev-client --reset-cache",
