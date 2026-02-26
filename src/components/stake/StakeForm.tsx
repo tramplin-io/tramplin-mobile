@@ -10,12 +10,14 @@ import type { Rpc, SolanaRpcApi } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native'
-import { SolanaIcon } from '../icons/icons'
+import { CheckIcon, LeaveIcon, SolanaIcon } from '../icons/icons'
 import { cn } from '@/lib/utils'
 import { SolInput } from './SolInput'
 import { lamportsToSol } from '@/utils/format'
 import { STAKE_TX_PRECALCULATED_COST } from '@/utils/solana'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
+import { SolscanIcon } from '../icons'
+import { useCSSVariable } from 'uniwind'
 
 const QUICK_AMOUNTS = [5, 10, 20] as const
 
@@ -54,6 +56,9 @@ export function StakeForm({ onClose }: Props) {
 
   const inputRef = useRef<TextInput>(null)
   const [lastSignature, setLastSignature] = useState<string | null>(null)
+
+  const contentTertiaryColor = useCSSVariable('--color-content-tertiary') as string | undefined
+  const contentPrimaryColor = useCSSVariable('--color-content-primary') as string | undefined
 
   const executeStake = useCallback(
     async (amountSol: number): Promise<StakeFormStakeResult> => {
@@ -160,33 +165,44 @@ export function StakeForm({ onClose }: Props) {
 
   if (status === 'success') {
     return (
-      <View className="gap-6 px-4 pb-8">
+      <View className="gap-10 px-4 pb-8">
         <Text variant="h4" className="text-content-primary">
           Stake
         </Text>
-        <View className="items-center gap-2">
-          <Text variant="h2" className="text-content-primary">
-            ↑ {amount} SOL staked
-          </Text>
-          {lastSignature && (
-            <Pressable onPress={handleViewSolscan} className="mt-2">
-              <Text variant="body" className="text-brand-primary">
-                View transaction on Solscan →
+        <View className="items-center gap-2 pb-4">
+          <View className="items-center gap-2 border-b border-content-tertiary pb-0">
+            <View className="flex-row items-end gap-1">
+              <Text variant="body" className="pb-2">
+                ↑
               </Text>
-            </Pressable>
-          )}
-        </View>
-        <View className="rounded-full overflow-hidden border border-brand-tertiary bg-fill-tertiary p-4">
-          <View className="flex-row items-center justify-center gap-2">
-            <View className="size-6 rounded-full bg-brand-primary" />
-            <Text variant="body" className="text-content-primary font-medium">
-              Successful Stake
-            </Text>
+              <Text variant="h2Digits">10.00 {amount}</Text>
+              <View className="flex-row items-center pb-1">
+                <Text variant="body">SOL</Text>
+                <SolanaIcon size={24} />
+                <Text variant="body">staked</Text>
+              </View>
+            </View>
+          </View>
+          <View className="items-center ">
+            {!lastSignature && (
+              <Pressable onPress={handleViewSolscan} className="mt-2 flex-row items-center">
+                <Text variant="smallBold" className="text-content-tertiary ">
+                  View transaction on{' '}
+                </Text>
+                <SolscanIcon color={contentTertiaryColor} />
+                <Text variant="smallBold" className="text-content-tertiary ">
+                  Solscan
+                </Text>
+                <LeaveIcon size={24} color={contentTertiaryColor} />
+              </Pressable>
+            )}
           </View>
         </View>
+
         {onClose && (
-          <Button variant="default" onPress={onClose}>
-            <Text>Done</Text>
+          <Button variant="gray" size="xl" onPress={onClose}>
+            <CheckIcon />
+            <Text className="text-content-primary">Successful Stake</Text>
           </Button>
         )}
       </View>
@@ -300,9 +316,9 @@ export function StakeForm({ onClose }: Props) {
       )}
 
       {isProcessing && (
-        <Button variant="default" size="xl" disabled className="w-full rounded-full py-4">
-          <ActivityIndicator size="small" color="#fff" />
-          <Text variant="body" className="text-fill-tertiary ml-2">
+        <Button variant="gray" size="xl" className="w-full rounded-full py-4">
+          <ActivityIndicator size="small" color={contentPrimaryColor} />
+          <Text variant="body" className="text-content-primary ml-2">
             Processing Transaction
           </Text>
         </Button>
