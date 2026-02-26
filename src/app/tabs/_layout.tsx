@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import { Tabs } from 'expo-router'
+import { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Pressable, type PressableProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -8,9 +9,10 @@ import { useCSSVariable } from 'uniwind'
 
 import { BigCupIcon, FilterIcon, PlusIcon, SmallCupIcon } from '@/components/icons/icons'
 import { LogoSmall } from '@/components/icons/Logo'
-import { cn } from '@/lib/utils'
+import { StakeModal } from '@/components/stake'
 import { Button } from '@/components/ui'
 import { Text } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
 
 function LeaderTabIcon({ color }: { readonly color: string }) {
   return <BigCupIcon size={30} color={color} />
@@ -97,6 +99,8 @@ export default function TabsLayout() {
   const activeTint = useCSSVariable('--color-brand-primary')
   const inactiveTint = useCSSVariable('--color-content-tertiary')
   const backgroundColor = useCSSVariable('--color-fill-primary')
+  const [stakeModalOpen, setStakeModalOpen] = useState(false)
+  const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
 
   return (
     <View className="flex-1">
@@ -190,14 +194,15 @@ export default function TabsLayout() {
         <Button
           variant="default"
           size="xl"
-          // onPress={handleLaunchApp}
-          // disabled={connecting || signingIn}
+          onPress={handleOpenStake}
           className="w-full border-brand-primary"
         >
           <PlusIcon size={20} className="drop-shadow-md" />
           <Text variant="body">Stake SOL</Text>
         </Button>
       </View>
+
+      <StakeModal open={stakeModalOpen} onOpenChange={setStakeModalOpen} />
     </View>
   )
 }
