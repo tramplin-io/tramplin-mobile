@@ -132,7 +132,9 @@ export default function SubscriptionScreen() {
       <ScreenWrapper>
         <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
           <BackButton onPress={handleBack} className="mb-0 z-10" />
-          <Text className="text-h4 text-center text-content-primary w-full -ml-10">Subscription</Text>
+          <Text variant="h4" className="text-center w-full -ml-10">
+            Subscription
+          </Text>
         </View>
         <Stack.Screen options={{ title: 'Subscription' }} />
         <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
