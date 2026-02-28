@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils'
 import * as React from 'react'
 import { Platform, TextInput, type TextInputProps } from 'react-native'
+
+import { cn } from '@/lib/utils'
 
 type InputProps = TextInputProps & {
   hasError?: boolean
@@ -11,7 +12,7 @@ function Input({ className, hasError, ...props }: InputProps) {
   return (
     <TextInput
       className={cn(
-        'web:flex h-10 native:h-16 web:w-full rounded-md border-none bg-fill-tertiary px-3 web:py-2 text-[16px] lg:text-[17px] native:text-lg native:leading-tight text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 native:pl-4 shadow-[0_0_3px_0_var(--border-quaternary,#FFF)]',
+        'web:flex h-10 native:h-16 web:w-full rounded-md border-none bg-fill-tertiary px-3 web:py-2 text-[16px] lg:text-[17px] native:text-body native:leading-tight text-content-tertiary placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 native:pl-4 shadow-[0_0_3px_0_var(--border-quaternary,#FFF)]',
         isFocused && 'border border-border-tertiary shadow-[0_0_3px_0_var(--border-tertiary,#8E8E8E)]',
         hasError && 'border border-destructive shadow-[0_0_3px_0_var(--border-destructive,#FF9494)]',
         props.editable === false &&
