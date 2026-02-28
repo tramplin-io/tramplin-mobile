@@ -1,14 +1,15 @@
 import { useCallback, useEffect } from 'react'
-import { View, ScrollView } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { router, Stack } from 'expo-router'
 import Toast from 'react-native-toast-message'
-import { Container } from '@/components/ui/Container'
+
+import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
 import { Card } from '@/components/ui'
-import { Text } from '@/components/ui/text'
+import { Container } from '@/components/ui/Container'
 import { Switch } from '@/components/ui/switch'
+import { Text } from '@/components/ui/text'
 import { useProfileStore } from '@/lib/stores/profile-store'
-import { ScreenWrapper } from '@/components/general'
 
 export default function NotificationSettingsScreen() {
   const {
@@ -67,7 +68,7 @@ export default function NotificationSettingsScreen() {
         </Text>
       </View>
       <Stack.Screen options={{ title: 'Notifications' }} />
-      <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerClassName="px-4 py-8" showsVerticalScrollIndicator={false}>
         <View className="gap-2">
           <Card variant="profile" className="flex-row items-center justify-between p-4">
             <Text variant="body" className="text-content-primary">
