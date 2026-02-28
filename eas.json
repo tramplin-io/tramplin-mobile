@@ -14,7 +14,7 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://develop-api.tramplin.io/api",
         "EXPO_PUBLIC_SOLANA_NETWORK": "mainnet-beta",
-        "EXPO_PUBLIC_SOLANA_RPC_URL": "https://solana-mainnet.core.chainstack.com/cf366b51ceeaff3655e596e6148af2c6",
+        "EXPO_PUBLIC_SOLANA_RPC_URL": "https://theodora-ppq4tm-fast-mainnet.helius-rpc.com/",
         "EXPO_PUBLIC_SOLANA_VALIDATOR_VOTE_KEY": "TRAMp1Z9EXyWQQNwNjjoNvVksMUHKioVU7ky61yNsEq",
         "EXPO_PUBLIC_SOLANA_PROGRAM_ID": "3NJyzGWjSHP4hZvsqakodi7jAtbufwd52vn1ek6EzQ35",
         "EXPO_PUBLIC_APP_NAME": "Tramplin",
