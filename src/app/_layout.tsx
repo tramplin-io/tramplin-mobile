@@ -21,7 +21,6 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Header, RoutePathOverlay } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useCSSVariable } from 'uniwind'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 import { initSentry } from '@/lib/sentry'
 import * as Sentry from '@sentry/react-native'
@@ -72,7 +71,6 @@ function RootLayout() {
   const { theme } = useAppTheme()
   const { isRoutePathOverlayEnabled } = useDeveloperStore()
   const insets = useSafeAreaInsets()
-  const bgColor = useCSSVariable('--color-fill-primary')
 
   // const visibility = NavigationBar.useVisibility()
   // const color = NavigationBar.getBackgroundColorAsync()
@@ -116,13 +114,7 @@ function RootLayout() {
       <ActionSheetProvider>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider value={theme}>
-            <View
-              style={[
-                styles.container,
-                { backgroundColor: 'transparent' },
-                bgColor != null && { backgroundColor: bgColor as string },
-              ]}
-            >
+            <View style={styles.container} className="bg-fill-primary">
               <AppProviders>
                 <StatusBar
                   style="auto"
@@ -151,6 +143,10 @@ function RootLayout() {
                     <Stack.Screen name="screens/contact-us" />
                     <Stack.Screen name="screens/edit-profile" />
                     <Stack.Screen name="screens/notification-settings" />
+                    <Stack.Screen
+                      name="screens/leaderboard-detail"
+                      options={{ presentation: 'fullScreenModal', headerShown: false }}
+                    />
                     <Stack.Screen name="no-internet/index" />
                     <Stack.Screen name="splash/index" />
                     <Stack.Screen name="terms/terms" />
