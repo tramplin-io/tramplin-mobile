@@ -99,13 +99,17 @@ export function formatPrizeSol(sol: number | undefined, maxDecimals = 5): string
 }
 
 /**
- * Format prize USD (cents from API) for display.
+ * Format prize USD (cents from API) for display with thousand separators.
  *
  * @example formatPrizeUSD(123) => '1.23'
+ * @example formatPrizeUSD(100000) => '1,000.00'
  */
 export function formatPrizeUSD(cents: number | undefined): string {
   if (cents == null || Number.isNaN(cents)) return '0'
-  return (cents / 100).toFixed(2)
+  return (cents / 100).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
 }
 
 /**

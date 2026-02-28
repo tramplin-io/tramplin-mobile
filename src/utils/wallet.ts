@@ -42,6 +42,18 @@ export function getSolscanTxUrl(signature: string, cluster: 'devnet' | 'testnet'
 }
 
 /**
+ * Get Solscan account URL for a given address.
+ */
+export function getSolscanAccountUrl(
+  address: string,
+  cluster: 'devnet' | 'testnet' | 'mainnet-beta' = 'devnet',
+): string {
+  const base = 'https://solscan.io'
+  const path = cluster === 'mainnet-beta' ? `account/${address}` : `account/${address}?cluster=${cluster}`
+  return `${base}/${path}`
+}
+
+/**
  * Type guard to check if an error is an instance of Error.
  */
 export function getErrorMessage(error: unknown): string {
