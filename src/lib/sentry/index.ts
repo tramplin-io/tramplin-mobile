@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 
 import { API_URLS } from '@/constants/appConstants'
+
 import { useAuthStore } from '../stores/auth-store'
 
 export type ApiSource = 'production' | 'development' | 'custom'
@@ -54,18 +55,12 @@ export const clearSentryUser = (): void => {
 }
 
 // Send error to Sentry
-export const captureSentryException = (
-  error: unknown,
-  context?: Record<string, unknown>,
-): void => {
+export const captureSentryException = (error: unknown, context?: Record<string, unknown>): void => {
   Sentry.captureException(error, { extra: context })
 }
 
 // Send info to Sentry
-export const captureSentryMessage = (
-  message: string,
-  context?: Record<string, unknown>,
-): void => {
+export const captureSentryMessage = (message: string, context?: Record<string, unknown>): void => {
   Sentry.captureMessage(message, { extra: context })
 }
 
