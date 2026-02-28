@@ -31,12 +31,12 @@ const buttonVariants = cva(
         ),
         gold: cn(
           'rounded-full border border-reward-large-primary',
-          '[background-image:linear-gradient(to_bottom,#7E650D,#7E650D00)]',
+          '[background-image:linear-gradient(to_bottom,var(--color-reward-large-secondary),#7E650D00)]',
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-reward-large-primary/90' }),
         ),
         black: cn(
-          'rounded-full border border-[#C1C1C1]',
+          'rounded-full border border-border-quinary',
           'bg-content-primary',
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-content-primary/90' }),
@@ -51,6 +51,12 @@ const buttonVariants = cva(
           '[background-image:linear-gradient(to_bottom,#E7E7E7,#FFFFFF)]',
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-content-tertiary/90' }),
+        ),
+        error: cn(
+          'rounded-full border border-critical-secondary',
+          '[background-image:linear-gradient(to_bottom,var(--color-critical-secondary),var(--color-fill-overlay))]',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-critical-secondary/90' }),
         ),
         preset: cn(
           'rounded-full px-2 py-1 border border-border-quaternary flex-row items-center',
@@ -102,6 +108,7 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
       black: 'text-body text-content-tertiary',
       tertiary: 'text-body text-content-tertiary',
       gray: 'text-body text-content-tertiary',
+      error: 'text-body text-critical-secondary',
       preset: 'text-smallBold',
       outline: cn(
         'text-foreground text-sm font-medium',

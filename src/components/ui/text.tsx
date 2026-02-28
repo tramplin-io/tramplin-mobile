@@ -23,6 +23,8 @@ const textVariants = cva(
         h3Digits: cn('text-h3 font-family-digits'),
         h4: cn('text-h4'),
         h4Digits: cn('text-h4 font-family-digits'),
+        h5: cn('text-h5'),
+        h5Digits: cn('text-h5 font-family-digits'),
         body: cn('text-body font-family-regular-medium'),
         small: cn('text-small font-family-regular-medium'),
         smallBold: cn('text-small-bold font-family-bold-light'),
@@ -49,10 +51,12 @@ const ROLE: Partial<Record<TextVariant, Role>> = {
   h2: 'heading',
   h3: 'heading',
   h4: 'heading',
+  h5: 'heading',
   h1Digits: 'heading',
   h2Digits: 'heading',
   h3Digits: 'heading',
   h4Digits: 'heading',
+  h5Digits: 'heading',
   blockquote: Platform.select({ web: 'blockquote' as Role }),
   code: Platform.select({ web: 'code' as Role }),
 }
@@ -62,10 +66,12 @@ const ARIA_LEVEL: Partial<Record<TextVariant, string>> = {
   h2: '2',
   h3: '3',
   h4: '4',
+  h5: '5',
   h1Digits: '1',
   h2Digits: '2',
   h3Digits: '3',
   h4Digits: '4',
+  h5Digits: '5',
 }
 
 const TextClassContext = React.createContext<string | undefined>(undefined)
