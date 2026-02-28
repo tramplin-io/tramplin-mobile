@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
-import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 import { router, Stack } from 'expo-router'
 import Toast from 'react-native-toast-message'
-import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
-import { Container } from '@/components/ui/Container'
-import { BackButton } from '@/components/general/BackButton'
-import { Text } from '@/components/ui/text'
-import { Input } from '@/components/ui/input'
-import { ImportantIcon, BigCupIcon, PointsIcon } from '@/components/icons/icons'
-import { useProfileStore } from '@/lib/stores/profile-store'
-import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
+
 import { ScreenWrapper } from '@/components/general'
+import { BackButton } from '@/components/general/BackButton'
+import { BigCupIcon, ImportantIcon, PointsIcon } from '@/components/icons/icons'
+import { Button } from '@/components/ui'
+import { Container } from '@/components/ui/Container'
+import { Input } from '@/components/ui/input'
+import { Text } from '@/components/ui/text'
+import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
+import { useProfileStore } from '@/lib/stores/profile-store'
+import { cn } from '@/lib/utils'
 
 function ContactRow({
   label,
@@ -137,7 +138,7 @@ export default function SubscriptionScreen() {
           </Text>
         </View>
         <Stack.Screen options={{ title: 'Subscription' }} />
-        <ScrollView contentContainerClassName="px-6 py-8" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="px-4 py-8" showsVerticalScrollIndicator={false}>
           <View className="gap-6">
             <View className="gap-4">
               <ContactRow
