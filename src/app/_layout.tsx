@@ -1,29 +1,30 @@
 import '../global.css'
 
-import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-
-import { ThemeProvider } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Slot, Stack, usePathname } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import * as SplashScreen from 'expo-splash-screen'
-import Toast from 'react-native-toast-message'
+import { StyleSheet, View } from 'react-native'
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { ThemeProvider } from '@react-navigation/native'
 import { PortalHost } from '@rn-primitives/portal'
-import { AppProviders } from '@/components/app-providers'
-import { AuthGuard } from '@/components/auth-guard'
-import { useAppTheme } from '@/components/app-theme'
-import { initializeApi, queryClient } from '@/lib/api'
-import { setNotificationHandler } from '@/lib/notifications/utils'
+import * as Sentry from '@sentry/react-native'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { Slot, Stack, usePathname } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
+
+import { AppProviders } from '@/components/app-providers'
+import { useAppTheme } from '@/components/app-theme'
+import { AuthGuard } from '@/components/auth-guard'
 import { Header, RoutePathOverlay } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useDeveloperStore } from '@/lib/stores/developer-store'
+import { initializeApi, queryClient } from '@/lib/api'
+import { setNotificationHandler } from '@/lib/notifications/utils'
 import { initSentry } from '@/lib/sentry'
-import * as Sentry from '@sentry/react-native'
+import { useDeveloperStore } from '@/lib/stores/developer-store'
+import { useLogStore } from '@/lib/stores/log-store'
+
 // import * as NavigationBar from 'expo-navigation-bar'
 
 function AppHeader() {
@@ -77,6 +78,23 @@ function RootLayout() {
 
   // console.log('visibility', visibility)
   // console.log('color', color)
+
+  // For testing. DELETE THIS.
+  // const originalLog = console.log
+  // console.log = (...args) => {
+  //   const combinedMessage = args.join(' ')
+  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+  //     originalLog(...args)
+  //     return
+  //   }
+
+  //   useLogStore.getState().addLog({
+  //     type: 'log',
+  //     message: combinedMessage,
+  //     timestamp: new Date().toISOString(),
+  //   })
+  //   originalLog(...args)
+  // }
 
   const hideHeader = usePathname() === '/greeting'
 

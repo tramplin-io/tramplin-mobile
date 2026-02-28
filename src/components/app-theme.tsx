@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { DarkTheme, DefaultTheme } from '@react-navigation/native'
 import { useUniwind } from 'uniwind'
+
 import { useThemeStore } from '@/hooks/useThemeStore'
 
 /**
