@@ -34,6 +34,7 @@ const createIconComponent = (name: string, children: React.ReactNode) => {
     ({ size = 24, className, color, ...props }, ref) => {
       const themeColor = useCSSVariable('--color-content-primary') as string | undefined
       const resolvedColor = color ?? (className ? undefined : themeColor)
+
       return (
         <Svg
           ref={ref}
@@ -204,8 +205,7 @@ export const CounterClockwiseIcon = createIconComponent(
 export const CrossIcon = createIconComponent(
   'CrossIcon',
   <>
-
-    <Path d="M7.5 7.64648L17.5 17.6465" stroke="currentColor"  fill="none" />
+    <Path d="M7.5 7.64648L17.5 17.6465" stroke="currentColor" fill="none" />
     <Line x1="17.3536" y1="7.35355" x2="7.35355" y2="17.3536" stroke="currentColor" />
   </>,
 )
