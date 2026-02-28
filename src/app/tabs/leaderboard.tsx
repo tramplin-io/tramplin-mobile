@@ -1,21 +1,22 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from 'react'
-import { View, ScrollView, Pressable, Linking } from 'react-native'
-import { Container } from '@/components/ui/Container'
+import { View, ScrollView, Pressable, Linking, RefreshControl } from 'react-native'
+import { router } from 'expo-router'
 import { Pagination } from '@/components/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useListPublicWinLeaders, useListPublicStakeLeaders } from '@/lib/api/generated/restApi'
 import type { Win, DrawType } from '@/lib/api/generated/restApi.schemas'
 import { ellipsify } from '@/utils/format'
-import { getExplorerUrl } from '@/utils/wallet'
-import { ExpandIcon, SolanaIcon } from '@/components/icons/icons'
+import { getSolscanAccountUrl } from '@/utils/wallet'
+import { ExpandIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 import { useCSSVariable } from 'uniwind'
 import { DashboardHeader } from '@/components/main'
 import { ScreenWrapper } from '@/components/general'
 
-const PAGE_SIZE = 5
 const CLUSTER = (process.env.EXPO_PUBLIC_SOLANA_NETWORK as 'devnet' | 'mainnet-beta' | 'testnet') ?? 'devnet'
+
+const PAGE_SIZE = 5
 
 type TabId = 'winners' | 'stakers'
 
@@ -82,16 +83,31 @@ function LeaderboardRow({
   stake,
   showReward,
   drawType,
+  epochOrSlot,
+  isStakers,
 }: Readonly<{
   walletAddress: string
   reward?: string
   stake: number
   showReward: boolean
   drawType?: DrawType
+  epochOrSlot?: string
+  isStakers?: boolean
 }>) {
-  const handleOpenExplorer = useCallback(() => {
-    const url = getExplorerUrl('address', walletAddress, CLUSTER)
-    void Linking.openURL(url)
+  const handleOpenDetail = useCallback(() => {
+    router.push({
+      pathname: '/screens/leaderboard-detail',
+      params: {
+        walletAddress,
+        epochOrSlot: epochOrSlot ?? '',
+        drawType: drawType ?? '',
+        isWinner: showReward ? 'true' : 'false',
+      },
+    })
+  }, [walletAddress, epochOrSlot, drawType, showReward])
+
+  const handleOpenSolscan = useCallback(() => {
+    void Linking.openURL(getSolscanAccountUrl(walletAddress, CLUSTER))
   }, [walletAddress])
 
   const rewardStakeTextClass = drawTypeTextClass(drawType)
@@ -118,12 +134,16 @@ function LeaderboardRow({
         <TokenStakeIcon drawType={drawType} />
       </View>
       <Pressable
-        onPress={handleOpenExplorer}
+        onPress={isStakers ? handleOpenSolscan : handleOpenDetail}
         className="ml-0 p-2 -m-2"
         hitSlop={8}
-        accessibilityLabel="Open in explorer"
+        accessibilityLabel={isStakers ? 'Open in Solscan' : 'View details'}
       >
-        <ExpandIconComponent drawType={drawType} />
+        {isStakers ? (
+          <LeaveIcon size={20} className="text-content-primary" />
+        ) : (
+          <ExpandIconComponent drawType={drawType} />
+        )}
       </Pressable>
     </View>
   )
@@ -191,6 +211,7 @@ function LeaderboardTable({
                 stake={win.stake}
                 showReward
                 drawType={win.drawType}
+                epochOrSlot={win.epochOrSlot}
               />
             )
           }
@@ -201,6 +222,7 @@ function LeaderboardTable({
               walletAddress={staker.walletAddress}
               stake={staker.stake}
               showReward={false}
+              isStakers
             />
           )
         })}
@@ -217,8 +239,10 @@ export default function LeaderboardTab() {
   const [winnersPage, setWinnersPage] = useState(0)
   const [stakersPage, setStakersPage] = useState(0)
 
-  const { data: winsData, isLoading: isLoadingWins } = useListPublicWinLeaders()
-  const { data: stakersData, isLoading: isLoadingStakers } = useListPublicStakeLeaders()
+  const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
+  
+  const { data: winsData, isLoading: isLoadingWins, refetch: refetchWins } = useListPublicWinLeaders()
+  const { data: stakersData, isLoading: isLoadingStakers, refetch: refetchStakers } = useListPublicStakeLeaders()
 
   const winsList = useMemo(() => (Array.isArray(winsData) ? winsData : []), [winsData])
   const stakersList = useMemo(() => {
@@ -226,15 +250,29 @@ export default function LeaderboardTab() {
     return Array.isArray(stakersData) ? stakersData : [stakersData]
   }, [stakersData])
 
+
   const handleTabChange = useCallback((value: string) => {
     setTab(value as TabId)
   }, [])
+
+  const [refreshing, setRefreshing] = useState(false)
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true)
+    await Promise.all([refetchWins(), refetchStakers()])
+    setRefreshing(false)
+  }, [refetchWins, refetchStakers])
 
   return (
     <ScreenWrapper>
       <ScrollView
         contentContainerClassName="px-6 pb-30 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={handleRefresh} 
+          progressViewOffset={40}
+          colors={[colorBrandPrimary]}
+          />}
       >
         <DashboardHeader title="Community Stats" className="mb-6" />
 
