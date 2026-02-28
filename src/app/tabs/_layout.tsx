@@ -1,10 +1,8 @@
+import { useCallback, useState } from 'react'
+import { Pressable, StyleSheet, View, type PressableProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Tabs } from 'expo-router'
-import { useCallback, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Pressable, type PressableProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 import { useCSSVariable } from 'uniwind'
 
 import {
@@ -164,7 +162,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="leaderboard"
           options={{
-            title: 'Leadboard',
+            title: 'Leaderboard',
             tabBarIcon: LeaderTabIcon,
           }}
         />
