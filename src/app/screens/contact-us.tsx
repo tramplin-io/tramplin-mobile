@@ -85,7 +85,9 @@ export default function ContactUsScreen() {
     <ScreenWrapper scrollable keyboardAvoiding padded>
       <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
         <BackButton onPress={() => router.back()} className="mb-0 z-10" />
-        <Text className="text-h4 text-center text-content-primary w-full -ml-10">Contact Us</Text>
+        <Text variant="h4" className="text-center w-full -ml-10">
+          Contact Us
+        </Text>
       </View>
       <Stack.Screen options={{ title: 'Contact Us' }} />
       <ScrollView

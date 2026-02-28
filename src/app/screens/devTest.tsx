@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, Button as RNButton, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, ScrollView, Button as RNButton, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { Container } from '@/components/ui/Container'
@@ -16,6 +16,7 @@ import { useProfileStore } from '@/lib/stores/profile-store'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { getExpoPushToken } from '@/lib/notifications/utils'
 import { BackButton } from '@/components/general/BackButton'
+import { Text } from '@/components/ui/text'
 
 /**
  * Profile Tab — user info + settings menu.
@@ -135,7 +136,9 @@ export default function ProfileTab() {
     <Container safe={false}>
       <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
         <BackButton onPress={() => router.back()} className="mb-0 z-10" />
-        <Text className="text-h4 text-center text-content-primary w-full -ml-10">DEV PAGE</Text>
+        <Text variant="h4" className="text-center w-full -ml-10">
+          DEV PAGE
+        </Text>
       </View>
       <ScrollView contentContainerClassName="px-6 pt-2 pb-20" showsVerticalScrollIndicator={false}>
         {/* Header */}
