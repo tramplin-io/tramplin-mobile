@@ -1,18 +1,20 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from 'react'
-import { View, ScrollView, Pressable, Linking, RefreshControl } from 'react-native'
+import { Linking, Pressable, RefreshControl, ScrollView, View } from 'react-native'
 import { router } from 'expo-router'
-import { Pagination } from '@/components/ui'
+import { useCSSVariable } from 'uniwind'
+
+import { ScreenWrapper } from '@/components/general'
+import { ExpandIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
+import { DashboardHeader } from '@/components/main'
+import { Card, Pagination } from '@/components/ui'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useListPublicWinLeaders, useListPublicStakeLeaders } from '@/lib/api/generated/restApi'
-import type { Win, DrawType } from '@/lib/api/generated/restApi.schemas'
+import { Text } from '@/components/ui/text'
+import { useListPublicStakeLeaders, useListPublicWinLeaders } from '@/lib/api/generated/restApi'
+import type { DrawType, Win } from '@/lib/api/generated/restApi.schemas'
+import { cn } from '@/lib/utils'
 import { ellipsify } from '@/utils/format'
 import { getSolscanAccountUrl } from '@/utils/wallet'
-import { ExpandIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
-import { Text } from '@/components/ui/text'
-import { cn } from '@/lib/utils'
-import { useCSSVariable } from 'uniwind'
-import { DashboardHeader } from '@/components/main'
-import { ScreenWrapper } from '@/components/general'
 
 const CLUSTER = (process.env.EXPO_PUBLIC_SOLANA_NETWORK as 'devnet' | 'mainnet-beta' | 'testnet') ?? 'devnet'
 
@@ -195,8 +197,23 @@ function LeaderboardTable({
         </View>
       )}
 
-      {isLoading && <Text className="text-content-secondary py-8">Loading…</Text>}
-      {!isLoading && pageItems.length === 0 && <Text className="text-content-secondary py-8">No entries yet.</Text>}
+      {isLoading && (
+        <View className="gap-0">
+          {Array.from({ length: PAGE_SIZE }, (_, i) => `skeleton-${i}`).map((id) => (
+            <View key={id} className="flex-row items-center border-b border-border-quaternary py-4 gap-2">
+              <Skeleton className="h-5 flex-1 rounded" />
+              {isWinners && <Skeleton className="h-5 w-14 rounded" />}
+              <Skeleton className="h-5 w-14 rounded" />
+              <Skeleton className="h-5 w-8 rounded" />
+            </View>
+          ))}
+        </View>
+      )}
+      {!isLoading && pageItems.length === 0 && (
+        <Card className="py-8">
+          <Text className="text-content-secondary text-center">No entries yet.</Text>
+        </Card>
+      )}
       {!isLoading &&
         pageItems.length > 0 &&
         pageItems.map((item) => {
@@ -240,7 +257,7 @@ export default function LeaderboardTab() {
   const [stakersPage, setStakersPage] = useState(0)
 
   const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
-  
+
   const { data: winsData, isLoading: isLoadingWins, refetch: refetchWins } = useListPublicWinLeaders()
   const { data: stakersData, isLoading: isLoadingStakers, refetch: refetchStakers } = useListPublicStakeLeaders()
 
@@ -249,7 +266,6 @@ export default function LeaderboardTab() {
     if (!stakersData) return []
     return Array.isArray(stakersData) ? stakersData : [stakersData]
   }, [stakersData])
-
 
   const handleTabChange = useCallback((value: string) => {
     setTab(value as TabId)
@@ -267,12 +283,14 @@ export default function LeaderboardTab() {
       <ScrollView
         contentContainerClassName="px-6 pb-30 py-8 bg-fill-secondary flex-grow"
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl 
-          refreshing={refreshing} 
-          onRefresh={handleRefresh} 
-          progressViewOffset={40}
-          colors={[colorBrandPrimary]}
-          />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            progressViewOffset={40}
+            colors={[colorBrandPrimary]}
+          />
+        }
       >
         <DashboardHeader title="Community Stats" className="mb-6" />
 
