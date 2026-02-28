@@ -1,15 +1,16 @@
 import { useCallback, useRef, useState } from 'react'
-import { View, FlatList, useWindowDimensions } from 'react-native'
+import { FlatList, useWindowDimensions, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import { useCSSVariable } from 'uniwind'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Container } from '@/components/ui/Container'
-import { Button } from '@/components/ui/button'
-import { Text } from '@/components/ui/text'
-import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/components/greeting/slides'
-import { HeaderGrating } from '@/components/general'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
+import { useCSSVariable } from 'uniwind'
+
+import { HeaderGrating } from '@/components/general'
+import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/components/greeting/slides'
+import { Button } from '@/components/ui/button'
+import { Container } from '@/components/ui/Container'
+import { Text } from '@/components/ui/text'
 import { useWalletActions } from '@/hooks/useWalletActions'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { signatureToBase58 } from '@/utils/format'
@@ -54,15 +55,12 @@ export default function GreetingScreen() {
 
   const handleLaunchApp = useCallback(async () => {
     setError(null)
-    console.log('handleLaunchApp')
-    console.log('handleLaunchApp - account', account)
 
     if (!account) {
       setConnecting(true)
       try {
         await connect()
       } catch (err) {
-        console.log('handleLaunchApp - err', err)
         Toast.show({
           type: 'error',
           text1: err instanceof Error ? err.message : 'Failed to connect wallet',
@@ -75,10 +73,8 @@ export default function GreetingScreen() {
 
     setSigningIn(true)
 
-    console.log('handleLaunchApp - 2')
     try {
       const result = await signLoginMessage()
-      console.log('handleLaunchApp - result', result)
       if (!result) {
         Toast.show({ type: 'error', text1: 'Signing failed' })
         return

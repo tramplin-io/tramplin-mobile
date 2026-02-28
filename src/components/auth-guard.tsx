@@ -1,10 +1,11 @@
-import type { PropsWithChildren } from 'react'
-import { useEffect } from 'react'
+import { useEffect, type PropsWithChildren } from 'react'
 import { useRouter, useSegments } from 'expo-router'
-import { useAuthStore } from '@/lib/stores/auth-store'
-import { useProfileStore } from '@/lib/stores/profile-store'
+
 import { useNotificationObserver, useSystemPushPermission } from '@/lib/notifications/hooks'
 import { setSentryUser } from '@/lib/sentry'
+import { useAuthStore } from '@/lib/stores/auth-store'
+import { useProfileStore } from '@/lib/stores/profile-store'
+
 import { ForceUpdateModal, UpdateAvailableModal } from './general'
 
 // import { ForceUpdateModal } from '@/components/ForceUpdateModal'
@@ -63,10 +64,6 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
     const firstSegment = segments[0]
     const inAuthGroup = firstSegment === 'auth'
     const inGreetingGroup = firstSegment === 'greeting'
-
-    console.log('isAuthenticated', isAuthenticated)
-
-    console.log('segments', segments)
 
     if (isAuthenticated) {
       if (inAuthGroup || inGreetingGroup) {

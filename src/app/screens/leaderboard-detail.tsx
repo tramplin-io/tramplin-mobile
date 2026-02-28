@@ -41,8 +41,6 @@ export default function LeaderboardDetailScreen() {
     query: { enabled: isWinnerEntry },
   })
 
-  console.log('leaders', leaders)
-
   const win = leaders.find((w) => w.walletAddress === walletAddress && (!epochOrSlot || w.epochOrSlot === epochOrSlot))
   const isGold = drawType === 'big' || win?.drawType === 'big'
   const insets = useSafeAreaInsets()
