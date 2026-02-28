@@ -1,20 +1,20 @@
 import { useCallback, useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 import { router, Stack } from 'expo-router'
-import Toast from 'react-native-toast-message'
 import { Send } from 'lucide-react-native'
+import Toast from 'react-native-toast-message'
 
-import { BackButton } from '@/components/general/BackButton'
 import { ScreenWrapper } from '@/components/general'
+import { BackButton } from '@/components/general/BackButton'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, type Option } from '@/components/ui/select'
 import { Text } from '@/components/ui/text'
 import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
 import { CONTACT_REASONS } from '@/constants/profile'
 import { useContactUs } from '@/lib/api/generated/restApi'
 import type { ContactUsInput } from '@/lib/api/generated/restApi.schemas'
+import { cn } from '@/lib/utils'
 
 function parseSelectValue(v: unknown): string {
   if (typeof v === 'string') return v
@@ -67,22 +67,20 @@ export default function ContactUsScreen() {
       await sendContactUs({ data: payload })
       Toast.show({
         type: 'success',
-        text1: 'Contact Us',
-        text2: 'Your message has been sent successfully.',
+        text1: 'Your message has been sent successfully.',
       })
       resetForm()
     } catch {
       Toast.show({
         type: 'error',
-        text1: 'Contact Us',
-        text2: 'Failed to send message. Please try again.',
+        text1: 'Failed to send message. Please try again.',
       })
     }
   }, [title, message, reason, sendContactUs, resetForm])
 
   // TODO: Update design of components to match the new design system
   return (
-    <ScreenWrapper scrollable keyboardAvoiding padded>
+    <ScreenWrapper>
       <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
         <BackButton onPress={() => router.back()} className="mb-0 z-10" />
         <Text variant="h4" className="text-center w-full -ml-10">
@@ -90,11 +88,8 @@ export default function ContactUsScreen() {
         </Text>
       </View>
       <Stack.Screen options={{ title: 'Contact Us' }} />
-      <ScrollView
-        contentContainerClassName="px-6 pb-8"
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
+
+      <ScreenWrapper scrollable keyboardAvoiding={true} contentClassName="px-4 pb-8">
         <Text variant="body" className=" mb-6">
           Have a question or feedback? We would love to hear from you.
         </Text>
@@ -104,20 +99,19 @@ export default function ContactUsScreen() {
           <View className="gap-2">
             <Text variant="body">REASON</Text>
             <Select
-              value={reason ? (reason as unknown as Option) : undefined}
+              value={reason ? (CONTACT_REASONS.find((r) => r.value === reason) as Option) : undefined}
               onValueChange={(v) => setReason(parseSelectValue(v))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Choose a reason" />
               </SelectTrigger>
-              <SelectContent className="bg-fill-tertiary border-border-tertiary ">
+              <SelectContent className="bg-fill-tertiary gap-1 py-3">
                 {CONTACT_REASONS.map((r) => (
                   <SelectItem
                     key={r.value}
                     value={r.value}
                     label={r.label}
-                    className="w-full"
-                    // className="text-[16px] leading-[18px] text-content-primary cursor-pointer hover:bg-fill-secondary focus:bg-fill-secondary"
+                    className={cn('w-full py-2 pl-3', reason === r.value && 'bg-accent')}
                   />
                 ))}
               </SelectContent>
@@ -167,7 +161,7 @@ export default function ContactUsScreen() {
             </Button>
           </View>
         </View>
-      </ScrollView>
+      </ScreenWrapper>
     </ScreenWrapper>
   )
 }
