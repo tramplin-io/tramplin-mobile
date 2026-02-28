@@ -49,7 +49,7 @@ export const ScreenWrapper = ({
   const Container = hasSafeArea ? SafeAreaView : View
 
   return (
-    <Container className={cn('flex-1 bg-fill-secondary', className)} {...props} edges={edges}>
+    <Container className={cn('flex-1 bg-fill-primary', className)} {...props} edges={edges}>
       {keyboardAvoiding ? (
         <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           {wrappedContent}
