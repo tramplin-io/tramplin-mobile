@@ -1,13 +1,15 @@
-import { View, Text, Pressable } from 'react-native'
-import { useRouter, usePathname, useNavigation } from 'expo-router'
+import { Pressable, Text, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useCSSVariable } from 'uniwind'
-import { Logo, ThreeDotsIcon } from '@/components/icons'
-import { UserIcon } from './UserIcon'
-import { formatWalletAddress } from '@/utils/wallet'
+import { useNavigation, usePathname, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useCSSVariable } from 'uniwind'
+
+import { Logo, ThreeDotsIcon } from '@/components/icons'
 import { cn } from '@/lib/utils'
+import { formatWalletAddress } from '@/utils/wallet'
+
+import { UserIcon } from './UserIcon'
 
 export type HeaderVariant = 'onboarding' | 'app'
 
@@ -33,8 +35,8 @@ export function Header({ variant, showLogo = true }: Readonly<HeaderProps>) {
   const fillPrimary = useCSSVariable('--color-fill-primary')
   const fillFade = useCSSVariable('--color-fill-fade')
 
-  const contentPrimary = useCSSVariable('--color-content-primary')
-  const borderPrimary = useCSSVariable('--color-border-primary')
+  const contentPrimary = useCSSVariable('--color-content-primary') as string
+  const borderPrimary = useCSSVariable('--color-border-primary') as string
 
   const addressStr = account?.address?.toString()
   const isApp = variant === 'app'
@@ -84,7 +86,7 @@ export function Header({ variant, showLogo = true }: Readonly<HeaderProps>) {
             className="flex-row items-center gap-1.5 active:opacity-80"
             hitSlop={8}
           >
-            <ThreeDotsIcon size={24} />
+            <ThreeDotsIcon size={24} color={contentPrimary} />
             <Text className="text-content-primary text-sm font-bold" style={{ lineHeight: 18 }} numberOfLines={1}>
               {formatWalletAddress(addressStr)}
             </Text>
