@@ -65,7 +65,7 @@ function SegmentButton({
       onPress={onPress}
       className={cn('px-3 gap-0', isSelected && 'border border-content-primary bg-fill-tertiary')}
     >
-      <Icon size={24} className={isSelected ? 'text-content-primary' : 'text-content-tertiary'} />
+      <Icon size={24} />
       <Text variant="body" className={isSelected ? 'text-content-primary' : 'text-content-tertiary'}>
         {label}
       </Text>

@@ -218,7 +218,7 @@ export function UnstakeForm({ onClose }: Props) {
             isAboveMax && 'border-critical-secondary bg-[linear-gradient(to_bottom,#E7E7E7,#FF9494)]',
           )}
         >
-          <Text variant="smallBold" className="truncate">
+          <Text variant="smallBold" className="truncate text-content-primary">
             MAX {maxSol > 0 ? lamportsToSol(BigInt(totalLamports)) : '0'}
           </Text>
           <SolanaIcon size={24} />

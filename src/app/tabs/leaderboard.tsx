@@ -141,11 +141,7 @@ function LeaderboardRow({
         hitSlop={8}
         accessibilityLabel={isStakers ? 'Open in Solscan' : 'View details'}
       >
-        {isStakers ? (
-          <LeaveIcon size={20} className="text-content-primary" />
-        ) : (
-          <ExpandIconComponent drawType={drawType} />
-        )}
+        {isStakers ? <LeaveIcon size={20} /> : <ExpandIconComponent drawType={drawType} />}
       </Pressable>
     </View>
   )
