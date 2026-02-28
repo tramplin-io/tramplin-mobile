@@ -1,20 +1,15 @@
 import { useCallback, useState } from 'react'
-import type { Rpc, SolanaRpcApi } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 
-import { prepareUnstakeInstructions } from '@/lib/solana/unstake'
-import type { UserStakeAccount } from '@/lib/solana/unstake'
+import { prepareUnstakeInstructions, type UserStakeAccount } from '@/lib/solana/unstake'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { signatureToBase58 } from '@/utils/format'
+import { rpc } from '@/utils/solana'
 import { isCancellationError } from '@/utils/wallet'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-interface UseUnstakeOptions {
-  rpc?: Rpc<SolanaRpcApi> | null
-}
 
 interface UnstakeParams {
   /** Amount to deactivate, in lamports */
@@ -34,16 +29,13 @@ interface UnstakeResult {
 // Hook
 // ---------------------------------------------------------------------------
 
-export function useUnstake({ rpc }: UseUnstakeOptions) {
+export function useUnstake() {
   const { account, getTransactionSigner, signAndSendTransaction } = useMobileWallet()
   const session = useAuthStore((s) => s.session)
   const [isLoading, setIsLoading] = useState(false)
 
   const unstake = useCallback(
     async ({ amountLamports, stakeAccounts }: UnstakeParams): Promise<UnstakeResult> => {
-      if (!rpc) {
-        throw new Error('RPC not ready')
-      }
       if (!account) {
         throw new Error('Wallet not connected')
       }
@@ -66,7 +58,6 @@ export function useUnstake({ rpc }: UseUnstakeOptions) {
         console.log('unstake - payerSigner:', payerSigner)
 
         const { transaction, deactivatedAccounts } = await prepareUnstakeInstructions({
-          rpc,
           payerSigner,
           latestBlockhash: latest.value,
           stakeAccounts,
@@ -99,7 +90,7 @@ export function useUnstake({ rpc }: UseUnstakeOptions) {
         setIsLoading(false)
       }
     },
-    [account, rpc, session, getTransactionSigner, signAndSendTransaction],
+    [account, session, getTransactionSigner, signAndSendTransaction],
   )
 
   return {

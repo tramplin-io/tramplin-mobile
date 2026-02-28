@@ -2,8 +2,16 @@ export { useThemeStore } from './useThemeStore'
 export { useWalletBalance } from './useWalletBalance'
 export { useWalletActions } from './useWalletActions'
 export { useCopyToClipboard } from './useCopyToClipboard'
-export { useUnstake } from './useUnstake'
 export { useUserStakeAccounts } from './useUserStakeAccounts'
+
+export { useStake } from './useStake'
+export { useUnstake } from './useUnstake'
+
+export { useDrawConfig } from './useDrawConfig'
+export { useDrawWins } from './useDrawWins'
+export { useClaimPrize } from './useClaimPrize'
+export { useEpoch } from './useEpoch'
+export { useProgramAccounts } from './useProgramAccounts'
 
 /**
  * TODO (Phase 4 — State & Data): Create these new hooks/stores:

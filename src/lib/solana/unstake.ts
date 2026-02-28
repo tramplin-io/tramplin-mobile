@@ -11,7 +11,9 @@ import {
 } from '@solana/kit'
 import { getCreateAccountInstruction } from '@solana-program/system'
 import { getDeactivateInstruction, getSplitInstruction, getWithdrawInstruction, STAKE_PROGRAM_ADDRESS } from '@solana-program/stake'
-import type { Address, Instruction, Lamports, Rpc, SolanaRpcApi, Transaction, TransactionSigner } from '@solana/kit'
+import type { Address, Instruction, Lamports, Transaction, TransactionSigner } from '@solana/kit'
+
+import { rpc } from '@/utils/solana'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -37,7 +39,6 @@ export interface UserStakeAccount {
 }
 
 export interface PrepareUnstakeInstructionsParams {
-  rpc: Rpc<SolanaRpcApi>
   payerSigner: TransactionSigner
   latestBlockhash: LatestBlockhash
   stakeAccounts: UserStakeAccount[]
@@ -50,7 +51,6 @@ export interface PrepareUnstakeResult {
 }
 
 export interface PrepareWithdrawInstructionParams {
-  rpc: Rpc<SolanaRpcApi>
   payerSigner: TransactionSigner
   latestBlockhash: LatestBlockhash
   stakeAccountAddress: string
@@ -70,7 +70,7 @@ const normalizeRpcBalance = (result: unknown): bigint => {
   return BigInt(Number.isFinite(raw) ? raw : 0)
 }
 
-async function fetchRentExempt(rpc: Rpc<SolanaRpcApi>): Promise<bigint> {
+async function fetchRentExempt(): Promise<bigint> {
   const result = await rpc.getMinimumBalanceForRentExemption(STAKE_ACCOUNT_SPACE).send()
   return normalizeRpcBalance(result)
 }
@@ -93,7 +93,6 @@ async function fetchRentExempt(rpc: Rpc<SolanaRpcApi>): Promise<bigint> {
  * (wallet signature + broadcast).
  */
 export async function prepareUnstakeInstructions({
-  rpc,
   payerSigner,
   latestBlockhash,
   stakeAccounts,
@@ -110,7 +109,7 @@ export async function prepareUnstakeInstructions({
     throw new Error(`Insufficient staked balance. Requested: ${amountLamports}, available: ${totalStaked}`)
   }
 
-  const rentExempt = await fetchRentExempt(rpc)
+  const rentExempt = await fetchRentExempt()
 
   const walletBalance = normalizeRpcBalance(await rpc.getBalance(payerSigner.address).send())
   if (walletBalance < rentExempt) {
@@ -212,7 +211,6 @@ export async function prepareUnstakeInstructions({
  * Call this after the deactivation epoch has elapsed.
  */
 export async function prepareWithdrawInstruction({
-  rpc,
   payerSigner,
   latestBlockhash,
   stakeAccountAddress,
