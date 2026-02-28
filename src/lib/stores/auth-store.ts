@@ -1,14 +1,18 @@
-import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.schemas'
-import { createSessionByUserWallet, deleteMySession, readMySession } from '@/lib/api/generated/restApi'
-
-import { tokenStore } from '@/lib/api/token-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { useProfileStore } from './profile-store'
+import { queryClient } from '@/lib/api'
+import { createSessionByUserWallet, deleteMySession, readMySession } from '@/lib/api/generated/restApi'
+import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.schemas'
+import { tokenStore } from '@/lib/api/token-store'
 
 import { getExpoPushToken } from '../notifications/utils'
+import { useApiConfigStore } from './api-config-store'
+import { useDeveloperStore } from './developer-store'
+import { useLogStore } from './log-store'
+import { useProfileStore } from './profile-store'
+import { useUserStore } from './user-store'
 
 type AuthState = {
   token: string | null
@@ -180,6 +184,12 @@ export const useAuthStore = create<AuthState>()(
 
           resetProfile()
 
+          useUserStore.getState().reset()
+          useApiConfigStore.getState().resetToDefaultUrl()
+          useDeveloperStore.getState().reset()
+          useLogStore.getState().clearLogs()
+          queryClient.clear()
+
           if (opts?.disconnect != null && opts?.router != null) {
             void opts.disconnect().then(() => opts.router?.replace('/'))
           }
@@ -196,6 +206,11 @@ export const useAuthStore = create<AuthState>()(
           })
           setUserProfile(null)
           resetProfile()
+          useUserStore.getState().reset()
+          useApiConfigStore.getState().resetToDefaultUrl()
+          useDeveloperStore.getState().reset()
+          useLogStore.getState().clearLogs()
+          queryClient.clear()
           if (opts?.disconnect != null && opts?.router != null) {
             void opts.disconnect().then(() => opts.router?.replace('/'))
           }
@@ -217,6 +232,11 @@ export const useAuthStore = create<AuthState>()(
           })
           setUserProfile(null)
           resetProfile()
+          useUserStore.getState().reset()
+          useApiConfigStore.getState().resetToDefaultUrl()
+          useDeveloperStore.getState().reset()
+          useLogStore.getState().clearLogs()
+          queryClient.clear()
         } catch (error) {
           console.error('Error logging out:', error)
           tokenStore.clearToken()
@@ -230,6 +250,11 @@ export const useAuthStore = create<AuthState>()(
           })
           setUserProfile(null)
           resetProfile()
+          useUserStore.getState().reset()
+          useApiConfigStore.getState().resetToDefaultUrl()
+          useDeveloperStore.getState().reset()
+          useLogStore.getState().clearLogs()
+          queryClient.clear()
         }
       },
     }),

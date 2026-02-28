@@ -12,6 +12,7 @@ type UserState = {
   setRegisteredWith: (provider: RegistrationMethod) => void
   clearRegisteredWith: () => void
   setOnboardingStartDate: (isNull: boolean) => void
+  reset: () => void
 }
 
 export const useUserStore = create<UserState>()(
@@ -30,6 +31,10 @@ export const useUserStore = create<UserState>()(
 
       setOnboardingStartDate: (isNull: boolean) => {
         set({ onboardingStartDate: isNull ? null : new Date() })
+      },
+
+      reset: () => {
+        set({ registeredWith: null, onboardingStartDate: null })
       },
     }),
     {

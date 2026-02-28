@@ -5,6 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 type DeveloperState = {
   isRoutePathOverlayEnabled: boolean
   setIsRoutePathOverlayEnabled: (enabled: boolean) => void
+  reset: () => void
 }
 
 export const useDeveloperStore = create<DeveloperState>()(
@@ -12,6 +13,8 @@ export const useDeveloperStore = create<DeveloperState>()(
     (set) => ({
       isRoutePathOverlayEnabled: false,
       setIsRoutePathOverlayEnabled: (enabled: boolean) => set({ isRoutePathOverlayEnabled: enabled }),
+
+      reset: () => set({ isRoutePathOverlayEnabled: false }),
     }),
     {
       name: 'developer-store',
