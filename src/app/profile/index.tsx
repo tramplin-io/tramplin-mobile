@@ -1,14 +1,13 @@
-import { router } from 'expo-router'
 import { useCallback, useState } from 'react'
 import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
-import Toast from 'react-native-toast-message'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import { useDeleteMyProfile } from '@/lib/api/generated/restApi'
-import { useAuthStore } from '@/lib/stores/auth-store'
+import { router } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 
-import { Button } from '@/components/ui/button'
-import { Text } from '@/components/ui/text'
+import { ScreenWrapper } from '@/components/general'
+import { DeveloperPanel } from '@/components/profile/DeveloperPanel'
+import { Card } from '@/components/ui'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -16,13 +15,14 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui'
-import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
-import { ScreenWrapper } from '@/components/general'
+import { Text } from '@/components/ui/text'
 import { APP_VERSION, BUILD_NUMBER } from '@/constants/appConstants'
-import { DeveloperPanel } from '@/components/profile/DeveloperPanel'
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
+import { useDeleteMyProfile } from '@/lib/api/generated/restApi'
+import { useAuthStore } from '@/lib/stores/auth-store'
 
 interface MenuSectionItem {
   title: string
@@ -233,6 +233,15 @@ export default function ProfileScreen() {
     },
   ]
 
+  // const systemItems: MenuSectionItem[] = [
+  //   {
+  //     title: 'System settings',
+  //     onPress: () => {
+  //       router.push('/screens/system-settings')
+  //     },
+  //   },
+  // ]
+
   const helpItems: MenuSectionItem[] = [
     {
       title: 'Contact Us',
@@ -305,6 +314,7 @@ export default function ProfileScreen() {
       >
         <View className="gap-6 pt-2">
           <Section title="GENERAL" items={generalItems} />
+          {/* <Section title="SYSTEM" items={systemItems} /> */}
           <Section title="NEED HELP?" items={helpItems} />
           <Section title="LEGAL" items={legalItems} />
 
