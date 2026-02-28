@@ -1,24 +1,26 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native'
+import type { Rpc, SolanaRpcApi } from '@solana/kit'
+import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { useCSSVariable } from 'uniwind'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
+import { AppConfig } from '@/constants/app-config'
 import { LAMPORTS_PER_SOL, MIN_STAKE_SOL, MIN_SUBSEQUENT_STAKE_SOL } from '@/constants/solana'
-import type { BalanceInfo } from '@/types/wallet'
 import { useStake } from '@/hooks/useStake'
 import { useWalletBalance } from '@/hooks/useWalletBalance'
-import { getSolscanTxUrl } from '@/utils/wallet'
-import type { Rpc, SolanaRpcApi } from '@solana/kit'
-import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native'
-import { CheckIcon, LeaveIcon, SolanaIcon } from '../icons/icons'
+import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
-import { SolInput } from './SolInput'
+import type { BalanceInfo } from '@/types/wallet'
 import { lamportsToSol } from '@/utils/format'
 import { STAKE_TX_PRECALCULATED_COST } from '@/utils/solana'
-import { useReadMyStats } from '@/lib/api/generated/restApi'
+import { getSolscanTxUrl } from '@/utils/wallet'
+
 import { SolscanIcon } from '../icons'
-import { useCSSVariable } from 'uniwind'
-import { AppConfig } from '@/constants/app-config'
+import { CheckIcon, LeaveIcon, SolanaIcon } from '../icons/icons'
+import { SolInput } from './SolInput'
 
 const QUICK_AMOUNTS = [5, 10, 20] as const
 
@@ -283,7 +285,7 @@ export function StakeForm({ onClose }: Props) {
             isAboveMax && 'border-critical-secondary [background-image:linear-gradient(to_bottom,#E7E7E7,#FF9494)]',
           )}
         >
-          <Text variant="smallBold" className="truncate ">
+          <Text variant="smallBold" className="truncate text-content-primary">
             MAX {balance ? balance.sol : '0'}
           </Text>
           <SolanaIcon size={24} />

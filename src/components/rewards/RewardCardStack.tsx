@@ -1,11 +1,12 @@
-import { useVideoPlayer, VideoView } from 'expo-video'
-import { View, Pressable, StyleSheet } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
-import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
-import { cn } from '@/lib/utils'
-import { Text } from '@/components/ui/text'
+import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
+
+import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
+import { Text } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
+import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
 
@@ -29,69 +30,65 @@ export function RewardCardStack({ reward = 0, count, revealedAt, onPress }: Rewa
   const contentPrimary = (useCSSVariable('--color-content-primary') as string) ?? '#000'
 
   const amountSol = formatPrizeSol(reward)
-  const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
+  // const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
 
   return (
-    <Pressable onPress={onPress} className="active:opacity-95">
-      <View className="relative">
-        {/* Stacked layers effect */}
-        <View
+    <View className="relative">
+      {/* Main card — same layout as RewardCardRegular */}
+      <View
+        className={cn(
+          'rounded-xl overflow-hidden flex-row items-center justify-between p-2.5',
+          'border border-reward-small-secondary z-50',
+          'h-17',
+        )}
+      >
+        <LinearGradient
+          colors={[rewardLargeSecondary, contentPrimary]}
+          locations={[0, 1]}
+          style={StyleSheet.absoluteFillObject}
           pointerEvents="none"
-          className={cn(
-            'absolute rounded-xl overflow-hidden border border-reward-small-secondary',
-            'right-2 -bottom-3 w-[95%] h-14 ',
-          )}
-        >
-          <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
-        </View>
-        <View
+        />
+        <VideoView
+          player={player}
+          style={StyleSheet.absoluteFillObject}
+          contentFit="cover"
+          nativeControls={false}
           pointerEvents="none"
-          className={cn(
-            'absolute rounded-xl overflow-hidden border border-reward-small-secondary',
-            'right-1 -bottom-1.5 w-[98%] h-14',
-          )}
-        >
-          <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
-        </View>
-        {/* Main card — same layout as RewardCardRegular */}
-        <View
-          className={cn(
-            'rounded-xl overflow-hidden flex-row items-center justify-between p-2.5',
-            'border border-reward-small-secondary z-50',
-          )}
-        >
-          <LinearGradient
-            colors={[rewardLargeSecondary, contentPrimary]}
-            locations={[0, 1]}
-            style={StyleSheet.absoluteFillObject}
-          />
-          <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
-          <View className="flex-1">
-            <View className="flex-row items-center">
-              <Text variant="h4Digits" className="text-reward-small-primary">
-                +{amountSol}
-              </Text>
-              <SolanaCircleIcon size={32} color={solColor} />
-            </View>
-            <Text variant="small" className="text-reward-small-primary">
-              {awardedText}
+        />
+        <View className="flex-1" pointerEvents="none">
+          <View className="flex-row items-center py-1">
+            <Text variant="h4Digits" className="text-reward-small-primary">
+              +{amountSol}
             </Text>
+            <SolanaCircleIcon size={32} color={solColor} />
           </View>
+          {/* <Text variant="small" className="text-reward-small-primary">
+            {awardedText}
+          </Text> */}
+        </View>
 
-          <View className="flex-row items-center gap-0.5">
-            <Text variant="small" className="text-reward-small-primary ">
-              CLAIM
-            </Text>
-            <Text variant="body" className="text-reward-small-primary ">
-              {count}
-            </Text>
-            <SmallCupIcon size={24} color={smallCupColor} />
-            <Text variant="small" className="text-reward-small-primary ">
-              REWARDS
-            </Text>
-          </View>
+        <View className="flex-row items-center gap-0.5" pointerEvents="none">
+          <Text variant="small" className="text-reward-small-primary ">
+            CLAIM
+          </Text>
+          <Text variant="body" className="text-reward-small-primary ">
+            {count}
+          </Text>
+          <SmallCupIcon size={24} color={smallCupColor} />
+          <Text variant="small" className="text-reward-small-primary ">
+            REWARDS
+          </Text>
         </View>
+
+        {/* Invisible overlay so the whole card is tappable; native VideoView can still capture touches otherwise */}
+        <Pressable
+          style={StyleSheet.absoluteFillObject}
+          onPress={onPress}
+          className="active:opacity-95"
+          accessibilityRole="button"
+          accessibilityLabel="Expand rewards stack"
+        />
       </View>
-    </Pressable>
+    </View>
   )
 }

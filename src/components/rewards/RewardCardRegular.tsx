@@ -1,11 +1,13 @@
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
-import { View, StyleSheet, ActivityIndicator } from 'react-native'
-import { RewardIcon, SolanaCircleIcon } from '@/components/icons/icons'
-import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
-import { cn } from '@/lib/utils'
-import { Button } from '../ui'
-import { Text } from '../ui/text'
 import { useCSSVariable } from 'uniwind'
+
+import { RewardIcon, SolanaCircleIcon } from '@/components/icons/icons'
+import { cn } from '@/lib/utils'
+import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
+
+import { Button, GradientText } from '../ui'
+import { Text } from '../ui/text'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
 
@@ -18,7 +20,7 @@ type RewardCardRegularProps = Readonly<{
   disabled?: boolean
   hasError?: boolean
   buttonText?: string | null
-} >
+}>
 
 export function RewardCardRegular({
   reward,
@@ -46,6 +48,7 @@ export function RewardCardRegular({
       className={cn(
         'rounded-xl overflow-hidden flex-row items-center justify-between p-2.5',
         'border border-reward-small-secondary',
+        'h-17',
         hasError && 'border-critical-secondary bg-critical-primary/20',
         disabled && 'opacity-50',
       )}
@@ -92,17 +95,9 @@ export function RewardCardRegular({
               size="lg"
               onPress={onClaim}
               disabled={disabled}
-              className="rounded-full px-4"
+              className="rounded-full px-4 "
             >
-              {buttonText ? (
-                <Text className="text-border-quinary">{buttonText}</Text>
-              ) : (
-                <>
-                  <Text className="text-border-quinary">{claimCount > 1 ? `CLAIM ${claimCount}` : 'Claim'}</Text>
-                  {claimCount > 1 && <RewardIcon size={16} className="text-border-quinary" />}
-                  <Text className="text-border-quinary">{claimCount > 1 ? 'REWARDS' : 'Now'}</Text>
-                </>
-              )}
+              {buttonText ? <GradientText>{buttonText}</GradientText> : <GradientText>Claim Now</GradientText>}
             </Button>
           )}
 
@@ -112,12 +107,12 @@ export function RewardCardRegular({
               size="lg"
               onPress={onClaim}
               disabled={disabled}
-              className="rounded-full px-4 my-0.5"
+              className="rounded-full px-4 my-0.5 "
             >
               {buttonText ? (
-                <Text className="text-border-quinary">{buttonText}</Text>
+                <GradientText>{buttonText}</GradientText>
               ) : (
-                <Text className="text-border-quinary">Claim {claimCount} rewards</Text>
+                <GradientText>{`Claim ${claimCount} rewards`}</GradientText>
               )}
             </Button>
           )}
