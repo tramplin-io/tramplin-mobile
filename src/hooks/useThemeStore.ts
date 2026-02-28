@@ -25,7 +25,7 @@ interface ThemeStore {
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
-      themeMode: 'system',
+      themeMode: 'light',
       setThemeMode: (mode) => {
         Uniwind.setTheme(mode)
         set({ themeMode: mode })
