@@ -1,22 +1,22 @@
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { View, Pressable, StyleSheet } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { RewardIcon, SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
+import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
 import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
-import type { Win } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
 import { Text } from '@/components/ui/text'
 import { useCSSVariable } from 'uniwind'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
 
 type RewardCardStackProps = Readonly<{
-  wins: Win[]
+  reward?: number
+  count: number
+  revealedAt?: string
   onPress: () => void
 }>
 
-export function RewardCardStack({ wins, onPress }: RewardCardStackProps) {
+export function RewardCardStack({ reward = 0, count, revealedAt, onPress }: RewardCardStackProps) {
   const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
     p.loop = true
     p.muted = true
@@ -28,12 +28,8 @@ export function RewardCardStack({ wins, onPress }: RewardCardStackProps) {
   const rewardLargeSecondary = (useCSSVariable('--color-reward-small-secondary') as string) ?? '#7E650D'
   const contentPrimary = (useCSSVariable('--color-content-primary') as string) ?? '#000'
 
-  const count = wins.length
-  const first = wins[0]
-  if (!first || count === 0) return null
-
-  const amountSol = formatPrizeSol(first.prizeSol)
-  const awardedText = formatAwardedAgo(first.revealedAt ?? first.createdAt)
+  const amountSol = formatPrizeSol(reward)
+  const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
 
   return (
     <Pressable onPress={onPress} className="active:opacity-95">
