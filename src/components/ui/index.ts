@@ -1,5 +1,6 @@
 export { Button } from './button'
 export { Card } from './card'
+export { GradientText } from './gradient-text'
 export { Container } from './Container'
 export { Badge } from './badge'
 export { Pagination } from './pagination'
