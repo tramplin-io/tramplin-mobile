@@ -1,21 +1,27 @@
+import React, { useCallback, useRef, useState } from 'react'
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+  type BottomSheetBackdropProps,
+} from '@gorhom/bottom-sheet'
+import axios from 'axios'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
+import { AppConfig } from '@/constants/app-config'
 import { API_URLS } from '@/constants/appConstants'
 import { queryClient } from '@/lib/api/api-setup'
 import { captureSentryException, captureSentryMessage } from '@/lib/sentry'
 import { useApiConfigStore } from '@/lib/stores/api-config-store'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
-import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
-import axios from 'axios'
-import React from 'react'
-import { useCallback, useRef, useState } from 'react'
-import { Alert, ScrollView, TouchableOpacity, View } from 'react-native'
+
+import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { LogDisplay } from './LogDisplay'
-import { AppConfig } from '@/constants/app-config'
 
 export type ApiSource = 'Production' | 'Development' | 'Custom'
 
@@ -48,7 +54,7 @@ const validateApiHealth = async (apiUrl: string): Promise<{ isValid: boolean; er
   try {
     const openapiUrl = `${apiUrl}/openapi`
 
-    console.log('Checking openapi endpoint:', openapiUrl)
+    // console.log('Checking openapi endpoint:', openapiUrl)
 
     const response = await axios.get(openapiUrl, {
       timeout: 10000,
@@ -84,7 +90,7 @@ type Props = {
 
 export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
   const { apiUrl, setApiUrl } = useApiConfigStore()
-  console.log('apiUrl', apiUrl)
+  // console.log('apiUrl', apiUrl)
   const { logout, isAuthenticated } = useAuthStore()
   const { isRoutePathOverlayEnabled, setIsRoutePathOverlayEnabled } = useDeveloperStore()
 
@@ -296,7 +302,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                   <Text>Send Info to Sentry</Text>
                 </Button>
               </View>
-              <LogDisplay />
+              {/* <LogDisplay /> */}
             </View>
 
             {/* <View className="gap-2">
@@ -325,8 +331,15 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 })}
               </View>
             </View> */}
+            <View className="gap-2 mb-4">
+              <Text variant="h4" className="text-secondaryPink">
+                Theme Switcher
+              </Text>
 
-            <View className="gap-2">
+              <ThemeSwitcher />
+            </View>
+
+            {/* <View className="gap-2">
               <Text variant="h4" className="text-secondaryPink">
                 API URL
               </Text>
@@ -350,10 +363,10 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 </View>
               )}
 
-              {/* <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
+              <Button variant="default" onPress={handleSave} disabled={isSaveDisabled} className="w-full">
                 <Text>{isValidating ? 'Validating API...' : 'Save Changes'}</Text>
-              </Button> */}
-            </View>
+              </Button>
+            </View> */}
 
             {showLogoutWarning && (
               <View className="gap-4 p-4 bg-red-50 border border-red-200 rounded-lg">
