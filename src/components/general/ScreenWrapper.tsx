@@ -1,14 +1,14 @@
-import { cn } from '@/lib/utils'
 import type * as React from 'react'
 import {
   KeyboardAvoidingView,
-  Platform,
   // SafeAreaView,
   ScrollView,
   View,
   type ViewProps,
 } from 'react-native'
-import { type Edge, SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
+
+import { cn } from '@/lib/utils'
 
 export interface ScreenWrapperProps extends ViewProps {
   children: React.ReactNode
@@ -51,7 +51,7 @@ export const ScreenWrapper = ({
   return (
     <Container className={cn('flex-1 bg-fill-primary', className)} {...props} edges={edges}>
       {keyboardAvoiding ? (
-        <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView className="flex-1" behavior="padding">
           {wrappedContent}
         </KeyboardAvoidingView>
       ) : (
