@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, RefreshControl, ScrollView, View } from 'react-native'
+import { RefreshControl, ScrollView, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
-import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
 import { RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
-import { Text } from '@/components/ui/text'
+import { CollapsibleStack } from '@/components/ui/collapsible-stack'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
 import { useIndexMyWins } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
-import { IndexMyWinsMock } from '@/mock/rawards'
 import type { Winner } from '@/utils/solana'
 
 const CLAIM_ERROR_RETRY_SECONDS = 3
@@ -98,7 +96,6 @@ export default function RewardsTab() {
   const bigWins = wins.filter((w) => w.drawType === 'big')
   const regularWins = wins.filter((w) => w.drawType === 'regular')
 
-  // console.log('isRegularStackExpanded', isRegularStackExpanded)
   return (
     <ScreenWrapper>
       <ScrollView
@@ -145,31 +142,49 @@ export default function RewardsTab() {
 
         {!isLoading && regularWins.length > 0 && (
           <View className="gap-3">
-            {regularWins.length > 1 && !isRegularStackExpanded ? (
-              <RewardCardStack
-                count={regularWins.length}
-                reward={regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0)}
-                revealedAt={regularWins[0]?.revealedAt ?? undefined}
-                onPress={() => setIsRegularStackExpanded(true)}
-              />
+            {regularWins.length === 1 ? (
+              (() => {
+                const win = regularWins[0]
+                if (!win) return null
+                const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
+                const retryIn = claimErrorCountdowns[winKey]
+                const hasError = retryIn !== undefined
+                const buttonText = hasError ? `Error Claiming! Try again in ${retryIn}s…` : null
+                return (
+                  <RewardCardRegular
+                    variant="claim"
+                    reward={win.prizeSol}
+                    revealedAt={win.revealedAt}
+                    onClaim={() => handleClaim([win], winKey)}
+                    disabled={isClaiming || hasError}
+                    hasError={hasError}
+                    buttonText={buttonText}
+                  />
+                )
+              })()
             ) : (
-              <>
-                {regularWins.length > 1 && (
-                  <Pressable onPress={() => setIsRegularStackExpanded(false)} className="self-end pt-2">
-                    {/* <Text className="text-content-tertiary text-small">Collapse</Text> */}
-                    <CrossIcon size={28} strokeWidth="1.5" />
-                  </Pressable>
-                )}
-
+              <CollapsibleStack
+                collapsedCount={3}
+                gap={6}
+                expandedGap={4}
+                open={isRegularStackExpanded}
+                onOpenChange={setIsRegularStackExpanded}
+                cover={
+                  <RewardCardStack
+                    count={regularWins.length}
+                    reward={regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0)}
+                    revealedAt={regularWins[0]?.revealedAt ?? undefined}
+                    onPress={() => setIsRegularStackExpanded(true)}
+                  />
+                }
+              >
+                {/* Summary card */}
                 {regularWins.length > 1 &&
                   (() => {
                     const summaryKey = 'regular-summary'
                     const summaryRetryIn = claimErrorCountdowns[summaryKey]
                     const summaryHasError = summaryRetryIn !== undefined
-                    const summaryButtonText = summaryHasError
-                      ? `Error Claiming! Try again in ${summaryRetryIn}s…`
-                      : undefined
-
+                    const summaryButtonText = summaryHasError ? `Try again in ${summaryRetryIn}s…` : undefined
                     return (
                       <RewardCardRegular
                         variant="summary"
@@ -182,13 +197,12 @@ export default function RewardsTab() {
                       />
                     )
                   })()}
-
+                {/* Claim cards */}
                 {regularWins.map((win) => {
                   const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
                   const retryIn = claimErrorCountdowns[winKey]
                   const hasError = retryIn !== undefined
-                  const buttonText = hasError ? `Error Claiming! Try again in ${retryIn}s…` : null
-
+                  const buttonText = hasError ? `Try again in ${retryIn}s…` : null
                   return (
                     <RewardCardRegular
                       key={winKey}
@@ -202,7 +216,7 @@ export default function RewardsTab() {
                     />
                   )
                 })}
-              </>
+              </CollapsibleStack>
             )}
           </View>
         )}
