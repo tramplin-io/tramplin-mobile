@@ -49,6 +49,7 @@ export default function LeaderboardDetailScreen() {
   const fillPrimary = useCSSVariable('--color-fill-primary')
   const fillFade = useCSSVariable('--color-fill-fade')
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
+  const contentPrimary = useCSSVariable('--color-content-primary') as string
   const titleColor = isGold ? 'text-reward-large-secondary' : 'text-content-primary'
 
   return (
@@ -65,11 +66,11 @@ export default function LeaderboardDetailScreen() {
       <View className={cn('w-full bg-fill-primary')} style={{ paddingTop: insets.top }}>
         <View className="h-10 flex-row items-center justify-between px-4 py-2 w-full">
           <View className="flex-row items-center gap-1">
-            <BigCupIcon size={24} className={titleColor} />
+            <BigCupIcon size={24} color={contentPrimary} />
             <Text variant="body">{isWinnerEntry ? 'Rewarded wallet' : 'Wallet'}</Text>
           </View>
           <View className="flex-row items-center gap-0">
-            <WalletIcon size={16} className={titleColor} />
+            <WalletIcon size={16} color={contentTertiary} />
             <Text variant="small" numberOfLines={1}>
               {walletAddress ? ellipsify(walletAddress) : '—'}
             </Text>

@@ -1,9 +1,11 @@
-import { View, Pressable } from 'react-native'
-import { Text } from '@/components/ui/text'
-import { LinkIcon } from '@/components/icons/icons'
-import { cn } from '@/lib/utils'
 import { useCallback } from 'react'
+import { Pressable, View } from 'react-native'
 import { router } from 'expo-router'
+import { useCSSVariable } from 'uniwind'
+
+import { LinkIcon } from '@/components/icons/icons'
+import { Text } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
 
 export interface DashboardHeaderProps {
   title?: string
@@ -21,6 +23,7 @@ export function DashboardHeader({
   onSubscribePress,
   className,
 }: Readonly<DashboardHeaderProps>) {
+  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
   // onSubscribePress
   const handleSubscribePress = useCallback(() => {
     if (onSubscribePress) {
@@ -40,7 +43,7 @@ export function DashboardHeader({
         <Text variant="body" className="text-content-tertiary">
           {subscribeLabel}
         </Text>
-        <LinkIcon size={16} className="text-content-tertiary" />
+        <LinkIcon size={16} color={contentTertiary} />
       </Pressable>
     </View>
   )

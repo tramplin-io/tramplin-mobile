@@ -1,10 +1,12 @@
-import { View, Pressable, ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Pressable, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Text } from '@/components/ui/text'
+import { useCSSVariable } from 'uniwind'
+
 import { QuestionIcon, SolanaIcon } from '@/components/icons/icons'
+import { Text } from '@/components/ui/text'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
-import { useCSSVariable } from 'uniwind'
+
 import { LogoSmall } from '../icons'
 
 export interface YourStakeProps {
@@ -140,12 +142,10 @@ function EarnedCard({
         <Text variant="h4" className="text-reward-large-secondary">
           Earned
         </Text>
-        {onInfoPress ? (
+        {onInfoPress && (
           <Pressable onPress={onInfoPress} hitSlop={8} className="active:opacity-80">
             <QuestionIcon size={24} className="text-reward-large-secondary" />
           </Pressable>
-        ) : (
-          <QuestionIcon size={24} className="text-reward-large-secondary" />
         )}
       </View>
       <View className="flex-row items-end gap-0.5">
@@ -236,9 +236,9 @@ export function YourStake({
           {showEarned ? <EarnedCard value={data.totalPoints} onInfoPress={onEarnedInfoPress} /> : placeholderCard}
         </View>
       </View>
-      <Text variant="small" className="text-content-tertiary">
+      {/* <Text variant="small" className="text-content-tertiary">
         {participatingLabel}
-      </Text>
+      </Text> */}
     </View>
   )
 }

@@ -1,11 +1,12 @@
 import { useCallback } from 'react'
-import { View, Pressable } from 'react-native'
+import { Pressable, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import Toast from 'react-native-toast-message'
-import { Text } from '@/components/ui/text'
-import { CopyIcon, WalletIcon } from '@/components/icons/icons'
-import { cn } from '@/lib/utils'
 import { useCSSVariable } from 'uniwind'
+
+import { CopyIcon, WalletIcon } from '@/components/icons/icons'
+import { Text } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
 
 type DetailWalletHeaderProps = Readonly<{
   walletAddress?: string
@@ -36,7 +37,7 @@ export function DetailWalletHeader({ walletAddress }: DetailWalletHeaderProps) {
           'shadow-[0_0_3px_0_var(--border-quaternary,#FFF)]',
         )}
       >
-        <WalletIcon size={24} className="text-content-tertiary shrink-0" />
+        <WalletIcon size={24} color={contentTertiary} className="shrink-0" />
         <View className="flex-1 min-w-0 mx-3">
           <Text variant="small" className={cn('text-center')} numberOfLines={2}>
             {line2 ? `${line1}\n${line2}` : line1}

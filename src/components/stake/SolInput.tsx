@@ -1,10 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { Linking, Pressable, Text as RNText, TextInput, View } from 'react-native'
 import { useCSSVariable } from 'uniwind'
+
+import { LinkIcon, SolanaIcon, UpIcon } from '@/components/icons/icons'
 import { cn } from '@/lib/utils'
 import { formatPrizeSol } from '@/utils/format'
 import { getSolscanTxUrl } from '@/utils/wallet'
-import { LinkIcon, SolanaIcon, UpIcon } from '@/components/icons/icons'
+
 import { Text } from '../ui/text'
 
 type SolInputProps = {
@@ -100,7 +102,7 @@ export function SolInput({ value, onChange, min, max, disabled, onValidationChan
       </View>
       <View className={cn('flex-row items-center gap-1 mx-2.5 shrink-0', disabled && 'text-content-tertiary')}>
         <Text variant="body">SOL</Text>
-        <SolanaIcon size={24} className="text-content-primary" />
+        <SolanaIcon size={24} />
       </View>
     </View>
   )
