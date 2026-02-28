@@ -475,7 +475,7 @@ export const SmallCupIcon = createIconComponent(
       stroke="currentColor"
     />
     <Path
-      d="M7.5 17.292C11.25 17.292 12.5 13.292 12.5 13.292C12.5 13.292 13.7499 17.292 17.5 17.292H7.5Z"
+      d="M7.5 17.292C11.25 17.292 12.5 13.292 12.5 13.192C12.5 13.292 13.7499 17.292 17.5 17.292H7.5Z"
       stroke="currentColor"
       stroke-linecap="round"
       stroke-linejoin="bevel"
