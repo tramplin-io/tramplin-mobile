@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native'
-import type { Rpc, SolanaRpcApi } from '@solana/kit'
-import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { ActivityIndicator, Linking, Pressable, View, type TextInput } from 'react-native'
 import { useCSSVariable } from 'uniwind'
 
+import { SolscanIcon } from '@/components/icons'
+import { CheckIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
+import { SolInput } from '@/components/stake/SolInput'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { CheckIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
-import { SolscanIcon } from '@/components/icons'
-import { SolInput } from '@/components/stake/SolInput'
 import { LAMPORTS_PER_SOL } from '@/constants/solana'
 import { useUnstake } from '@/hooks/useUnstake'
 import { useUserStakeAccounts } from '@/hooks/useUserStakeAccounts'
@@ -26,11 +24,8 @@ type Props = Readonly<{
 }>
 
 export function UnstakeForm({ onClose }: Props) {
-  const { client } = useMobileWallet()
-  const rpc = (client?.rpc ?? undefined) as Rpc<SolanaRpcApi> | undefined
-
-  const { data: stakeAccounts } = useUserStakeAccounts({ rpc: rpc ?? null })
-  const { unstake, isLoading } = useUnstake({ rpc: rpc ?? null })
+  const { data: stakeAccounts } = useUserStakeAccounts()
+  const { unstake, isLoading } = useUnstake()
   const { refetch: refetchMyStats } = useReadMyStats()
 
   const inputRef = useRef<TextInput>(null)
