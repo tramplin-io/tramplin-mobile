@@ -7,17 +7,32 @@ import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
 import { BigCupIcon, ImportantIcon, PointsIcon } from '@/components/icons/icons'
 import { Button } from '@/components/ui'
-import { Container } from '@/components/ui/Container'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
 import { useProfileStore } from '@/lib/stores/profile-store'
 import { cn } from '@/lib/utils'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const TELEGRAM_USERNAME_REGEX = /^@?\w{2,32}$/
+
+function validateEmail(value: string): string | null {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+  return EMAIL_REGEX.test(trimmed) ? null : 'Enter a valid email address'
+}
+
+function validateTelegramUsername(value: string): string | null {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+  return TELEGRAM_USERNAME_REGEX.test(trimmed) ? null : 'Use 2–32 characters, letters, numbers or underscore'
+}
+
 function ContactRow({
   label,
   value,
   placeholder,
+  error,
   onChangeText,
   ...inputProps
 }: Readonly<
@@ -25,6 +40,7 @@ function ContactRow({
     label: string
     value: string
     placeholder: string
+    error?: string | null
     onChangeText?: (text: string) => void
   } & Omit<React.ComponentProps<typeof Input>, 'value' | 'placeholder' | 'onChangeText'>
 >) {
@@ -33,16 +49,26 @@ function ContactRow({
       <Text variant="small" className="uppercase tracking-wide">
         {label}
       </Text>
-      <View className="flex-row items-center rounded-lg bg-fill-tertiary border border-transparent px-3 py-1">
+      <View
+        className={cn(
+          'flex-row items-center rounded-lg bg-fill-tertiary border px-3 py-1',
+          error ? 'border-critical-secondary' : 'border-transparent',
+        )}
+      >
         <Input
           value={value}
           placeholder={placeholder}
           onChangeText={onChangeText}
+          hasError={!!error}
           className="flex-1 h-14 min-w-0 border-0 bg-transparent px-1 py-2.5 text-content-primary placeholder:text-content-tertiary shadow-none"
           {...inputProps}
         />
-        {/* <ForwardIcon size={20} className="text-content-tertiary ml-2" /> */}
       </View>
+      {error ? (
+        <Text variant="small" className="text-error">
+          {error}
+        </Text>
+      ) : null}
     </View>
   )
 }
@@ -79,6 +105,8 @@ export default function SubscriptionScreen() {
   const [telegramUsername, setTelegramUsername] = useState('')
   const [notificationTypes, setNotificationTypes] = useState<NotificationType[]>(['product'])
   const [isSaving, setIsSaving] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [telegramError, setTelegramError] = useState<string | null>(null)
 
   useEffect(() => {
     void fetchUserProfile()
@@ -109,6 +137,12 @@ export default function SubscriptionScreen() {
   }, [])
 
   const handleSave = useCallback(async () => {
+    const eErr = validateEmail(email)
+    const tErr = validateTelegramUsername(telegramUsername)
+    setEmailError(eErr)
+    setTelegramError(tErr)
+    if (eErr ?? tErr) return
+
     setIsSaving(true)
     const ok = await updateUserProfile({
       notificationTypes,
@@ -128,7 +162,7 @@ export default function SubscriptionScreen() {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      keyboardVerticalOffset={0}
     >
       <ScreenWrapper>
         <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
@@ -145,7 +179,11 @@ export default function SubscriptionScreen() {
                 label="EMAIL"
                 value={email}
                 placeholder="johndoe@gmail.com"
-                onChangeText={setEmail}
+                error={emailError}
+                onChangeText={(text) => {
+                  setEmail(text)
+                  if (emailError) setEmailError(validateEmail(text))
+                }}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -154,7 +192,11 @@ export default function SubscriptionScreen() {
                 label="TELEGRAM"
                 value={telegramUsername}
                 placeholder="@johndoe"
-                onChangeText={setTelegramUsername}
+                error={telegramError}
+                onChangeText={(text) => {
+                  setTelegramUsername(text)
+                  if (telegramError) setTelegramError(validateTelegramUsername(text))
+                }}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
