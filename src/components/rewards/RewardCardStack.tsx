@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native'
+import { ImageBackground, Pressable, StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
@@ -6,23 +6,19 @@ import { useCSSVariable } from 'uniwind'
 import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
-import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
+import { formatPrizeSol } from '@/utils/format'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
+const rewardSilverSmallImage = require('@/assets/images/rewards/tramplin_reward_silver_7x1.png')
 
 type RewardCardStackProps = Readonly<{
   reward?: number
   count: number
-  revealedAt?: string
-  onPress: () => void
+  shouldPlayVideo?: boolean
+  onPress?: () => void
 }>
 
-export function RewardCardStack({ reward = 0, count, revealedAt, onPress }: RewardCardStackProps) {
-  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+export function RewardCardStack({ reward = 0, count, shouldPlayVideo = false, onPress }: RewardCardStackProps) {
   const solColor = useCSSVariable('--color-reward-small-primary') as string
   const smallCupColor = useCSSVariable('--color-reward-small-primary') as string
 
@@ -48,13 +44,7 @@ export function RewardCardStack({ reward = 0, count, revealedAt, onPress }: Rewa
           style={StyleSheet.absoluteFillObject}
           pointerEvents="none"
         />
-        <VideoView
-          player={player}
-          style={StyleSheet.absoluteFillObject}
-          contentFit="cover"
-          nativeControls={false}
-          pointerEvents="none"
-        />
+        {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground />}
         <View className="flex-1" pointerEvents="none">
           <View className="flex-row items-center py-1">
             <Text variant="h4Digits" className="text-reward-small-primary">
@@ -81,14 +71,34 @@ export function RewardCardStack({ reward = 0, count, revealedAt, onPress }: Rewa
         </View>
 
         {/* Invisible overlay so the whole card is tappable; native VideoView can still capture touches otherwise */}
-        <Pressable
-          style={StyleSheet.absoluteFillObject}
-          onPress={onPress}
-          className="active:opacity-95"
-          accessibilityRole="button"
-          accessibilityLabel="Expand rewards stack"
-        />
+        {onPress && (
+          <Pressable
+            style={StyleSheet.absoluteFillObject}
+            onPress={onPress}
+            className="active:opacity-95"
+            accessibilityRole="button"
+            accessibilityLabel="Expand rewards stack"
+          />
+        )}
       </View>
+    </View>
+  )
+}
+
+function RewardCardBackgroundVideo() {
+  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
+    p.loop = true
+    p.muted = true
+    p.play()
+  })
+
+  return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+}
+
+function RewardCardStaticBackground() {
+  return (
+    <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+      <ImageBackground source={rewardSilverSmallImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
     </View>
   )
 }

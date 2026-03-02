@@ -1,19 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { RefreshControl, ScrollView, View } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FlatList, Pressable, RefreshControl, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
+import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
 import { RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
 import { useIndexMyWins } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
+// import { IndexMyWinsMock } from '@/mock/rawards'
 import type { Winner } from '@/utils/solana'
 
 const CLAIM_ERROR_RETRY_SECONDS = 3
+const REWARDS_NOTIFICATIONS_LIMIT = 4
+const REWARD_CARD_VIDEO_LIMIT = 5
+const PREVIEW_COLLAPSED_COUNT = 3
+const PREVIEW_ITEM_HEIGHT = 68
+const PREVIEW_EXPANDED_CONTENT_HEIGHT = 80
+const PREVIEW_COLLAPSED_GAP = 6
+const PREVIEW_EXPANDED_GAP = 4
+
+function RegularListSeparator() {
+  return <View className="h-0.5" />
+}
 
 function winToWinner(win: Win): Winner {
   return {
@@ -38,7 +51,14 @@ export default function RewardsTab() {
 
   const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
 
-  const { data: wins = [], isLoading, refetch } = useIndexMyWins({ isClaimed: 'false' })
+  const {
+    data: wins = [],
+    isLoading,
+    refetch,
+  } = useIndexMyWins({
+    isClaimed: 'false',
+    limit: 250,
+  })
 
   // const wins = IndexMyWinsMock
 
@@ -95,26 +115,55 @@ export default function RewardsTab() {
 
   const bigWins = wins.filter((w) => w.drawType === 'big')
   const regularWins = wins.filter((w) => w.drawType === 'regular')
+  const regularRewardsTotal = useMemo(() => regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0), [regularWins])
+  const shouldPlayVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
 
-  return (
-    <ScreenWrapper>
-      <ScrollView
-        contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            progressViewOffset={40}
-            colors={[colorBrandPrimary]}
+  const useLazyRegularList = regularWins.length > 0
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 40,
+    minimumViewTime: 100,
+  }).current
+
+  const handleClaimSingle = useCallback((win: Win, winKey: string) => () => handleClaim([win], winKey), [handleClaim])
+
+  const renderRegularClaimCard = useCallback(
+    (info: { item: Win; index: number }) => {
+      const { item: win } = info
+      const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
+      const retryIn = claimErrorCountdowns[winKey]
+      const hasError = retryIn !== undefined
+      const buttonText = hasError ? `Try again in ${retryIn}s…` : null
+
+      return (
+        <View className="px-6">
+          <RewardCardRegular
+            variant="claim"
+            reward={win.prizeSol}
+            revealedAt={win.revealedAt}
+            onClaim={handleClaimSingle(win, winKey)}
+            disabled={isClaiming || hasError}
+            hasError={hasError}
+            buttonText={buttonText}
+            shouldPlayVideo={shouldPlayVideo}
           />
-        }
-      >
+        </View>
+      )
+    },
+    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayVideo], //,visibleRegularIndices
+  )
+
+  const regularListKeyExtractor = useCallback((win: Win) => win.id ?? `${win.winnerId}-${win.epochOrSlot}`, [])
+
+  const regularListData = useLazyRegularList && isRegularStackExpanded ? regularWins : []
+
+  const listHeaderComponent = useCallback(
+    () => (
+      <View className="gap-3 px-6 pt-8 pb-0.5">
         <DashboardHeader title="Congratulations!" className="mb-6" />
+        {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 
-        {isLoading && <RewardCardRegular variant="loading" />}
-
-        {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" />}
+        {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />}
 
         {!isLoading && bigWins.length > 0 && (
           <View className="gap-4 mb-4">
@@ -123,7 +172,6 @@ export default function RewardsTab() {
               const retryIn = claimErrorCountdowns[winKey]
               const hasError = retryIn !== undefined
               const buttonText = hasError ? `Error Claiming! Try again in ${retryIn}s…` : 'Claim Now'
-
               return (
                 <RewardCardBig
                   key={winKey}
@@ -140,87 +188,104 @@ export default function RewardsTab() {
           </View>
         )}
 
-        {!isLoading && regularWins.length > 0 && (
-          <View className="gap-3">
-            {regularWins.length === 1 ? (
-              (() => {
-                const win = regularWins[0]
-                if (!win) return null
-                const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
-                const retryIn = claimErrorCountdowns[winKey]
-                const hasError = retryIn !== undefined
-                const buttonText = hasError ? `Error Claiming! Try again in ${retryIn}s…` : null
+        {!isLoading &&
+          useLazyRegularList &&
+          regularWins.length > 0 &&
+          (isRegularStackExpanded ? (
+            <>
+              <View className="flex-row justify-end pr-1">
+                <Pressable
+                  onPress={() => setIsRegularStackExpanded(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Collapse"
+                >
+                  <CrossIcon size={20} strokeWidth="1.5" />
+                </Pressable>
+              </View>
+              {(() => {
+                const summaryRetryIn = claimErrorCountdowns['regular-summary']
+                const hasSummaryError = summaryRetryIn != null
                 return (
                   <RewardCardRegular
-                    variant="claim"
-                    reward={win.prizeSol}
-                    revealedAt={win.revealedAt}
-                    onClaim={() => handleClaim([win], winKey)}
-                    disabled={isClaiming || hasError}
-                    hasError={hasError}
-                    buttonText={buttonText}
+                    variant="summary"
+                    reward={regularRewardsTotal}
+                    onClaim={() => handleClaim(regularWins, 'regular-summary')}
+                    disabled={isClaiming || hasSummaryError}
+                    hasError={hasSummaryError}
+                    buttonText={hasSummaryError ? `Try again in ${summaryRetryIn}s…` : undefined}
+                    claimCount={regularWins.length}
+                    shouldPlayVideo={shouldPlayVideo}
                   />
                 )
-              })()
-            ) : (
-              <CollapsibleStack
-                collapsedCount={3}
-                gap={6}
-                expandedGap={4}
-                open={isRegularStackExpanded}
-                onOpenChange={setIsRegularStackExpanded}
-                cover={
-                  <RewardCardStack
-                    count={regularWins.length}
-                    reward={regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0)}
-                    revealedAt={regularWins[0]?.revealedAt ?? undefined}
-                    onPress={() => setIsRegularStackExpanded(true)}
-                  />
-                }
-              >
-                {/* Summary card */}
-                {regularWins.length > 1 &&
-                  (() => {
-                    const summaryKey = 'regular-summary'
-                    const summaryRetryIn = claimErrorCountdowns[summaryKey]
-                    const summaryHasError = summaryRetryIn !== undefined
-                    const summaryButtonText = summaryHasError ? `Try again in ${summaryRetryIn}s…` : undefined
-                    return (
-                      <RewardCardRegular
-                        variant="summary"
-                        reward={regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0)}
-                        onClaim={() => handleClaim(regularWins, summaryKey)}
-                        disabled={isClaiming || summaryHasError}
-                        hasError={summaryHasError}
-                        buttonText={summaryButtonText}
-                        claimCount={regularWins.length}
-                      />
-                    )
-                  })()}
-                {/* Claim cards */}
-                {regularWins.map((win) => {
-                  const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
-                  const retryIn = claimErrorCountdowns[winKey]
-                  const hasError = retryIn !== undefined
-                  const buttonText = hasError ? `Try again in ${retryIn}s…` : null
-                  return (
-                    <RewardCardRegular
-                      key={winKey}
-                      variant="claim"
-                      reward={win.prizeSol}
-                      revealedAt={win.revealedAt}
-                      onClaim={() => handleClaim([win], winKey)}
-                      disabled={isClaiming || hasError}
-                      hasError={hasError}
-                      buttonText={buttonText}
-                    />
-                  )
-                })}
-              </CollapsibleStack>
-            )}
-          </View>
-        )}
-      </ScrollView>
+              })()}
+            </>
+          ) : (
+            (() => {
+              return (
+                <CollapsibleStack
+                  collapsedCount={PREVIEW_COLLAPSED_COUNT}
+                  gap={PREVIEW_COLLAPSED_GAP}
+                  expandedGap={PREVIEW_EXPANDED_GAP}
+                  itemHeight={PREVIEW_ITEM_HEIGHT}
+                  expandedContentHeight={PREVIEW_EXPANDED_CONTENT_HEIGHT}
+                  open={false}
+                  onOpenChange={(open) => {
+                    if (open) setIsRegularStackExpanded(true)
+                  }}
+                  cover={<RewardCardStack count={regularWins.length} reward={regularRewardsTotal} />}
+                >
+                  <RewardCardStack count={regularWins.length} />
+                  <RewardCardStack count={regularWins.length} />
+                  <RewardCardStack count={regularWins.length} />
+                </CollapsibleStack>
+              )
+            })()
+          ))}
+      </View>
+    ),
+    [
+      isLoading,
+      wins.length,
+      bigWins,
+      claimErrorCountdowns,
+      isClaiming,
+      handleClaim,
+      isRegularStackExpanded,
+      regularWins,
+      regularRewardsTotal,
+      useLazyRegularList,
+      shouldPlayVideo,
+    ],
+  )
+
+  const listFooterComponent = useCallback(() => <View className="h-40" />, [])
+
+  return (
+    <ScreenWrapper>
+      <FlatList
+        data={regularListData}
+        keyExtractor={regularListKeyExtractor}
+        renderItem={renderRegularClaimCard}
+        ListHeaderComponent={listHeaderComponent}
+        ListFooterComponent={listFooterComponent}
+        ItemSeparatorComponent={RegularListSeparator}
+        // onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={true}
+        // contentContainerClassName="pb-40"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            progressViewOffset={40}
+            colors={[colorBrandPrimary]}
+          />
+        }
+      />
     </ScreenWrapper>
   )
 }

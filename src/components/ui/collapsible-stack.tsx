@@ -13,6 +13,8 @@ type CollapsibleStackProps = Readonly<{
   gap?: number
   expandedGap?: number
   itemHeight?: number
+  /** When set, overrides computed expanded height (e.g. when a child is a FlatList). */
+  expandedContentHeight?: number
   open?: boolean
   cover?: ReactNode
   onOpenChange?: (open: boolean) => void
@@ -25,6 +27,7 @@ export function CollapsibleStack({
   gap = 5,
   expandedGap = 8,
   itemHeight = 68,
+  expandedContentHeight,
   open: controlledOpen,
   cover,
   onOpenChange,
@@ -45,8 +48,9 @@ export function CollapsibleStack({
 
   const collapsedHeight = useMemo(() => itemHeight + (visibleCount - 1) * gap, [itemHeight, visibleCount, gap])
   const expandedHeight = useMemo(
-    () => CLOSE_BUTTON_HEIGHT + count * itemHeight + count * expandedGap,
-    [count, itemHeight, expandedGap],
+    () =>
+      expandedContentHeight ?? CLOSE_BUTTON_HEIGHT + count * itemHeight + count * expandedGap,
+    [expandedContentHeight, count, itemHeight, expandedGap],
   )
 
   const height = useSharedValue(isOpen ? expandedHeight : collapsedHeight)

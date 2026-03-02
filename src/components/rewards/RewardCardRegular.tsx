@@ -1,8 +1,8 @@
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, ImageBackground, StyleSheet, View } from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
-import { RewardIcon, SolanaCircleIcon } from '@/components/icons/icons'
+import { SolanaCircleIcon } from '@/components/icons/icons'
 import { cn } from '@/lib/utils'
 import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
 
@@ -10,6 +10,7 @@ import { Button, GradientText } from '../ui'
 import { Text } from '../ui/text'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
+const rewardSilverSmallImage = require('@/assets/images/rewards/tramplin_reward_silver_7x1.png')
 
 type RewardCardRegularProps = Readonly<{
   reward?: number
@@ -20,6 +21,7 @@ type RewardCardRegularProps = Readonly<{
   disabled?: boolean
   hasError?: boolean
   buttonText?: string | null
+  shouldPlayVideo?: boolean
 }>
 
 export function RewardCardRegular({
@@ -31,15 +33,10 @@ export function RewardCardRegular({
   disabled = false,
   hasError = false,
   buttonText,
+  shouldPlayVideo = false,
 }: RewardCardRegularProps) {
   const amountSol = reward ? formatPrizeSol(reward) : '0'
   const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
-
-  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
 
   const solColor = useCSSVariable('--color-reward-small-primary') as string
 
@@ -53,7 +50,7 @@ export function RewardCardRegular({
         disabled && 'opacity-50',
       )}
     >
-      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground hasError={hasError} />}
 
       {variant === 'empty' && (
         <View className="flex-col justify-center items-center gap-2 mx-auto py-1">
@@ -118,6 +115,25 @@ export function RewardCardRegular({
           )}
         </>
       )}
+    </View>
+  )
+}
+
+function RewardCardBackgroundVideo() {
+  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
+    p.loop = true
+    p.muted = true
+    p.play()
+  })
+
+  return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+}
+
+function RewardCardStaticBackground({ hasError }: Readonly<{ hasError: boolean }>) {
+  if (hasError) return null
+  return (
+    <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+      <ImageBackground source={rewardSilverSmallImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
     </View>
   )
 }
