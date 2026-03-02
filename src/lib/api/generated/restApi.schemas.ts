@@ -12,8 +12,16 @@ export interface DrawSync {
   vrfSeed?: string
   /** Transaction that committed the draw (Draw instruction); for Solscan/Explorer URL */
   commitTransactionHash?: string
+  /** Orao VRF fulfillment transaction; for Solscan/Explorer URL */
+  vrfTransactionHash?: string
   /** Transaction that revealed the draw; for Solscan/Explorer URL */
   revealTransactionHash?: string
+  /** Secret from Reveal instruction (base58); for draw verification */
+  revealSecret?: string
+  /** SecretHash from Draw instruction (base58); for draw verification */
+  revealSecretHash?: string
+  /** Draw account PDA (derived from drawType + epochOrSlot) */
+  drawPda?: string
   lastSyncedAt: string
   syncStatus: SyncStatus
   errorMessage?: string
@@ -41,6 +49,8 @@ export interface Epoch {
   stakes: string
   effectiveStakes?: string
   shares?: string
+  /** Sum of all share values; summary number for the epoch */
+  poolShares?: number
   /** Number of participants from snapshot merkle_tree.max_num_nodes */
   participants?: number
   /** Merkle root hash from snapshot merkle_tree.merkle_root */
@@ -343,11 +353,19 @@ export interface Win {
   commitTransactionHash?: string
   /** Transaction that revealed the draw; for Solscan/Explorer URL */
   revealTransactionHash?: string
+  /** Orao VRF fulfillment transaction; for Solscan/Explorer URL */
+  vrfTransactionHash?: string
+  /** Secret from Reveal instruction (base58); for draw verification */
+  revealSecret?: string
+  /** SecretHash from Draw instruction (base58); for draw verification */
+  revealSecretHash?: string
   drawType: DrawType
   merkleProofs: string[]
   revealedAtSlot?: string
   revealedAt?: string
   claimPda?: string
+  /** Draw account PDA; used as URL identifier e.g. .../proof/{drawPda} */
+  drawPda?: string
   isClaimed?: boolean
   claimedAt?: string
   prizeUSDInCents?: number
@@ -356,10 +374,18 @@ export interface Win {
   participants?: number
   /** Merkle root hash of the epoch (from Epoch) */
   merkleRootHash?: string
+  /** Sum of all share values for the epoch (from Epoch) */
+  poolShares?: number
+  /** Points for the wallet in the epoch (from Epoch points.points, with decimals applied) */
+  points?: number
   /** Solscan URL for the commit transaction */
   commitTransactionUrl?: string
   /** Solscan URL for the reveal transaction */
   revealTransactionUrl?: string
+  /** Solscan URL for the Orao VRF fulfillment transaction */
+  vrfTransactionUrl?: string
+  /** Public URL to the epoch draw snapshot (JSON) */
+  snapshotUrl?: string
   id?: string
   createdAt?: string
   updatedAt?: string
