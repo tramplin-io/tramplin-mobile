@@ -5,22 +5,24 @@
  * REST API
  * OpenAPI spec version: 3.0.0
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
-import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  MutationFunction,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
-  UseQueryOptions,
-  UseQueryResult,
+import {
+  useMutation,
+  useQuery,
+  type DataTag,
+  type DefinedInitialDataOptions,
+  type DefinedUseQueryResult,
+  type MutationFunction,
+  type QueryClient,
+  type QueryFunction,
+  type QueryKey,
+  type UndefinedInitialDataOptions,
+  type UseMutationOptions,
+  type UseMutationResult,
+  type UseQueryOptions,
+  type UseQueryResult,
 } from '@tanstack/react-query'
 
+import { customInstance } from '../mutator/custom-instance'
 import type {
   AttemptCredentials,
   ContactUsInput,
@@ -81,8 +83,6 @@ import type {
   WalletCredentials,
   Win,
 } from './restApi.schemas'
-
-import { customInstance } from '../mutator/custom-instance'
 
 export const indexDrawSyncs = (params?: IndexDrawSyncsParams, signal?: AbortSignal) => {
   return customInstance<DrawSync[]>({ url: `/indexDrawSyncs`, method: 'GET', params, signal })

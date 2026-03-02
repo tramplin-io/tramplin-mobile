@@ -8,6 +8,12 @@
 export interface DrawSync {
   drawType: DrawType
   epochOrSlot: string
+  /** VRF seed from draw account (base58); one per draw */
+  vrfSeed?: string
+  /** Transaction that committed the draw (Draw instruction); for Solscan/Explorer URL */
+  commitTransactionHash?: string
+  /** Transaction that revealed the draw; for Solscan/Explorer URL */
+  revealTransactionHash?: string
   lastSyncedAt: string
   syncStatus: SyncStatus
   errorMessage?: string
@@ -35,6 +41,10 @@ export interface Epoch {
   stakes: string
   effectiveStakes?: string
   shares?: string
+  /** Number of participants from snapshot merkle_tree.max_num_nodes */
+  participants?: number
+  /** Merkle root hash from snapshot merkle_tree.merkle_root */
+  merkleRootHash?: string
   points: EpochPoints
   id?: string
   createdAt?: string
@@ -325,6 +335,14 @@ export interface Win {
   stake: number
   prizeLamports: string
   epochOrSlot: string
+  /** Epoch for both regular (derived from slot) and big draws */
+  epochNumber?: number
+  /** VRF seed from draw account (base58); one per draw */
+  vrfSeed?: string
+  /** Transaction that committed the draw (Draw instruction); for Solscan/Explorer URL */
+  commitTransactionHash?: string
+  /** Transaction that revealed the draw; for Solscan/Explorer URL */
+  revealTransactionHash?: string
   drawType: DrawType
   merkleProofs: string[]
   revealedAtSlot?: string
@@ -334,6 +352,14 @@ export interface Win {
   claimedAt?: string
   prizeUSDInCents?: number
   prizeSol?: number
+  /** Number of participants in the epoch (from Epoch) */
+  participants?: number
+  /** Merkle root hash of the epoch (from Epoch) */
+  merkleRootHash?: string
+  /** Solscan URL for the commit transaction */
+  commitTransactionUrl?: string
+  /** Solscan URL for the reveal transaction */
+  revealTransactionUrl?: string
   id?: string
   createdAt?: string
   updatedAt?: string
