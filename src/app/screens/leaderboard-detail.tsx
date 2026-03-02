@@ -10,15 +10,16 @@ import {
   DetailAmountCard,
   DetailCommitTransaction,
   DetailDistribution,
+  DetailDrawPdaHeader,
   DetailLinks,
-  DetailMerkleProofs,
+  // DetailMerkleProofs,
   DetailRevealTransaction,
   DetailSnapshot,
   DetailVerification,
-  DetailWalletHeader,
 } from '@/components/leaderboard/details'
 import { Text } from '@/components/ui/text'
 import { useListPublicWinLeaders } from '@/lib/api/generated/restApi'
+import type { Win } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { ellipsify } from '@/utils/format'
 
@@ -31,24 +32,37 @@ type Params = {
   epochOrSlot?: string
   drawType?: string
   isWinner?: string
+  /** Win id from API; used for lookup when available */
+  winId?: string
+  /** Draw PDA from API; used for lookup when available */
+  drawPda?: string
+}
+
+function findWin(leaders: Win[], params: Params): Win | undefined {
+  const { winId, drawPda, walletAddress, epochOrSlot } = params
+  if (winId) return leaders.find((w) => w.id === winId)
+  if (drawPda) return leaders.find((w) => w.drawPda === drawPda)
+  return leaders.find((w) => w.walletAddress === walletAddress && (!epochOrSlot || w.epochOrSlot === epochOrSlot))
 }
 
 export default function LeaderboardDetailScreen() {
-  const { walletAddress, epochOrSlot, drawType, isWinner } = useLocalSearchParams<Params>()
+  const { walletAddress, epochOrSlot, drawType, isWinner, winId, drawPda } = useLocalSearchParams<Params>()
   const isWinnerEntry = isWinner === 'true'
 
   const { data: leaders = [], isLoading } = useListPublicWinLeaders({
     query: { enabled: isWinnerEntry },
   })
 
-  const win = leaders.find((w) => w.walletAddress === walletAddress && (!epochOrSlot || w.epochOrSlot === epochOrSlot))
+  console.log('leaders', leaders)
+
+  const win = findWin(leaders, { winId, drawPda, walletAddress, epochOrSlot })
   const isGold = drawType === 'big' || win?.drawType === 'big'
   const insets = useSafeAreaInsets()
   const fillPrimary = useCSSVariable('--color-fill-primary')
   const fillFade = useCSSVariable('--color-fill-fade')
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
   const contentPrimary = useCSSVariable('--color-content-primary') as string
-  const titleColor = isGold ? 'text-reward-large-secondary' : 'text-content-primary'
+  // const titleColor = isGold ? 'text-reward-large-secondary' : 'text-content-primary'
 
   return (
     <ScreenWrapper>
@@ -95,7 +109,7 @@ export default function LeaderboardDetailScreen() {
       <View className="flex-1" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerClassName="px-6 pb-10 pt-10 gap-10" showsVerticalScrollIndicator={false}>
           <View>
-            <DetailWalletHeader walletAddress={walletAddress} />
+            <DetailDrawPdaHeader pda={win?.drawPda} />
 
             {isWinnerEntry && isLoading && (
               <View
@@ -113,15 +127,15 @@ export default function LeaderboardDetailScreen() {
 
           {isWinnerEntry && win && <DetailSnapshot win={win} isGold={isGold} />}
 
-          {isWinnerEntry && win && <DetailMerkleProofs win={win} />}
+          {/* {isWinnerEntry && win && <DetailMerkleProofs win={win} />} */}
 
           {isWinnerEntry && win && <DetailCommitTransaction win={win} />}
 
           {isWinnerEntry && win && <DetailRevealTransaction win={win} />}
 
-          {isWinnerEntry && <DetailVerification />}
+          {isWinnerEntry && <DetailVerification vrfSeed={win?.vrfSeed} />}
 
-          <DetailLinks walletAddress={walletAddress} epochOrSlot={epochOrSlot} />
+          {isWinnerEntry && win && <DetailLinks win={win} />}
         </ScrollView>
       </View>
     </ScreenWrapper>
