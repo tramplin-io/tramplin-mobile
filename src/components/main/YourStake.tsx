@@ -80,6 +80,8 @@ function StakedCard({
   onUnstakePress?: () => void
 }>) {
   const displayValue = typeof value === 'number' && !Number.isNaN(value) ? value : 0
+  const truncated = Math.floor(displayValue * 100) / 100
+  const formatted = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const primaryTint = useCSSVariable('--color-fill-primary')
   const secondaryTint = useCSSVariable('--color-brand-tertiary')
@@ -108,7 +110,7 @@ function StakedCard({
       </View>
       <View className="flex-row items-end gap-0.5">
         <Text variant="h3Digits" className="text-content-primary">
-          {displayValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+          {formatted}
         </Text>
         <View className="flex-row items-center gap-0.5 pb-1">
           <SolanaCircleIcon />
