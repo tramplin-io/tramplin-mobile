@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { queryClient } from '@/lib/api'
+import { queryClient } from '@/lib/api/query-client'
 import { createSessionByUserWallet, deleteMySession, readMySession } from '@/lib/api/generated/restApi'
 import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.schemas'
 import { tokenStore } from '@/lib/api/token-store'

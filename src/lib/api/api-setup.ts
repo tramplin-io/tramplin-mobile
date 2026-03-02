@@ -1,4 +1,3 @@
-import { QueryClient } from '@tanstack/react-query'
 import { setSentryApiSource } from '../sentry'
 // import { useApiConfigStore } from '../stores/api-config-store'
 import { useAuthStore } from '../stores/auth-store'
@@ -6,25 +5,6 @@ import { useProfileStore } from '../stores/profile-store'
 import { setBaseURL } from './mutator/custom-instance'
 import { tokenStore } from './token-store'
 // import { storage, STORAGE_KEYS } from '@/utils/storage'
-
-/**
- * React Query client with mobile-optimized defaults.
- *
- * - retry: 2 attempts before failing
- * - staleTime: 5 minutes (data considered fresh)
- * - gcTime: 10 minutes (garbage collection)
- *
- * Pattern from fem-fast-mobile.
- */
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
-    },
-  },
-})
 
 /**
  * Initialize the API layer on app startup.
