@@ -1,23 +1,25 @@
 import { useCallback, useState } from 'react'
+import { getDelegateStakeInstruction, getInitializeInstruction, STAKE_PROGRAM_ADDRESS } from '@solana-program/stake'
+import { getCreateAccountInstruction } from '@solana-program/system'
 import {
   address,
+  appendTransactionMessageInstructions,
+  compileTransaction,
+  createTransactionMessage,
+  generateKeyPairSigner,
   lamports,
   pipe,
-  createTransactionMessage,
   setTransactionMessageFeePayer,
   setTransactionMessageLifetimeUsingBlockhash,
-  appendTransactionMessageInstructions,
-  generateKeyPairSigner,
-  compileTransaction,
+  type Rpc,
+  type SolanaRpcApi,
+  type Transaction,
 } from '@solana/kit'
-import { signatureToBase58 } from '@/utils/format'
-import type { Rpc, SolanaRpcApi, Transaction } from '@solana/kit'
-import { getCreateAccountInstruction } from '@solana-program/system'
-import { getInitializeInstruction, getDelegateStakeInstruction, STAKE_PROGRAM_ADDRESS } from '@solana-program/stake'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 
 import { SOLANA_VALIDATOR_VOTE_KEY } from '@/constants'
 import { useAuthStore } from '@/lib/stores/auth-store'
+import { signatureToBase58 } from '@/utils/format'
 import { isCancellationError } from '@/utils/wallet'
 
 // ---------------------------------------------------------------------------

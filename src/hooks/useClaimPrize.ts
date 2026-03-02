@@ -11,9 +11,11 @@ import {
   type TransactionSigner,
 } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+
 import { signatureToBase58 } from '@/utils/format'
+import { batchInstructions, prepareClaimInstruction, rpc, type Winner } from '@/utils/solana'
 import { isCancellationError } from '@/utils/wallet'
-import { type Winner, batchInstructions, prepareClaimInstruction, rpc } from '@/utils/solana'
+
 import { useDrawWins } from './useDrawWins'
 
 type UseClaimPrizeReturn = {
