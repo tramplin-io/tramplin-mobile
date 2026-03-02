@@ -1,24 +1,38 @@
 import { View } from 'react-native'
+
+import { SolanaIcon } from '@/components/icons/icons'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
+
 import { DetailCopyableHash } from './DetailCopyableHash'
 import { DetailSectionHeader } from './DetailSectionHeader'
 import { StatCell } from './StatCell'
-import { SolanaIcon } from '@/components/icons/icons'
 
-type DetailSnapshotProps = Readonly<{ win: Win; isGold: Boolean }>
+type DetailSnapshotProps = Readonly<{ win: Win; isGold: boolean }>
 
 export function DetailSnapshot({ win, isGold }: DetailSnapshotProps) {
+  const snapshotValue = isGold ? (win.epochNumber ?? '—') : (win.epochOrSlot ?? '—')
+
+  const epochNumber = win.epochNumber
+
   return (
     <View className="gap-5">
       <DetailSectionHeader title="Snapshot" />
       <View className="gap-2">
-        <StatCell
-          label={isGold ? 'Epoch number' : 'Solana slot'}
-          value={win.epochOrSlot}
-          icon={isGold ? undefined : SolanaIcon}
-        />
-        <DetailCopyableHash label="Merkle Root Hash" value={'---'} />
-        {/* TODO: add merkle root hash */}
+        <View className="flex-row gap-2">
+          <View className="flex-1">
+            <StatCell
+              label={isGold ? 'Epoch number' : 'Solana slot'}
+              value={snapshotValue}
+              icon={isGold ? undefined : SolanaIcon}
+            />
+          </View>
+          {epochNumber && !isGold && (
+            <View className="flex-1">
+              <StatCell label={'Epoch number'} value={epochNumber} />
+            </View>
+          )}
+        </View>
+        <DetailCopyableHash label="Merkle Root Hash" value={win.merkleRootHash} />
       </View>
     </View>
   )

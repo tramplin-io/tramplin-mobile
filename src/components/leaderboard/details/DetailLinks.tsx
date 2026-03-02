@@ -3,49 +3,45 @@ import { Linking, Pressable, View } from 'react-native'
 
 import { LinkIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
-import { getExplorerUrl } from '@/utils/wallet'
-
-const CLUSTER = (process.env.EXPO_PUBLIC_SOLANA_NETWORK as 'devnet' | 'mainnet-beta' | 'testnet') ?? 'devnet'
+import type { Win } from '@/lib/api/generated/restApi.schemas'
 
 type DetailLinksProps = Readonly<{
-  walletAddress?: string
-  epochOrSlot?: string
+  win: Win
 }>
 
 function LinkItem({ label, onPress }: Readonly<{ label: string; onPress: () => void }>) {
   return (
-    <Pressable
-      onPress={onPress}
-      className="flex-row items-center py-1 border-b border-border-quaternary"
-      // hitSlop={8}
-    >
+    <Pressable onPress={onPress} className="flex-row items-center py-1 border-b border-border-quaternary">
       <Text variant="body">{label}</Text>
       <LinkIcon size={24} className="text-content-primary" />
     </Pressable>
   )
 }
 
-export function DetailLinks({ walletAddress, epochOrSlot }: DetailLinksProps) {
-  // TODO: update links to Snapshot, VRF
+export function DetailLinks({ win }: DetailLinksProps) {
+  const snapshotUrl = win?.snapshotUrl
+  const vrfTransactionUrl = win?.vrfTransactionUrl
 
-  const handleOpenWallet = useCallback(() => {
-    if (!walletAddress) return
-    void Linking.openURL(getExplorerUrl('address', walletAddress, CLUSTER))
-  }, [walletAddress])
+  const handleSnapshot = useCallback(() => {
+    if (!snapshotUrl) return
+    void Linking.openURL(snapshotUrl)
+  }, [snapshotUrl])
 
   const handleOpenVrf = useCallback(() => {
-    if (!epochOrSlot) return
-    void Linking.openURL(getExplorerUrl('block', epochOrSlot, CLUSTER))
-  }, [epochOrSlot])
+    if (!vrfTransactionUrl) return
+    void Linking.openURL(vrfTransactionUrl)
+  }, [vrfTransactionUrl])
+
+  if (!snapshotUrl && !vrfTransactionUrl) return null
 
   return (
     <View className="flex-row items-center justify-between border-b border-border-quaternary py-2">
       <Text variant="h4" className="text-content-primary">
         Links
       </Text>
-      <View className="flex-row items-center gap-4">
-        {epochOrSlot && <LinkItem label="VRF" onPress={handleOpenVrf} />}
-        {walletAddress && <LinkItem label="Wallet" onPress={handleOpenWallet} />}
+      <View className="flex-row flex-wrap items-center gap-4">
+        {snapshotUrl && <LinkItem label="Snapshot" onPress={handleSnapshot} />}
+        {vrfTransactionUrl && <LinkItem label="VRF" onPress={handleOpenVrf} />}
       </View>
     </View>
   )

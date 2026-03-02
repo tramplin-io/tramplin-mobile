@@ -1,8 +1,8 @@
-import { LinkIcon } from '@/components/icons/icons'
-import { Text } from '@/components/ui/text'
-
 import { Linking, Pressable, View } from 'react-native'
 import { useCSSVariable } from 'uniwind'
+
+import { LinkIcon } from '@/components/icons/icons'
+import { Text } from '@/components/ui/text'
 
 type DetailSectionHeaderProps = Readonly<{ title: string; url?: string }>
 

@@ -5,6 +5,8 @@ import { Text } from '@/components/ui/text'
 import { DetailCopyableHash } from './DetailCopyableHash'
 import { DetailSectionHeader } from './DetailSectionHeader'
 
+type DetailVerificationProps = Readonly<{ vrfSeed?: string | null }>
+
 const VERIFICATION_STEPS = [
   'Check the Solana slot timestamp on any explorer',
   'Verify the snapshot hash matches eligible holders',
@@ -12,7 +14,7 @@ const VERIFICATION_STEPS = [
   'Confirm "randomIndex = VRF_output % totalTickets"',
 ] as const
 
-export function DetailVerification() {
+export function DetailVerification({ vrfSeed }: DetailVerificationProps) {
   return (
     <View className="gap-5">
       <DetailSectionHeader title="Verification" />
@@ -32,8 +34,7 @@ export function DetailVerification() {
         ))}
       </View>
       <View className="gap-2">
-        <DetailCopyableHash label="VRF Seed" value={'---'} />
-        {/* TODO: add VRF seed */}
+        <DetailCopyableHash label="VRF Seed" value={vrfSeed} />
       </View>
     </View>
   )

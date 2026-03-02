@@ -8,8 +8,8 @@ import { CopyIcon, WalletIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 
-type DetailWalletHeaderProps = Readonly<{
-  walletAddress?: string
+type DetailHeaderProps = Readonly<{
+  pda?: string
 }>
 
 function formatAddressTwoLines(address: string): [string, string] {
@@ -17,16 +17,18 @@ function formatAddressTwoLines(address: string): [string, string] {
   return [address.slice(0, mid), address.slice(mid)]
 }
 
-export function DetailWalletHeader({ walletAddress }: DetailWalletHeaderProps) {
+export function DetailDrawPdaHeader({ pda }: DetailHeaderProps) {
   const handleCopy = useCallback(async () => {
-    if (!walletAddress) return
-    await Clipboard.setStringAsync(walletAddress)
-    Toast.show({ type: 'success', text1: 'Wallet address copied' })
-  }, [walletAddress])
+    if (!pda) return
+    await Clipboard.setStringAsync(pda)
+    Toast.show({ type: 'success', text1: 'Draw PDA copied' })
+  }, [pda])
 
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
 
-  const [line1, line2] = walletAddress ? formatAddressTwoLines(walletAddress) : ['—', '']
+  if (!pda) return null
+
+  const [line1, line2] = pda ? formatAddressTwoLines(pda) : ['—', '']
 
   return (
     <View className="mb-2.5">
