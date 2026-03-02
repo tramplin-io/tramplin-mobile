@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
+import { View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router, Stack } from 'expo-router'
 import { Send } from 'lucide-react-native'
 import Toast from 'react-native-toast-message'
+import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
@@ -31,7 +33,14 @@ export default function ContactUsScreen() {
   const [titleError, setTitleError] = useState<string | null>(null)
   const [messageError, setMessageError] = useState<string | null>(null)
 
+  const fillPrimary = useCSSVariable('--color-fill-primary') as string
+  const fillFade = useCSSVariable('--color-fill-fade') as string
+
   const { mutateAsync: sendContactUs, isPending } = useContactUs()
+
+  const handleBack = useCallback(() => {
+    router.push('/profile')
+  }, [])
 
   const resetForm = useCallback(() => {
     setReason('')
@@ -81,15 +90,27 @@ export default function ContactUsScreen() {
   // TODO: Update design of components to match the new design system
   return (
     <ScreenWrapper>
-      <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
-        <BackButton onPress={() => router.back()} className="mb-0 z-10" />
+      <View className="flex-row items-center justify-between mb-2 mt-2 px-4">
+        <BackButton onPress={handleBack} className="mb-0 z-10" />
         <Text variant="h4" className="text-center w-full -ml-10">
           Contact Us
         </Text>
       </View>
+      <LinearGradient
+        colors={[fillPrimary, fillFade]}
+        locations={[0, 1]}
+        className="w-full h-10 z-10"
+        style={{
+          position: 'absolute',
+          top: 56,
+          left: 0,
+          right: 0,
+          height: 32,
+        }}
+      />
       <Stack.Screen options={{ title: 'Contact Us' }} />
 
-      <ScreenWrapper scrollable keyboardAvoiding={true} contentClassName="px-4 pb-8">
+      <ScreenWrapper scrollable keyboardAvoiding={true} contentClassName="px-4 pt-6 pb-8">
         <Text variant="body" className=" mb-6">
           Have a question or feedback? We would love to hear from you.
         </Text>

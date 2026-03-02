@@ -1,11 +1,14 @@
 import { useCallback, useState } from 'react'
 import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
+import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
+import { BackButton } from '@/components/general/BackButton'
 import { DeveloperPanel } from '@/components/profile/DeveloperPanel'
 import { Card } from '@/components/ui'
 import {
@@ -200,6 +203,9 @@ export default function ProfileScreen() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showDeleteSuccess, setShowDeleteSuccess] = useState(false)
 
+  const fillPrimary = useCSSVariable('--color-fill-primary') as string
+  const fillFade = useCSSVariable('--color-fill-fade') as string
+
   const { mutate: deleteProfile, isPending: isDeleting } = useDeleteMyProfile({
     mutation: {
       onSuccess: () => {
@@ -305,10 +311,32 @@ export default function ProfileScreen() {
     router.replace('/')
   }, [])
 
+  const handleBack = useCallback(() => {
+    router.replace('/tabs/')
+  }, [])
+
   return (
     <ScreenWrapper>
+      <View className="flex-row items-center justify-between mb-2 mt-2 px-4">
+        <BackButton onPress={handleBack} className="mb-0 z-10" />
+        <Text variant="h4" className="text-center w-full -ml-10">
+          My Profile
+        </Text>
+      </View>
+      <LinearGradient
+        colors={[fillPrimary, fillFade]}
+        locations={[0, 1]}
+        className="w-full h-10 z-10"
+        style={{
+          position: 'absolute',
+          top: 56,
+          left: 0,
+          right: 0,
+          height: 32,
+        }}
+      />
       <ScrollView
-        className="flex-1 px-4 pt-6"
+        className="relative flex-1 px-4 pt-6 "
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         showsVerticalScrollIndicator={false}
       >

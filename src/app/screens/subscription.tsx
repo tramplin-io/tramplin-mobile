@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router, Stack } from 'expo-router'
 import Toast from 'react-native-toast-message'
+import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
@@ -108,6 +110,9 @@ export default function SubscriptionScreen() {
   const [emailError, setEmailError] = useState<string | null>(null)
   const [telegramError, setTelegramError] = useState<string | null>(null)
 
+  const fillPrimary = useCSSVariable('--color-fill-primary') as string
+  const fillFade = useCSSVariable('--color-fill-fade') as string
+
   useEffect(() => {
     void fetchUserProfile()
   }, [fetchUserProfile])
@@ -121,8 +126,7 @@ export default function SubscriptionScreen() {
   }, [userProfile])
 
   const handleBack = useCallback(() => {
-    router.back()
-    // router.push('/profile')
+    router.push('/profile')
   }, [])
 
   const handleCategoryPress = useCallback((category: NotificationType) => {
@@ -165,12 +169,24 @@ export default function SubscriptionScreen() {
       keyboardVerticalOffset={0}
     >
       <ScreenWrapper>
-        <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
+        <View className="flex-row items-center justify-between mb-2 mt-2 px-4">
           <BackButton onPress={handleBack} className="mb-0 z-10" />
           <Text variant="h4" className="text-center w-full -ml-10">
             Subscription
           </Text>
         </View>
+        <LinearGradient
+          colors={[fillPrimary, fillFade]}
+          locations={[0, 1]}
+          className="w-full h-10 z-10"
+          style={{
+            position: 'absolute',
+            top: 56,
+            left: 0,
+            right: 0,
+            height: 32,
+          }}
+        />
         <Stack.Screen options={{ title: 'Subscription' }} />
         <ScrollView contentContainerClassName="px-4 py-8" showsVerticalScrollIndicator={false}>
           <View className="gap-6">

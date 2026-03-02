@@ -44,7 +44,12 @@ export function Header({ variant, showLogo = true }: Readonly<HeaderProps>) {
 
   const isProfile = pathname === '/profile' //|| pathname.endsWith('/profile')
   /** We only want "back" when we're on the pushed /profile stack screen; on tab /tabs/profile there's no stack to pop. */
-  const isPushedProfileScreen = pathname === '/profile'
+  const isPushedProfileScreen = [
+    '/profile',
+    'screens/notification-settings',
+    'screens/subscription',
+    'screens/contact-us',
+  ].includes(pathname)
 
   const handlePressWallet = () => {
     if (isApp && !isProfile) {
