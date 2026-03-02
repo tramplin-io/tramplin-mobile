@@ -1,11 +1,17 @@
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet'
-import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Keyboard, Platform, type KeyboardEvent } from 'react-native'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetView,
+  type BottomSheetBackdropProps,
+} from '@gorhom/bottom-sheet'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
 import { ErrorBoundary } from '@/components/error-boundary'
+
 import { UnstakeForm } from './UnstakeForm'
 
 const TAB_BAR_HEIGHT = 70
@@ -83,7 +89,7 @@ export function UnstakeModal({ open, onOpenChange }: Props) {
         borderBottomRightRadius: 0,
       }}
     >
-      <BottomSheetScrollView>
+      <BottomSheetScrollView keyboardShouldPersistTaps="always">
         <BottomSheetView style={{ flex: 1, paddingBottom: keyboardHeight - TAB_BAR_HEIGHT }}>
           <ErrorBoundary>
             <UnstakeForm onClose={handleDismiss} />

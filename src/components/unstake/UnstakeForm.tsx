@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Linking, Pressable, View, type TextInput } from 'react-native'
+import { ActivityIndicator, Keyboard, Linking, Pressable, View, type TextInput } from 'react-native'
 import { useCSSVariable } from 'uniwind'
 
 import { SolscanIcon } from '@/components/icons'
@@ -121,6 +121,10 @@ export function UnstakeForm({ onClose }: Props) {
     const t = setTimeout(() => setRetryCountdown((c) => c - 1), 1000)
     return () => clearTimeout(t)
   }, [status, retryCountdown])
+
+  useEffect(() => {
+    if (status !== 'idle') Keyboard.dismiss()
+  }, [status])
 
   const handleValidationChange = useCallback((valid: boolean, err: 'min' | 'max' | null) => {
     setIsValid(valid)

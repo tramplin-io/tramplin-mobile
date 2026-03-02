@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native'
+import { ActivityIndicator, Keyboard, Linking, Pressable, TextInput, View } from 'react-native'
 import type { Rpc, SolanaRpcApi } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { useCSSVariable } from 'uniwind'
@@ -160,6 +160,10 @@ export function StakeForm({ onClose }: Props) {
   useEffect(() => {
     if (loading && status === 'idle') setStatus('processing')
   }, [loading, status])
+
+  useEffect(() => {
+    if (status !== 'idle') Keyboard.dismiss()
+  }, [status])
 
   const handleValidationChange = useCallback((valid: boolean, err: 'min' | 'max' | null) => {
     setIsValid(valid)
