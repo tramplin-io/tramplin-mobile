@@ -32,13 +32,12 @@ const SLIDE_COMPONENTS = [
  * "Launch App" → connect wallet; AuthGuard then redirects to tabs.
  */
 export default function GreetingScreen() {
-  const { connect, account } = useMobileWallet()
+  const { account } = useMobileWallet()
   const { signLoginMessage } = useWalletActions()
   const loginWithWallet = useAuthStore((s) => s.loginWithWallet)
   const insets = useSafeAreaInsets()
   const { width } = useWindowDimensions()
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [connecting, setConnecting] = useState(false)
   const [signingIn, setSigningIn] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const flatListRef = useRef<FlatList>(null)
@@ -55,36 +54,20 @@ export default function GreetingScreen() {
 
   const handleLaunchApp = useCallback(async () => {
     setError(null)
-
-    if (!account) {
-      setConnecting(true)
-      try {
-        await connect()
-      } catch (err) {
-        Toast.show({
-          type: 'error',
-          text1: err instanceof Error ? err.message : 'Failed to connect wallet',
-        })
-      } finally {
-        setConnecting(false)
-      }
-      return
-    }
-
     setSigningIn(true)
 
     try {
       const result = await signLoginMessage()
-      if (!result) {
+      if (!result || !result.publicKey) {
         Toast.show({ type: 'error', text1: 'Signing failed' })
         return
       }
+
       const signatureBase58 = signatureToBase58(result.signature)
-      const publicKey = typeof account.address === 'string' ? account.address : String(account.address)
       const success = await loginWithWallet({
         digest: result.message,
         signature: signatureBase58,
-        publicKey,
+        publicKey: result.publicKey,
       })
       if (!success) {
         Toast.show({ type: 'error', text1: 'Login failed' })
@@ -97,7 +80,7 @@ export default function GreetingScreen() {
     } finally {
       setSigningIn(false)
     }
-  }, [account, connect, loginWithWallet, signLoginMessage])
+  }, [loginWithWallet, signLoginMessage])
 
   const renderSlide = useCallback(
     ({ item, index }: { item: (typeof SLIDE_COMPONENTS)[number]; index: number }) => {
@@ -167,10 +150,10 @@ export default function GreetingScreen() {
           variant="default"
           size="xl"
           onPress={handleLaunchApp}
-          disabled={connecting || signingIn}
+          disabled={signingIn}
           className="w-full border-brand-primary"
         >
-          <Text>{connecting ? 'Connecting…' : signingIn ? 'Signing in…' : account ? 'Sign in' : 'Launch App'}</Text>
+          <Text>{signingIn ? 'Signing in…' : account ? 'Sign in' : 'Launch App'}</Text>
         </Button>
       </View>
     </Container>

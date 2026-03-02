@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react'
 import { AppState } from 'react-native'
+import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-kit'
 import type { SignatureBytes, Transaction } from '@solana/kit'
-import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import type { SignMessageResult, WalletActionResult } from '@/types/wallet'
+import { useAuthorization, useMobileWallet } from '@wallet-ui/react-native-kit'
+
 import { LOGIN_PAYLOAD } from '@/constants/auth'
+import type { SignMessageResult, WalletActionResult } from '@/types/wallet'
 import { encodeMessage, toHexString } from '@/utils/format'
 import { getErrorMessage } from '@/utils/wallet'
 
@@ -29,6 +31,11 @@ import { getErrorMessage } from '@/utils/wallet'
  */
 export function useWalletActions() {
   const wallet = useMobileWallet()
+  const { authorizeSession } = useAuthorization({
+    chain: wallet.chain,
+    identity: wallet.identity,
+    store: wallet.store,
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastResult, setLastResult] = useState<WalletActionResult | null>(null)
@@ -45,24 +52,27 @@ export function useWalletActions() {
     }
   }, [])
 
-  const withReauthorizeRetry = useCallback(async <T>(fn: () => Promise<T>): Promise<T> => {
-    try {
-      ensureForeground()
-      return await fn()
-    } catch (err) {
-      if (!isAuthRequestFailed(err)) throw err
+  const withReauthorizeRetry = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T> => {
+      try {
+        ensureForeground()
+        return await fn()
+      } catch (err) {
+        if (!isAuthRequestFailed(err)) throw err
 
-      // Solflare/Android can return a protocol-level auth failure if the cached session is stale.
-      // Reset session and try once more. We cannot call deauthorizeSession here (it requires
-      // a DeauthorizeAPI wallet reference we don't have in this path); disconnect + connect
-      // clears our side and establishes a fresh session.
-      await wallet.disconnect?.().catch(() => undefined)
-      await wallet.connect()
+        // Solflare/Android can return a protocol-level auth failure if the cached session is stale.
+        // Reset session and try once more. We cannot call deauthorizeSession here (it requires
+        // a DeauthorizeAPI wallet reference we don't have in this path); disconnect + connect
+        // clears our side and establishes a fresh session.
+        await wallet.disconnect?.().catch(() => undefined)
+        await wallet.connect()
 
-      ensureForeground()
-      return await fn()
-    }
-  }, [wallet, ensureForeground, isAuthRequestFailed])
+        ensureForeground()
+        return await fn()
+      }
+    },
+    [wallet, ensureForeground, isAuthRequestFailed],
+  )
 
   /**
    * Clear any existing error state.
@@ -78,11 +88,6 @@ export function useWalletActions() {
    * @returns The signed message result with digest as the signed JSON string, or null if signing failed
    */
   const signLoginMessage = useCallback(async (): Promise<SignMessageResult | null> => {
-    if (!wallet.account) {
-      setError('No wallet connected')
-      return null
-    }
-
     setLoading(true)
     setError(null)
 
@@ -92,14 +97,31 @@ export function useWalletActions() {
       const dataSign = JSON.stringify(dataSignObject)
 
       const messageBytes = new TextEncoder().encode(dataSign)
-      console.log('signLoginMessage - messageBytes', messageBytes)
-      if (!wallet?.signMessage) {
-        throw new Error('Wallet does not support message signing')
-      }
 
-      const signature = await withReauthorizeRetry(() => wallet.signMessage(messageBytes))
+      const result: SignMessageResult = await withReauthorizeRetry(async () => {
+        return await transact(async (mobileWallet) => {
+          const account = await authorizeSession(mobileWallet)
 
-      const result: SignMessageResult = { message: dataSign, signature }
+          if (!mobileWallet?.signMessages) {
+            throw new Error('Wallet does not support message signing')
+          }
+
+          const signedMessages = await mobileWallet.signMessages({
+            addresses: [account.addressBase64],
+            payloads: [messageBytes],
+          })
+
+          const signature = signedMessages?.[0]
+          if (!signature) {
+            throw new Error('Wallet did not return a signature')
+          }
+
+          const publicKey = String(account.address)
+
+          return { message: dataSign, signature, publicKey }
+        })
+      })
+
       setLastResult({ data: result, error: null, loading: false })
       return result
     } catch (err) {
@@ -111,7 +133,7 @@ export function useWalletActions() {
     } finally {
       setLoading(false)
     }
-  }, [wallet, withReauthorizeRetry])
+  }, [authorizeSession, withReauthorizeRetry])
 
   /**
    * Sign a text message with the connected wallet.

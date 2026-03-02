@@ -30,6 +30,8 @@ export interface SignMessageResult {
   message: string
   /** The signature bytes */
   signature: Uint8Array
+  /** Base58 public key that signed the message, if known */
+  publicKey?: string
 }
 
 /**
