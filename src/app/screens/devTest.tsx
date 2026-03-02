@@ -1,22 +1,23 @@
 import { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, ScrollView, Button as RNButton, TouchableOpacity } from 'react-native'
-import { router } from 'expo-router'
+import { Button as RNButton, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
-import { Container } from '@/components/ui/Container'
-import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
-import { ConnectButton } from '@/components/wallet/ConnectButton'
-import { AccountInfo } from '@/components/wallet/AccountInfo'
-import { SignMessageForm } from '@/components/wallet/SignMessageForm'
-import { Switch } from '@/components/ui/switch'
-import { Toast } from 'react-native-toast-message/lib/src/Toast'
-import { Button } from '@/components/ui'
 import * as Haptics from 'expo-haptics'
-import { useAuthStore } from '@/lib/stores/auth-store'
-import { useProfileStore } from '@/lib/stores/profile-store'
+import { router } from 'expo-router'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
+
+import { BackButton } from '@/components/general/BackButton'
+import { Button } from '@/components/ui'
+import { Container } from '@/components/ui/Container'
+import { Switch } from '@/components/ui/switch'
+import { Text } from '@/components/ui/text'
+import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
+import { AccountInfo } from '@/components/wallet/AccountInfo'
+import { ConnectButton } from '@/components/wallet/ConnectButton'
+import { SignMessageForm } from '@/components/wallet/SignMessageForm'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { getExpoPushToken } from '@/lib/notifications/utils'
-import { BackButton } from '@/components/general/BackButton'
-import { Text } from '@/components/ui/text'
+import { useAuthStore } from '@/lib/stores/auth-store'
+import { useProfileStore } from '@/lib/stores/profile-store'
 
 /**
  * Profile Tab — user info + settings menu.
@@ -62,7 +63,29 @@ import { Text } from '@/components/ui/text'
  *    - router.replace('/auth/sign-in')
  */
 export default function ProfileTab() {
-  const { account } = useMobileWallet()
+  const { account, accounts, client, cache, identity, store, chain } = useMobileWallet()
+  // const { authorizeSession } = useAuthorization({
+  //   chain: chain,
+  //   identity: identity,
+  //   store: store,
+  // })
+
+  const wallet = useMobileWallet()
+
+  console.log('account', account)
+  console.log('accounts', accounts)
+  console.log('client', client)
+  console.log('store', store)
+  console.log('cache', cache)
+  console.log('chain', chain)
+  console.log('identity', identity)
+
+  console.log('wallet', wallet)
+  // wallet_uri_base from MWA authorize response (optional; many wallets leave it null)
+  const walletUriBase = (wallet as { walletUriBase?: string | null }).walletUriBase
+  const storeUriBase = (store as { $walletUriBase?: { get: () => string | null } }).$walletUriBase?.get?.()
+  console.log('walletUriBase (connected wallet custom URI)', walletUriBase ?? storeUriBase ?? null)
+
   const isConnected = account !== undefined && account !== null
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const {
