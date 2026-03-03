@@ -8,9 +8,6 @@ import { useProfileStore } from '@/lib/stores/profile-store'
 
 import { ForceUpdateModal, UpdateAvailableModal } from './general'
 
-// import { ForceUpdateModal } from '@/components/ForceUpdateModal'
-// import { UpdateAvailableModal } from '@/components/UpdateAvailableModal'
-
 /**
  * Route protection based on API session (wallet sign-in).
  *
@@ -62,16 +59,28 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
 
   useEffect(() => {
     const firstSegment = segments[0]
-    const inAuthGroup = firstSegment === 'auth'
+    console.log('firstSegment', firstSegment)
+
     const inGreetingGroup = firstSegment === 'greeting'
+    const inSplash = firstSegment === 'splash'
+
+    if (!firstSegment) {
+      console.log('firstSegment is null, redirecting to splash')
+      router.replace('/splash/')
+      return
+    }
+
+    // Let splash screen run its timer and replace to greeting; don't redirect away
+    if (inSplash) return
 
     if (isAuthenticated) {
-      if (inAuthGroup || inGreetingGroup) {
+      if (inGreetingGroup) {
         router.replace('/tabs/')
       }
     } else {
-      //if (!inAuthGroup && !inGreetingGroup)
-      router.replace('/greeting/')
+      if (!inGreetingGroup) {
+        router.replace('/greeting/')
+      }
     }
   }, [isAuthenticated, segments, router])
 
