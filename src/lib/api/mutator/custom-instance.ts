@@ -1,5 +1,5 @@
-import type { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios'
-import axios from 'axios' //, { isAxiosError }
+import axios, { isAxiosError, type AxiosRequestConfig, type AxiosRequestHeaders, type AxiosResponse } from 'axios'
+
 import { tokenStore } from '../token-store'
 
 /**
@@ -57,12 +57,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   (error) => {
-    // if (isAxiosError(error) && error.response?.status === 401) {
-    //   tokenStore.clearToken()
-    //   // Handle 401: token cleared, UI should react to auth state change
-    // }
+    if (isAxiosError(error) && error.response?.status === 401) {
+      tokenStore.clearToken()
+      // Handle 401: token cleared, UI should react to auth state change
+    }
     const isCanceled = error.code === 'ERR_CANCELED' || error.message === 'canceled'
-    if (!isCanceled) {
+    const is404NoSession = error.response?.status === 404 && error.config?.url?.includes('readMySession')
+
+    if (!isCanceled && !is404NoSession) {
       console.error('API Error:', {
         url: error.config?.url,
         status: error.response?.status,
