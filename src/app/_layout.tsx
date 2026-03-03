@@ -43,33 +43,6 @@ setNotificationHandler()
 // Initialize Sentry
 initSentry()
 
-/**
- * Root layout component.
- *
- * Initialization sequence:
- * 1. Initialize API (restore auth token, set base URL)
- * 2. Hide splash screen
- * 3. Render app with providers
- *
- * Provider hierarchy is managed by AppProviders component.
- *
- * TODO (Phase 5 — Navigation Guards & Flow):
- * ────────────────────────────────────────────
- * 1. In prepare(), after initializeApi():
- *    - Restore auth session: const hasToken = await initializeApi()
- *    - Hydrate greeting state when applicable
- *    - Hydrate theme: await useThemeStore.persist.rehydrate()
- *    - Load custom fonts (expo-font)
- *    - Check network status (useNetworkStatus)
- *
- * 2. AuthGuard (src/components/auth-guard.tsx): wallet-based route protection.
- *    - Extend later with useAuthStore when API is added.
- *
- * 3. Network monitoring:
- *    - Subscribe to network status changes in this layout
- *    - On disconnect → router.push('/no-internet')
- *    - On reconnect → router.back()
- */
 function RootLayout() {
   const [appReady, setAppReady] = useState(false)
   const { isRoutePathOverlayEnabled } = useDeveloperStore()
@@ -110,7 +83,8 @@ function RootLayout() {
     originalLog(...args)
   }
 
-  const hideHeader = usePathname() === '/greeting'
+  const pathname = usePathname()
+  const hideHeader = pathname === '/greeting' || pathname === '/splash' || pathname === '/'
 
   useEffect(() => {
     async function prepare() {
@@ -149,32 +123,27 @@ function RootLayout() {
     <AppProviders>
       <View style={styles.container} className="bg-fill-primary">
         {[
-          <StatusBar key="statusbar" style="auto" />,
+          <StatusBar key="statusbar" style="dark" />,
           <AuthGuard key="auth">
             <Stack
               screenOptions={{
                 headerShown: !hideHeader,
                 header: AppHeader,
-                animation: 'slide_from_right',
-                gestureEnabled: false,
+                animation: 'fade',
               }}
             >
               <Stack.Screen name="index" />
-              <Stack.Screen name="greeting" />
+              <Stack.Screen name="greeting" options={{ presentation: 'fullScreenModal', headerShown: false }} />
               <Stack.Screen name="tabs" />
               <Stack.Screen name="profile/index" />
-              <Stack.Screen name="screens/qna" />
               <Stack.Screen name="screens/contact-us" />
-              <Stack.Screen name="screens/edit-profile" />
               <Stack.Screen name="screens/notification-settings" />
               <Stack.Screen
                 name="screens/leaderboard-detail"
                 options={{ presentation: 'fullScreenModal', headerShown: false }}
               />
               <Stack.Screen name="no-internet/index" />
-              <Stack.Screen name="splash/index" options={{ headerShown: false, animation: 'fade' }} />
-              <Stack.Screen name="terms/terms" />
-              <Stack.Screen name="terms/privacy" />
+              <Stack.Screen name="splash" />
             </Stack>
           </AuthGuard>,
           <PortalHost key="portal" />,
