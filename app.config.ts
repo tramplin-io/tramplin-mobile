@@ -1,5 +1,6 @@
 import 'dotenv/config'
-import type { ExpoConfig, ConfigContext } from 'expo/config'
+
+import type { ConfigContext, ExpoConfig } from 'expo/config'
 
 /**
  * Expo app configuration (TypeScript).
@@ -21,9 +22,9 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   icon: './src/assets/images/icon.png',
   splash: {
-    image: './src/assets/images/splash.png',
+    image: './src/assets/images/adaptive-icon.png',
     resizeMode: 'contain',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#B8B6FF',
   },
   // updates: {
   //   url: 'https://u.expo.dev/example',
@@ -36,8 +37,9 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     package: 'com.tramplin',
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
-      foregroundImage: './src/assets/images/adaptive-icon.png',
-      backgroundColor: '#8682F7',
+      // foregroundImage: './src/assets/images/adaptive-icon.png',
+      // backgroundImage: './src/assets/images/splash.png',
+      // backgroundColor: '#DABC58',
     },
   },
   ios: {
@@ -54,19 +56,19 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     'expo-router',
-    [
-      'expo-splash-screen',
-      {
-        backgroundColor: '#8682F7',
-        image: './src/assets/images/icon.png',
-        imageWidth: '100%',
-        imageHeight: '100%',
-        resizeMode: 'contain',
-        dark: {
-          backgroundColor: '#9F9CF9',
-        },
-      },
-    ],
+    // [
+    //   'expo-splash-screen',
+    //   {
+    //     backgroundColor: '#8682F7',
+    //     image: './src/assets/images/splash.png',
+    //     imageWidth: 200, //'100%',
+    //     // imageHeight: '100%',
+    //     resizeMode: 'contain',
+    //     // dark: {
+    //     //   backgroundColor: '#9F9CF9',
+    //     // },
+    //   },
+    // ],
     [
       'expo-font',
       {
