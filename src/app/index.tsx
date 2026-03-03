@@ -1,6 +1,7 @@
-// import { useRouter } from 'expo-router'
 // import { useEffect } from 'react'
-// import SplashScreen from '@/app/onboarding/splash'
+// import { useRouter } from 'expo-router'
+
+// import SplashAnimationScreen from './splash'
 
 // const Home = () => {
 //   const router = useRouter()
@@ -14,34 +15,18 @@
 //     return () => clearTimeout(timer)
 //   }, [router])
 
-//   return <SplashScreen />
+//   return <SplashAnimationScreen />
 // }
 
 // export default Home
 import { Redirect } from 'expo-router'
 
 /**
- * App entry point — redirects to the appropriate flow.
+ * App entry point — redirects to splash, then AuthGuard + splash handle flow.
  *
- * TODO (Phase 5 — Navigation Guards):
- * ─────────────────────────────────────
- * Replace this simple redirect with auth guard logic:
- *
- * 1. Read auth state from useAuthStore:
- *    - const { isAuthenticated } = useAuthStore()
- *    - const { isComplete } = useOnboardingStore()
- *
- * 2. Redirect based on state:
- *    - NOT authenticated       → <Redirect href="/auth/sign-in" />
- *    - Authenticated + no onb  → <Redirect href="/greeting/" />
- *    - Authenticated + onb ok  → <Redirect href="/tabs/" />
- *
- * 3. Handle edge cases:
- *    - No internet → <Redirect href="/no-internet" />
- *    - Loading state → return null (splash screen still visible)
- *
- * For now, redirect to tabs while auth is not implemented.
+ * Flow: index → /splash/ (brand video) → splash replaces to /greeting/ after 2.5s
+ *       → AuthGuard: unauthenticated stay on greeting, authenticated → /tabs/
  */
 export default function EntryRedirect() {
-  return <Redirect href="/tabs/" />
+  return <Redirect href="/splash/" />
 }
