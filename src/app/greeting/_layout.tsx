@@ -1,9 +1,4 @@
 import { Stack } from 'expo-router'
-// import { HeaderGrating } from '@/components/general'
-
-// function OnboardingHeader() {
-//   return <HeaderGrating />
-// }
 
 /**
  * Greeting flow layout — stack with Header (greeting variant).
@@ -17,15 +12,8 @@ export default function GreetingLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        // header: OnboardingHeader,
-        animation: 'slide_from_right',
-        // headerStyle: {
-        //   backgroundColor: '#f4511e',
-        // },
-        // headerTintColor: '#fff',
-        // headerTitleStyle: {
-        //   fontWeight: 'bold',
-        // },
+        presentation: 'fullScreenModal',
+        animation: 'fade',
       }}
     />
   )
