@@ -2,28 +2,27 @@ import '../global.css'
 
 import { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { ThemeProvider } from '@react-navigation/native'
 import { PortalHost } from '@rn-primitives/portal'
 import * as Sentry from '@sentry/react-native'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { Slot, Stack, usePathname } from 'expo-router'
+import { Stack, usePathname } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import { AppProviders } from '@/components/app-providers'
-import { useAppTheme } from '@/components/app-theme'
 import { AuthGuard } from '@/components/auth-guard'
 import { Header, RoutePathOverlay } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
-import { initializeApi, queryClient } from '@/lib/api'
+import { initializeApi } from '@/lib/api'
+import { useNetworkStatus } from '@/lib/network'
 import { setNotificationHandler } from '@/lib/notifications/utils'
 import { initSentry } from '@/lib/sentry'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 import { useLogStore } from '@/lib/stores/log-store'
+
+import NoInternetScreen from './no-internet'
 
 // import * as NavigationBar from 'expo-navigation-bar'
 
@@ -31,8 +30,13 @@ function AppHeader() {
   return <Header variant="app" />
 }
 
+function ToastWithInsets() {
+  const insets = useSafeAreaInsets()
+  return <Toast topOffset={40 + insets.top} config={toastConfig} />
+}
+
 // Keep the splash screen visible while we load resources
-SplashScreen.preventAutoHideAsync()
+// SplashScreen.preventAutoHideAsync()
 
 // Configure how notifications are presented (required for foreground display on Android/iOS)
 setNotificationHandler()
@@ -48,7 +52,6 @@ initSentry()
  * 3. Render app with providers
  *
  * Provider hierarchy is managed by AppProviders component.
- * Toast is placed outside AppProviders so it renders above everything.
  *
  * TODO (Phase 5 — Navigation Guards & Flow):
  * ────────────────────────────────────────────
@@ -69,9 +72,9 @@ initSentry()
  */
 function RootLayout() {
   const [appReady, setAppReady] = useState(false)
-  const { theme } = useAppTheme()
   const { isRoutePathOverlayEnabled } = useDeveloperStore()
-  const insets = useSafeAreaInsets()
+
+  const { isConnected } = useNetworkStatus()
 
   // const visibility = NavigationBar.useVisibility()
   // const color = NavigationBar.getBackgroundColorAsync()
@@ -80,21 +83,32 @@ function RootLayout() {
   // console.log('color', color)
 
   // For testing. DELETE THIS.
-  // const originalLog = console.log
-  // console.log = (...args) => {
-  //   const combinedMessage = args.join(' ')
-  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
-  //     originalLog(...args)
-  //     return
-  //   }
+  const originalLog = console.log
+  const safeStringify = (arg: unknown): string => {
+    if (arg === null) return 'null'
+    if (arg === undefined) return 'undefined'
+    const t = typeof arg
+    if (t === 'string' || t === 'number' || t === 'boolean' || t === 'bigint') return String(arg)
+    try {
+      return JSON.stringify(arg)
+    } catch {
+      return Object.prototype.toString.call(arg)
+    }
+  }
+  console.log = (...args) => {
+    const combinedMessage = args.map(safeStringify).join(' ')
+    if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+      originalLog(...args)
+      return
+    }
 
-  //   useLogStore.getState().addLog({
-  //     type: 'log',
-  //     message: combinedMessage,
-  //     timestamp: new Date().toISOString(),
-  //   })
-  //   originalLog(...args)
-  // }
+    useLogStore.getState().addLog({
+      type: 'log',
+      message: combinedMessage,
+      timestamp: new Date().toISOString(),
+    })
+    originalLog(...args)
+  }
 
   const hideHeader = usePathname() === '/greeting'
 
@@ -127,61 +141,48 @@ function RootLayout() {
     return null
   }
 
+  if (!isConnected) {
+    return <NoInternetScreen />
+  }
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ActionSheetProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={theme}>
-            <View style={styles.container} className="bg-fill-primary">
-              <AppProviders>
-                <StatusBar
-                  style="auto"
-                  // networkActivityIndicatorVisible={false}
-                  // hidden
-                  // animated
-                  // backgroundColor="transparent"
-                  // translucent
-                />
-                <AuthGuard>
-                  {/* <Slot /> */}
-                  <Stack
-                    screenOptions={{
-                      headerShown: !hideHeader,
-                      header: AppHeader,
-                      animation: 'slide_from_right',
-                      gestureEnabled: false, // Disable swipe back gesture
-                    }}
-                  >
-                    <Stack.Screen name="index" />
-                    <Stack.Screen name="greeting" />
-                    <Stack.Screen name="auth/sign-in" />
-                    <Stack.Screen name="tabs" />
-                    <Stack.Screen name="profile/index" />
-                    <Stack.Screen name="screens/qna" />
-                    <Stack.Screen name="screens/contact-us" />
-                    <Stack.Screen name="screens/edit-profile" />
-                    <Stack.Screen name="screens/notification-settings" />
-                    <Stack.Screen
-                      name="screens/leaderboard-detail"
-                      options={{ presentation: 'fullScreenModal', headerShown: false }}
-                    />
-                    <Stack.Screen name="no-internet/index" />
-                    <Stack.Screen name="splash/index" />
-                    <Stack.Screen name="terms/terms" />
-                    <Stack.Screen name="terms/privacy" />
-                  </Stack>
-                </AuthGuard>
-                <PortalHost />
-              </AppProviders>
-              {/* <View style={styles.toastContainer}> */}
-              <Toast topOffset={40 + insets.top} config={toastConfig} />
-              <RoutePathOverlay visible={isRoutePathOverlayEnabled} />
-              {/* </View> */}
-            </View>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </ActionSheetProvider>
-    </GestureHandlerRootView>
+    <AppProviders>
+      <View style={styles.container} className="bg-fill-primary">
+        {[
+          <StatusBar key="statusbar" style="auto" />,
+          <AuthGuard key="auth">
+            <Stack
+              screenOptions={{
+                headerShown: !hideHeader,
+                header: AppHeader,
+                animation: 'slide_from_right',
+                gestureEnabled: false,
+              }}
+            >
+              <Stack.Screen name="index" />
+              <Stack.Screen name="greeting" />
+              <Stack.Screen name="tabs" />
+              <Stack.Screen name="profile/index" />
+              <Stack.Screen name="screens/qna" />
+              <Stack.Screen name="screens/contact-us" />
+              <Stack.Screen name="screens/edit-profile" />
+              <Stack.Screen name="screens/notification-settings" />
+              <Stack.Screen
+                name="screens/leaderboard-detail"
+                options={{ presentation: 'fullScreenModal', headerShown: false }}
+              />
+              <Stack.Screen name="no-internet/index" />
+              <Stack.Screen name="splash/index" options={{ headerShown: false, animation: 'fade' }} />
+              <Stack.Screen name="terms/terms" />
+              <Stack.Screen name="terms/privacy" />
+            </Stack>
+          </AuthGuard>,
+          <PortalHost key="portal" />,
+          <ToastWithInsets key="toast" />,
+          <RoutePathOverlay key="route-overlay" visible={isRoutePathOverlayEnabled} />,
+        ]}
+      </View>
+    </AppProviders>
   )
 }
 
@@ -191,12 +192,5 @@ export default Sentry.wrap(RootLayout)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  toastContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 9999,
   },
 })

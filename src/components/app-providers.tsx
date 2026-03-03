@@ -1,14 +1,23 @@
 import { type PropsWithChildren, useEffect } from 'react'
 import { AppState, Platform } from 'react-native'
 import type { AppStateStatus } from 'react-native'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { ThemeProvider } from '@react-navigation/native'
 import { QueryClientProvider, focusManager } from '@tanstack/react-query'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { MobileWalletProvider } from '@wallet-ui/react-native-kit'
-import { AppTheme } from '@/components/app-theme'
+
+import { AppTheme, useAppTheme } from '@/components/app-theme'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { AppConfig } from '@/constants/app-config'
 import { queryClient } from '@/lib/api'
+
+function NavigationThemeProvider({ children }: Readonly<PropsWithChildren>) {
+  const { theme } = useAppTheme()
+  return <ThemeProvider value={theme}>{children}</ThemeProvider>
+}
 
 /**
  * Notify React Query when the app comes back to foreground.
@@ -24,40 +33,43 @@ function onAppStateChange(status: AppStateStatus) {
  * Root provider component that wraps the entire app.
  *
  * Provider hierarchy (outermost -> innermost):
- *   ErrorBoundary
- *     -> SafeAreaProvider
- *       -> AppTheme (React Navigation theme)
+ *   GestureHandlerRootView
+ *     -> ActionSheetProvider
+ *       -> ErrorBoundary
  *         -> QueryClientProvider (TanStack React Query)
- *           -> MobileWalletProvider (Solana Wallet)
- *             -> BottomSheetModalProvider (so modal content has wallet context)
- *               -> {children}
+ *           -> SafeAreaProvider
+ *             -> AppTheme (theme hydration)
+ *               -> ThemeProvider (React Navigation)
+ *                 -> MobileWalletProvider (Solana Wallet)
+ *                   -> BottomSheetModalProvider (so modal content has wallet context)
+ *                     -> {children}
  *
- * QueryClient is created in lib/api/api-setup.ts so it can be
- * shared with Orval-generated hooks and used outside React components.
- *
- * @example
- * <AppProviders>
- *   <Slot />
- * </AppProviders>
+ * QueryClient is created in lib/api so it can be shared with Orval-generated
+ * hooks and used outside React components.
  */
 export function AppProviders({ children }: Readonly<PropsWithChildren>) {
-  // Register app state listener for React Query focus management
   useEffect(() => {
     const subscription = AppState.addEventListener('change', onAppStateChange)
     return () => subscription.remove()
   }, [])
 
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <AppTheme>
-            <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
-              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-            </MobileWalletProvider>
-          </AppTheme>
-        </SafeAreaProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ActionSheetProvider>
+        <ErrorBoundary>
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              <AppTheme>
+                <NavigationThemeProvider>
+                  <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
+                    <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+                  </MobileWalletProvider>
+                </NavigationThemeProvider>
+              </AppTheme>
+            </SafeAreaProvider>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </ActionSheetProvider>
+    </GestureHandlerRootView>
   )
 }
