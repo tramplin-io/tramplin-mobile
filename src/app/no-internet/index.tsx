@@ -1,35 +1,19 @@
-import { View } from 'react-native'
-import { useNetworkStatus } from '@/lib/network'
 import { useEffect } from 'react'
-import { Button } from '@/components/ui'
+import { ImageBackground, StyleSheet, View } from 'react-native'
+import LottieView from 'lottie-react-native'
+
 import { ScreenWrapper } from '@/components/general'
+import { Logo } from '@/components/icons'
+import { Button } from '@/components/ui'
 import { Text } from '@/components/ui/text'
+import { useNetworkStatus } from '@/lib/network'
+
+const tramplinHeroMobileImageColored = require('@/assets/images/tramplin_hero_mobile_colored.png')
+const noInternetAnimation = require('@/assets/animation/no-internet.json')
 
 /**
  * No Internet Connection Screen.
  *
- * TODO: Implementation
- * ─────────────────────
- * 1. Layout:
- *    - Centered content:
- *      - Offline icon / illustration (wifi-off)
- *      - "No Internet Connection" title
- *      - "Check your connection and try again" subtitle
- *      - "Try Again" button
- *
- * 2. Components needed:
- *    - EmptyState (new: @/components/ui/EmptyState)
- *    - Button (existing)
- *
- * 3. Behavior:
- *    - "Try Again" → check network status (useNetworkStatus hook)
- *    - If online → router.back() or router.replace previous route
- *    - Auto-detect reconnection → navigate away automatically
- *
- * 4. Navigation:
- *    - Shown when useNetworkStatus detects offline
- *    - Standalone screen (not inside tabs or screens group)
- *    - AuthGuard should redirect here when offline during critical operations
  */
 export default function NoInternetScreen() {
   const { isLoading, recheck } = useNetworkStatus()
@@ -39,42 +23,39 @@ export default function NoInternetScreen() {
   }, [recheck])
 
   return (
-    <ScreenWrapper className="flex-1 px-4">
-      <View className="flex-1 items-center ">
-        <View className="mb-10 mt-36">📡</View>
-        <Text variant="h2" className="text-center mb-4" accessibilityRole="header">
+    <ScreenWrapper className="flex-1 bg-fill-primary">
+      <RewardCardStaticBackground />
+      <View className="flex-1 items-center px-4 gap-4">
+        <View className="mt-28">
+          <LottieView source={noInternetAnimation} autoPlay loop style={{ width: 200, height: 200 }} />
+        </View>
+
+        <View className="items-center gap-5">
+          <Logo width={250} height={46} color="#FFFFFF" />
+        </View>
+
+        <Text variant="h2" className="text-center mb-2 text-fill-primary" accessibilityRole="header">
           No Internet Connection
         </Text>
-        <Text variant="body" className="text-center text-textSecondary mb-8">
+        <Text variant="h4" className="text-center mb-4 text-fill-primary">
           Please check your network settings and try again.
         </Text>
-        <Button
-          className="py-4 w-full"
-          onPress={recheck}
-          disabled={isLoading}
-          accessibilityLabel="Try Again"
-          accessibilityRole="button"
-        >
+        <Button variant="default" size="xl" className=" w-full" onPress={recheck} disabled={isLoading}>
           <Text>{isLoading ? 'Checking...' : 'Try Again'}</Text>
         </Button>
       </View>
     </ScreenWrapper>
-    // <Container safe centered>
-    //   <View className="items-center px-8">
-    //     <Text className="text-5xl mb-4">📡</Text>
-    //     <Text className="text-2xl font-bold text-content-primary mb-2">No Internet Connection</Text>
-    //     <Text className="text-base text-content-secondary text-center mb-8">Please check your network settings and try again.</Text>
-    //     {/* TODO: Add "Try Again" button with network check */}
-    //     <Button
-    //       className="py-4 w-full"
-    //       onPress={recheck}
-    //       disabled={isLoading}
-    //       accessibilityLabel="Try Again"
-    //       accessibilityRole="button"
-    //     >
-    //       <Text>{isLoading ? 'Checking...' : 'Try Again'}</Text>
-    //     </Button>
-    //   </View>
-    // </Container>
+  )
+}
+
+function RewardCardStaticBackground() {
+  return (
+    <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+      <ImageBackground
+        source={tramplinHeroMobileImageColored}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      />
+    </View>
   )
 }
