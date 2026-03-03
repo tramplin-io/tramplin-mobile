@@ -1,4 +1,5 @@
 import { View } from 'react-native'
+
 import { Text } from '@/components/ui/text'
 import { useReadProtocolSummary } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
@@ -16,7 +17,7 @@ export interface CommunityStatsProps {
   distributionLabel?: string
 }
 
-const DEFAULT_STAKED_LABEL = 'Staked '
+const DEFAULT_STAKED_LABEL = 'Staked'
 const DEFAULT_DISTRIBUTION_LABEL = 'Distributed'
 
 /**
@@ -35,7 +36,7 @@ export function CommunityStats({
   const distributionPoolUSDCents = data?.distributionPoolUSDCents ?? 0
 
   return (
-    <View className={cn('gap-2', className)}>
+    <View className={cn('gap-2 h-16', className)}>
       <View className="flex-row justify-between items-baseline">
         <Text variant="body" className={textClassName}>
           {stakedLabel}
