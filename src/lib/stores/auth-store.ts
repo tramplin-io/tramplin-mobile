@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { isAxiosError } from 'axios'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -113,13 +114,22 @@ export const useAuthStore = create<AuthState>()(
           get().checkUpdateAvailable()
 
           return session
-        } catch (error) {
-          console.error('Error fetching session:', error)
+        } catch (error: unknown) {
+          const status = isAxiosError(error) ? error.response?.status : undefined
 
-          if (error?.toString().includes('401')) {
+          if (status === 404) {
+            // No session on server (e.g. deleted or expired) — clear auth state
+            set({ session: null })
             get().logout()
+            return null
           }
 
+          if (status === 401) {
+            get().logout()
+            return null
+          }
+
+          console.error('Error fetching session:', error)
           return null
         } finally {
           set({ isLoading: false })
