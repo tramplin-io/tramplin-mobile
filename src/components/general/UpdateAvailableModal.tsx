@@ -1,10 +1,13 @@
+import React from 'react'
+import { Linking, Platform, View } from 'react-native'
+import LottieView from 'lottie-react-native'
+
 import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
 import { ANDROID_APP_STORE_URL } from '@/constants/appConstants'
-import React from 'react'
-import { Linking, Platform } from 'react-native'
-import { View } from 'react-native'
+
+const updateAvailableAnimation = require('@/assets/animation/update.json')
 
 type UpdateAvailableModalProps = {
   visible: boolean
@@ -31,7 +34,9 @@ export const UpdateAvailableModal = ({ visible, onClose }: UpdateAvailableModalP
     <AlertDialog open={visible} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader className="items-center justify-center">
-          <Text className="text-[72px] leading-[108px]">✨</Text>
+          <View className="mt-0">
+            <LottieView source={updateAvailableAnimation} autoPlay loop style={{ width: 150, height: 150 }} />
+          </View>
 
           <View className="items-center mt-2 px-4">
             <Text variant="h3" className="text-center mb-3">
@@ -44,7 +49,7 @@ export const UpdateAvailableModal = ({ visible, onClose }: UpdateAvailableModalP
         </AlertDialogHeader>
 
         <AlertDialogFooter className="w-full gap-2 mt-4">
-          <Button variant="link" size="xl" onPress={onClose}>
+          <Button variant="gray" size="xl" onPress={onClose}>
             <Text variant="body">Later</Text>
           </Button>
           <Button size="xl" onPress={handleUpdateApp}>
