@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
+
 import type { BalanceInfo } from '@/types/wallet'
 import { lamportsToSol } from '@/utils/format'
 
