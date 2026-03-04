@@ -136,7 +136,7 @@ export default function RewardsTab() {
       const buttonText = hasError ? `Try again in ${retryIn}s…` : null
 
       return (
-        <View className="px-6">
+        <View className="px-4">
           <RewardCardRegular
             variant="claim"
             reward={win.prizeSol}
@@ -159,7 +159,7 @@ export default function RewardsTab() {
 
   const listHeaderComponent = useCallback(
     () => (
-      <View className="gap-3 px-6 pt-8 pb-0.5">
+      <View className="gap-3 px-4 pt-8 pb-0.5">
         <DashboardHeader title="Congratulations!" className="mb-6" />
         {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 

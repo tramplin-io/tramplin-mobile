@@ -277,7 +277,7 @@ export default function LeaderboardTab() {
   return (
     <ScreenWrapper>
       <ScrollView
-        contentContainerClassName="px-6 pb-30 py-8 bg-fill-secondary flex-grow"
+        contentContainerClassName="px-4 pb-30 py-8 flex-grow"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

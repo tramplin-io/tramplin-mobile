@@ -1,15 +1,16 @@
 import { useCallback, useState } from 'react'
-import { ScrollView, RefreshControl } from 'react-native'
+import { RefreshControl, ScrollView } from 'react-native'
 import { useQueryClient } from '@tanstack/react-query'
+import { useCSSVariable } from 'uniwind'
+
+import { ScreenWrapper } from '@/components/general'
 import {
   CommunityStats,
   DashboardHeader,
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
-import { ScreenWrapper } from '@/components/general'
 import { UnstakeModal } from '@/components/unstake'
-import { useCSSVariable } from 'uniwind'
 
 /**
  * Home / Dashboard Tab.
@@ -37,7 +38,7 @@ export default function HomeTab() {
   return (
     <ScreenWrapper>
       <ScrollView
-        contentContainerClassName="px-6 pb-40 py-8 bg-fill-secondary flex-grow"
+        contentContainerClassName="px-4 pb-40 py-8 flex-grow"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
