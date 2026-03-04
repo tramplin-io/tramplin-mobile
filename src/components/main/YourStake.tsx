@@ -167,6 +167,31 @@ function EarnedCard({
   )
 }
 
+type PlaceholderCardProps = {
+  staked: boolean
+  className?: string
+}
+
+function PlaceholderCard({ staked, className }: Readonly<PlaceholderCardProps>) {
+  const messageStaked = 'Your stake will appear here'
+  const messageEarned = 'Your points will appear here'
+
+  const message = staked ? messageStaked : messageEarned
+
+  return (
+    <View
+      className={cn(
+        'min-h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
+        className,
+      )}
+    >
+      <Text variant="body" className="text-content-tertiary text-center">
+        {message}
+      </Text>
+    </View>
+  )
+}
+
 /**
  * Fetches readMyStats: shows placeholder when no data, otherwise Staked + Earned cards and participating status.
  */
@@ -215,27 +240,22 @@ export function YourStake({
   }
 
   const { data, showStaked, showEarned } = stats
-  const placeholderCard = (
-    <View
-      className={cn(
-        'min-h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
-        className,
-      )}
-    >
-      <Text variant="body" className="text-content-tertiary text-center">
-        {message}
-      </Text>
-    </View>
-  )
-
   return (
     <View className={cn('gap-4', className)}>
       <View className="flex flex-row gap-3 h-[170px]">
         <View className="flex-1 min-w-0">
-          {showStaked ? <StakedCard value={data.totalStakeAmount} onUnstakePress={onUnstakePress} /> : placeholderCard}
+          {showStaked ? (
+            <StakedCard value={data.totalStakeAmount} onUnstakePress={onUnstakePress} />
+          ) : (
+            <PlaceholderCard staked={true} className={className} />
+          )}
         </View>
         <View className="flex-1 min-w-0">
-          {showEarned ? <EarnedCard value={data.totalPoints} onInfoPress={onEarnedInfoPress} /> : placeholderCard}
+          {showEarned ? (
+            <EarnedCard value={data.totalPoints} onInfoPress={onEarnedInfoPress} />
+          ) : (
+            <PlaceholderCard staked={false} className={className} />
+          )}
         </View>
       </View>
       {/* <Text variant="small" className="text-content-tertiary">
