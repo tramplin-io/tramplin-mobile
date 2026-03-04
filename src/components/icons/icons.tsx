@@ -112,6 +112,17 @@ export const BigCupIcon = createIconComponent(
   </>,
 )
 
+// Bundle Icon
+export const BundleIcon = createIconComponent(
+  'BundleIcon',
+  <>
+    <Rect x="5" y="15.7924" width="14" height="3" rx="0.5" stroke="currentColor" />
+    <Rect x="3" y="12.7924" width="14" height="3" rx="0.5" stroke="currentColor" />
+    <Rect x="6" y="9.79242" width="14" height="3" rx="0.5" stroke="currentColor" />
+    <Rect x="4" y="6.79242" width="14" height="3" rx="0.5" stroke="currentColor" />
+  </>,
+)
+
 // Cancel Icon
 export const CancelIcon = createIconComponent(
   'CancelIcon',
