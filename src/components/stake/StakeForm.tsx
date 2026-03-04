@@ -14,7 +14,7 @@ import { useWalletBalance } from '@/hooks/useWalletBalance'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
 import type { BalanceInfo } from '@/types/wallet'
-import { lamportsToSol } from '@/utils/format'
+import { ellipsify, lamportsToSol } from '@/utils/format'
 import { STAKE_TX_PRECALCULATED_COST } from '@/utils/solana'
 import { getSolscanTxUrl } from '@/utils/wallet'
 
@@ -261,8 +261,8 @@ export function StakeForm({ onClose }: Props) {
         </View>
       </View> */}
 
-      <View className="flex-row flex-wrap justify-between gap-1 mb-10">
-        <View className="flex-row flex-wrap gap-1">
+      <View className="flex-row justify-between gap-0.5 mb-10">
+        <View className="flex-row gap-0.5">
           {QUICK_AMOUNTS.map((n) => (
             <Pressable
               key={n}
@@ -278,6 +278,7 @@ export function StakeForm({ onClose }: Props) {
             </Pressable>
           ))}
         </View>
+
         <Button
           variant={'preset'}
           size="sm"
@@ -289,8 +290,8 @@ export function StakeForm({ onClose }: Props) {
             isAboveMax && 'border-critical-secondary [background-image:linear-gradient(to_bottom,#E7E7E7,#FF9494)]',
           )}
         >
-          <Text variant="smallBold" className="truncate text-content-primary">
-            MAX {balance ? balance.sol : '0'}
+          <Text variant="smallBold" className="truncate ellipsis text-content-primary">
+            MAX {balance ? ellipsify(balance.sol, 4) : '0'}
           </Text>
           <SolanaIcon size={24} />
         </Button>

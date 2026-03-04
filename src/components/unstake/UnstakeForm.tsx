@@ -7,12 +7,11 @@ import { CheckIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
 import { SolInput } from '@/components/stake/SolInput'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { AppConfig } from '@/constants'
 import { LAMPORTS_PER_SOL } from '@/constants/solana'
-import { useUnstake } from '@/hooks/useUnstake'
-import { useUserStakeAccounts } from '@/hooks/useUserStakeAccounts'
+import { useUnstake, useUserActiveStake, useUserStakeAccounts } from '@/hooks'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
-import { lamportsToSol } from '@/utils/format'
 import { getSolscanTxUrl } from '@/utils/wallet'
 
 const QUICK_AMOUNTS = [5, 10, 20] as const
@@ -25,6 +24,8 @@ type Props = Readonly<{
 
 export function UnstakeForm({ onClose }: Props) {
   const { data: stakeAccounts } = useUserStakeAccounts()
+  const { data: activeStake } = useUserActiveStake()
+
   const { unstake, isLoading } = useUnstake()
   const { refetch: refetchMyStats } = useReadMyStats()
 
@@ -40,15 +41,7 @@ export function UnstakeForm({ onClose }: Props) {
   const contentPrimaryColor = useCSSVariable('--color-content-primary') as string | undefined
   const contentTertiaryColor = useCSSVariable('--color-content-tertiary') as string | undefined
 
-  const totalLamports =
-    stakeAccounts?.reduce((sum, acc) => {
-      if (acc.state === 'active' || acc.state === 'activating') {
-        return sum + acc.delegatedStake
-      }
-      return sum
-    }, 0) ?? 0
-
-  const maxSol = totalLamports > 0 ? Number(lamportsToSol(BigInt(totalLamports))) : 0
+  const maxSol = activeStake?.active ?? 0
   const amountNum = Number.parseFloat(amount) || 0
 
   const validationMessage = validationError === 'max' ? 'Amount exceeds staked balance.' : null
@@ -62,10 +55,10 @@ export function UnstakeForm({ onClose }: Props) {
 
   const handleMax = useCallback(() => {
     if (maxSol > 0) {
-      setAmount(lamportsToSol(BigInt(totalLamports)))
+      setAmount(String(maxSol))
     }
     setDisplayError(null)
-  }, [maxSol, totalLamports])
+  }, [maxSol])
 
   const executeUnstake = useCallback(
     async (amountSol: number) => {
@@ -112,7 +105,7 @@ export function UnstakeForm({ onClose }: Props) {
 
   const handleViewSolscan = useCallback(() => {
     if (lastSignature) {
-      Linking.openURL(getSolscanTxUrl(lastSignature, 'devnet'))
+      Linking.openURL(getSolscanTxUrl(lastSignature, AppConfig.networkCluster))
     }
   }, [lastSignature])
 
@@ -194,8 +187,19 @@ export function UnstakeForm({ onClose }: Props) {
         onValidationChange={handleValidationChange}
       />
 
-      <View className="flex-row flex-wrap justify-between gap-1 mb-10">
-        <View className="flex-row flex-wrap gap-1">
+      {activeStake && (
+        <Text variant="small" className="text-content-tertiary">
+          Available: {maxSol} SOL
+          {activeStake.activating > 0 && (
+            <Text variant="small" className="ml-1 text-content-tertiary">
+              (+{activeStake.activating.toFixed(4)} activating)
+            </Text>
+          )}
+        </Text>
+      )}
+
+      <View className="flex-row flex-wrap justify-between gap-0.5 mb-10">
+        <View className="flex-row flex-wrap gap-0.5">
           {QUICK_AMOUNTS.map((n) => (
             <Pressable
               key={n}
@@ -223,7 +227,7 @@ export function UnstakeForm({ onClose }: Props) {
           )}
         >
           <Text variant="smallBold" className="truncate text-content-primary">
-            MAX {maxSol > 0 ? lamportsToSol(BigInt(totalLamports)) : '0'}
+            MAX {maxSol > 0 ? String(maxSol) : '0'}
           </Text>
           <SolanaIcon size={24} />
         </Button>
