@@ -1,7 +1,8 @@
+import { Platform, Pressable } from 'react-native'
+import { cva, type VariantProps } from 'class-variance-authority'
+
 import { TextClassContext } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { Platform, Pressable } from 'react-native'
 
 // NOTE: group-* is not supported yet by Uniwind
 
@@ -42,7 +43,7 @@ const buttonVariants = cva(
           Platform.select({ web: 'hover:bg-content-primary/90' }),
         ),
         tertiary: cn(
-          'rounded-full border border-content-tertiary bg-fill-tertiary',
+          'rounded-full bg-fill-tertiary',
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-content-tertiary/90' }),
         ),
