@@ -5,12 +5,7 @@ import { Tabs } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
-import {
-  BigCupIcon,
-  // FilterIcon,
-  PlusIcon,
-  SmallCupIcon,
-} from '@/components/icons/icons'
+import { BigCupIcon, BundleIcon, FilterIcon, PlusIcon, SearchIcon } from '@/components/icons/icons'
 import { LogoSmall } from '@/components/icons/Logo'
 import { StakeModal } from '@/components/stake'
 import { Button } from '@/components/ui'
@@ -18,7 +13,7 @@ import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 
 function LeaderTabIcon({ color }: { readonly color: string }) {
-  return <BigCupIcon size={30} color={color} />
+  return <BundleIcon size={30} color={color} />
 }
 
 function StakeTabIcon({ color }: { readonly color: string }) {
@@ -26,7 +21,15 @@ function StakeTabIcon({ color }: { readonly color: string }) {
 }
 
 function RewardsTabIcon({ color }: { readonly color: string }) {
-  return <SmallCupIcon size={30} color={color} />
+  return <BigCupIcon size={30} color={color} />
+}
+
+function FAQTabIcon({ color }: { readonly color: string }) {
+  return <SearchIcon size={30} color={color} />
+}
+
+function SettingsTabIcon({ color }: { readonly color: string }) {
+  return <FilterIcon size={30} color={color} />
 }
 
 // function DevTabIcon({ color }: { readonly color: string }) {
@@ -167,6 +170,13 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name="rewards"
+          options={{
+            title: 'Rewards',
+            tabBarIcon: RewardsTabIcon,
+          }}
+        />
+        <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
@@ -174,16 +184,23 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="rewards"
+          name="faq"
           options={{
-            title: 'Rewards',
-            tabBarIcon: RewardsTabIcon,
+            title: 'FAQ',
+            tabBarIcon: FAQTabIcon,
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Settings',
+            tabBarIcon: SettingsTabIcon,
           }}
         />
       </Tabs>
 
       <View
-        className="items-center justify-center px-6 gap-5 z-50"
+        className="items-center justify-center px-4 gap-5 z-50"
         style={{
           position: 'absolute',
           bottom: 90 + insets.bottom,
