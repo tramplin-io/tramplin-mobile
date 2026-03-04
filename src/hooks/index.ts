@@ -3,6 +3,8 @@ export { useWalletBalance } from './useWalletBalance'
 export { useWalletActions } from './useWalletActions'
 export { useCopyToClipboard } from './useCopyToClipboard'
 export { useUserStakeAccounts } from './useUserStakeAccounts'
+export { useUserActiveStake } from './useUserActiveStake'
+export { useUserTotalStake } from './useUserTotalStake'
 
 export { useStake } from './useStake'
 export { useUnstake } from './useUnstake'
