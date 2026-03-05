@@ -151,21 +151,23 @@ function LeaderboardTable({
   isWinners,
   list,
   isLoading,
-  page,
-  setPage,
+  // page,
+  // setPage,
 }: Readonly<{
   isWinners: boolean
   list: Win[] | { walletAddress: string; stake: number; points?: number }[]
   isLoading: boolean
-  page: number
-  setPage: Dispatch<SetStateAction<number>>
+  // page: number
+  // setPage: Dispatch<SetStateAction<number>>
 }>) {
-  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
-  const currentPage = Math.min(page, totalPages - 1)
-  const pageItems = useMemo(
-    () => list.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
-    [list, currentPage],
-  )
+  // const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE))
+  // const currentPage = Math.min(page, totalPages - 1)
+  // const pageItems = useMemo(
+  //   () => list.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
+  //   [list, currentPage],
+  // )
+
+  const pageItems = list
   return (
     <>
       {isWinners ? (
@@ -240,17 +242,17 @@ function LeaderboardTable({
           )
         })}
 
-      {list.length > PAGE_SIZE && (
+      {/* {list.length > PAGE_SIZE && (
         <Pagination className="mt-6" currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
-      )}
+      )} */}
     </>
   )
 }
 
 export default function LeaderboardTab() {
   const [tab, setTab] = useState<TabId>('winners')
-  const [winnersPage, setWinnersPage] = useState(0)
-  const [stakersPage, setStakersPage] = useState(0)
+  // const [winnersPage, setWinnersPage] = useState(0)
+  // const [stakersPage, setStakersPage] = useState(0)
 
   const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
 
@@ -304,8 +306,8 @@ export default function LeaderboardTab() {
               isWinners
               list={winsList}
               isLoading={isLoadingWins}
-              page={winnersPage}
-              setPage={setWinnersPage}
+              // page={winnersPage}
+              // setPage={setWinnersPage}
             />
           </TabsContent>
           <TabsContent value="stakers" className="mt-4">
@@ -313,8 +315,8 @@ export default function LeaderboardTab() {
               isWinners={false}
               list={stakersList}
               isLoading={isLoadingStakers}
-              page={stakersPage}
-              setPage={setStakersPage}
+              // page={stakersPage}
+              // setPage={setStakersPage}
             />
           </TabsContent>
         </Tabs>
