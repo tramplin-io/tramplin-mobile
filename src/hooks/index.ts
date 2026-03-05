@@ -15,9 +15,6 @@ export { useClaimPrize } from './useClaimPrize'
 export { useEpoch } from './useEpoch'
 export { useProgramAccounts } from './useProgramAccounts'
 
-export { ReferralContextProvider, useReferralSignIn } from './ReferralContextProvider'
-export { useReferralProfile } from './useReferralProfile'
-
 /**
  * TODO (Phase 4 — State & Data): Create these new hooks/stores:
  *
