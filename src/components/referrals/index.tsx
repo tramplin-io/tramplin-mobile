@@ -99,7 +99,7 @@ export function ReferralStats({ className }: Readonly<{ className?: string }>) {
         </View>
       </Pressable>
 
-      <View className="flex-1 flex-row shrink gap-1 items-center justify-center mt-2">
+      <View className="flex-row gap-1 items-center justify-center mt-2">
         <Text variant="body" className="text-content-tertiary -mr-1">
           Earn
         </Text>
