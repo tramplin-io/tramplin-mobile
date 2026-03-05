@@ -58,6 +58,7 @@ export function useWalletActions() {
         ensureForeground()
         return await fn()
       } catch (err) {
+        console.error('withReauthorizeRetry - err:', err)
         if (!isAuthRequestFailed(err)) throw err
 
         // Solflare/Android can return a protocol-level auth failure if the cached session is stale.
@@ -82,58 +83,62 @@ export function useWalletActions() {
   }, [])
 
   /**
-   * Sign the login payload (expiresAt + LOGIN_PAYLOAD) for auth.
+   * Sign the login payload (expiresAt + payload) for auth.
    * Used by greeting screen to create a session.
    *
+   * @param payload - Payload to sign (default: LOGIN_PAYLOAD)
    * @returns The signed message result with digest as the signed JSON string, or null if signing failed
    */
-  const signLoginMessage = useCallback(async (): Promise<SignMessageResult | null> => {
-    setLoading(true)
-    setError(null)
+  const signLoginMessage = useCallback(
+    async (payload: string = LOGIN_PAYLOAD): Promise<SignMessageResult | null> => {
+      setLoading(true)
+      setError(null)
 
-    try {
-      const expiresAt = Date.now() + 1 * 60 * 1000
-      const dataSignObject = { expiresAt, payload: LOGIN_PAYLOAD }
-      const dataSign = JSON.stringify(dataSignObject)
+      try {
+        const expiresAt = Date.now() + 1 * 60 * 1000
+        const dataSignObject = { expiresAt, payload }
+        const dataSign = JSON.stringify(dataSignObject)
 
-      const messageBytes = new TextEncoder().encode(dataSign)
+        const messageBytes = new TextEncoder().encode(dataSign)
 
-      const result: SignMessageResult = await withReauthorizeRetry(async () => {
-        return await transact(async (mobileWallet) => {
-          const account = await authorizeSession(mobileWallet)
+        const result: SignMessageResult = await withReauthorizeRetry(async () => {
+          return await transact(async (mobileWallet) => {
+            const account = await authorizeSession(mobileWallet)
 
-          if (!mobileWallet?.signMessages) {
-            throw new Error('Wallet does not support message signing')
-          }
+            if (!mobileWallet?.signMessages) {
+              throw new Error('Wallet does not support message signing')
+            }
 
-          const signedMessages = await mobileWallet.signMessages({
-            addresses: [account.addressBase64],
-            payloads: [messageBytes],
+            const signedMessages = await mobileWallet.signMessages({
+              addresses: [account.addressBase64],
+              payloads: [messageBytes],
+            })
+
+            const signature = signedMessages?.[0]
+            if (!signature) {
+              throw new Error('Wallet did not return a signature')
+            }
+
+            const publicKey = String(account.address)
+
+            return { message: dataSign, signature, publicKey }
           })
-
-          const signature = signedMessages?.[0]
-          if (!signature) {
-            throw new Error('Wallet did not return a signature')
-          }
-
-          const publicKey = String(account.address)
-
-          return { message: dataSign, signature, publicKey }
         })
-      })
 
-      setLastResult({ data: result, error: null, loading: false })
-      return result
-    } catch (err) {
-      console.error('signLoginMessage - err', err)
-      const errorMsg = getErrorMessage(err)
-      setError(errorMsg)
-      setLastResult({ data: null, error: errorMsg, loading: false })
-      return null
-    } finally {
-      setLoading(false)
-    }
-  }, [authorizeSession, withReauthorizeRetry])
+        setLastResult({ data: result, error: null, loading: false })
+        return result
+      } catch (err) {
+        console.error('signLoginMessage - err', err)
+        const errorMsg = getErrorMessage(err)
+        setError(errorMsg)
+        setLastResult({ data: null, error: errorMsg, loading: false })
+        return null
+      } finally {
+        setLoading(false)
+      }
+    },
+    [authorizeSession, withReauthorizeRetry],
+  )
 
   /**
    * Sign a text message with the connected wallet.
