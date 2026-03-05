@@ -5,7 +5,7 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader'
 export default function ProfileScreen() {
   return (
     <ScreenWrapper>
-      <ProfileHeader title="My Profile" />
+      <ProfileHeader title="Settings" />
       <ProfileContent />
     </ScreenWrapper>
   )
