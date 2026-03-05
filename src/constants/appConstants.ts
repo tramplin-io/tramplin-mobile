@@ -21,8 +21,8 @@ const ANDROID_APP_STORE_URL: string =
 const API_URLS = {
   PROD: process.env.EXPO_PUBLIC_API_URL || 'https://api.tramplin.io/api',
   DEV: process.env.EXPO_PUBLIC_API_URL || 'https://develop-api.tramplin.io/api',
-  PROD_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://referrals.tramplin.io',
-  DEV_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://develop-referrals-api.tramplin.io',
+  PROD_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://referrals-api.tramplin.io/api',
+  DEV_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://develop-referrals-api.tramplin.io/api',
 } as const
 
 export {
