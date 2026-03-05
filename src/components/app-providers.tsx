@@ -9,10 +9,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { AppTheme, useAppTheme } from '@/components/app-theme'
+import { initSentry } from '@/lib/sentry'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { AppConfig } from '@/constants/app-config'
 import { ReferralContextProvider } from '@/hooks'
 import { queryClient } from '@/lib/api'
+
+initSentry()
 
 function NavigationThemeProvider({ children }: Readonly<PropsWithChildren>) {
   const { theme } = useAppTheme()

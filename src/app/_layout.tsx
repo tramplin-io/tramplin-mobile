@@ -17,8 +17,6 @@ import { toastConfig } from '@/components/ToastConfig'
 import { initializeApi } from '@/lib/api'
 import { useNetworkStatus } from '@/lib/network'
 import { setNotificationHandler } from '@/lib/notifications/utils'
-import { initSentry } from '@/lib/sentry'
-import { useAuthStore } from '@/lib/stores/auth-store'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 import { useLogStore } from '@/lib/stores/log-store'
 
@@ -40,8 +38,6 @@ function ToastWithInsets() {
 
 // Configure how notifications are presented (required for foreground display on Android/iOS)
 setNotificationHandler()
-// Initialize Sentry
-initSentry()
 
 function RootLayout() {
   const [appReady, setAppReady] = useState(false)
@@ -56,7 +52,6 @@ function RootLayout() {
   // console.log('color', color)
 
   // For testing. DELETE THIS.
-  const originalLog = console.log
   const safeStringify = (arg: unknown): string => {
     if (arg === null) return 'null'
     if (arg === undefined) return 'undefined'
@@ -68,19 +63,36 @@ function RootLayout() {
       return Object.prototype.toString.call(arg)
     }
   }
-  console.log = (...args) => {
+
+  // const originalLog = console.log
+  // console.log = (...args) => {
+  //   const combinedMessage = args.map(safeStringify).join(' ')
+  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+  //     originalLog(...args)
+  //     return
+  //   }
+
+  //   useLogStore.getState().addLog({
+  //     type: 'log',
+  //     message: combinedMessage,
+  //     timestamp: new Date().toISOString(),
+  //   })
+  //   originalLog(...args)
+  // }
+
+  const originalError = console.error
+  console.error = (...args) => {
     const combinedMessage = args.map(safeStringify).join(' ')
     if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
-      originalLog(...args)
+      originalError(...args)
       return
     }
-
     useLogStore.getState().addLog({
-      type: 'log',
+      type: 'error',
       message: combinedMessage,
       timestamp: new Date().toISOString(),
     })
-    originalLog(...args)
+    originalError(...args)
   }
 
   const pathname = usePathname()
