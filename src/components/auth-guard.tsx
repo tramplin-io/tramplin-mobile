@@ -59,13 +59,13 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
 
   useEffect(() => {
     const firstSegment = segments[0]
-    console.log('firstSegment', firstSegment)
+    // console.log('firstSegment', firstSegment)
 
     const inGreetingGroup = firstSegment === 'greeting'
     const inSplash = firstSegment === 'splash'
 
     if (!firstSegment) {
-      console.log('firstSegment is null, redirecting to splash')
+      // console.log('firstSegment is null, redirecting to splash')
       router.replace('/splash/')
       return
     }

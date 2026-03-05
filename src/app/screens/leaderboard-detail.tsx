@@ -53,7 +53,7 @@ export default function LeaderboardDetailScreen() {
     query: { enabled: isWinnerEntry },
   })
 
-  console.log('leaders', leaders)
+  // console.log('leaders', leaders)
 
   const win = findWin(leaders, { winId, drawPda, walletAddress, epochOrSlot })
   const isGold = drawType === 'big' || win?.drawType === 'big'

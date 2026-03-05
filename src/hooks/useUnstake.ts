@@ -81,7 +81,7 @@ export function useUnstake() {
           deactivatedAccounts: deactivatedAccounts.map((a) => a.toString()),
         }
       } catch (err) {
-        console.log('unstake - err:', err)
+        console.error('unstake - err:', err)
         if (isCancellationError(err)) {
           throw new Error('Transaction cancelled')
         }

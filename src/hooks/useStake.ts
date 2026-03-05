@@ -192,7 +192,7 @@ export function useStake({ rpc }: UseStakeOptions) {
         }
       } catch (err) {
         if (isCancellationError(err)) {
-          console.log('stake - isCancellationError:', err)
+          console.error('stake - isCancellationError:', err)
           throw new Error('Transaction cancelled')
         }
         throw err instanceof Error ? err : new Error('Staking failed')

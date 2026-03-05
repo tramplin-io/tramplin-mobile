@@ -38,11 +38,11 @@ export function useWalletBalance() {
     setError(null)
 
     try {
-      console.log('fetchBalance - account.address', account.address)
-      console.log('fetchBalance - rpc', rpc)
+      // console.log('fetchBalance - account.address', account.address)
+      // console.log('fetchBalance - rpc', rpc)
       const result = await rpc.getBalance(account.address, { commitment: 'confirmed' }).send()
 
-      console.log('fetchBalance - result', result)
+      // console.log('fetchBalance - result', result)
 
       const lamports = result.value
       setBalance({
@@ -50,6 +50,7 @@ export function useWalletBalance() {
         sol: lamportsToSol(lamports),
       })
     } catch (err) {
+      console.error('fetchBalance - err', err)
       const message = err instanceof Error ? err.message : 'Failed to fetch balance'
       setError(message)
       setBalance(null)

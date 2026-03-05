@@ -125,7 +125,7 @@ export function useWalletActions() {
       setLastResult({ data: result, error: null, loading: false })
       return result
     } catch (err) {
-      console.log('signLoginMessage - err', err)
+      console.error('signLoginMessage - err', err)
       const errorMsg = getErrorMessage(err)
       setError(errorMsg)
       setLastResult({ data: null, error: errorMsg, loading: false })
@@ -156,14 +156,15 @@ export function useWalletActions() {
         if (!wallet?.signMessage) {
           throw new Error('Wallet does not support message signing')
         }
-        console.log('signMessage - encodedMessage', encodedMessage)
+        // console.log('signMessage - encodedMessage', encodedMessage)
         const signature = await withReauthorizeRetry(() => wallet.signMessage(encodedMessage))
-        console.log('signMessage - signature', signature)
+        // console.log('signMessage - signature', signature)
 
         const result: SignMessageResult = { message, signature }
         setLastResult({ data: result, error: null, loading: false })
         return result
       } catch (err) {
+        console.error('signMessage - err', err)
         const errorMsg = getErrorMessage(err)
         setError(errorMsg)
         setLastResult({ data: null, error: errorMsg, loading: false })
