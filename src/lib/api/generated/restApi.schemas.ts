@@ -301,6 +301,14 @@ export const UserRole = {
 export interface MyStats {
   totalStakeAmount: number
   totalPoints: number
+  effectiveStake?: number
+  effectiveStakeLamports?: number
+  apr?: number
+  totalWinLamports?: number
+  totalWinSol?: number
+  multiplier?: number
+  isAttendingRegularDraw?: boolean
+  isAttendingBigDraw?: boolean
 }
 
 export interface ValidatorStakeAccount {
@@ -738,6 +746,10 @@ export const IndexValidatorStakeAccountsSortOrder = {
   ASC: 'ASC',
   DESC: 'DESC',
 } as const
+
+export type ReadPublicStatsParams = {
+  walletAddress: string
+}
 
 export type ReadValidatorStakeAccountParams = {
   id: string

@@ -58,6 +58,7 @@ import type {
   ReadMyWinParams,
   ReadProfileParams,
   ReadProtocolStatisticParams,
+  ReadPublicStatsParams,
   ReadServiceConfigParams,
   ReadTokenParams,
   ReadUserParams,
@@ -3080,6 +3081,87 @@ export function useReadMyStats<TData = Awaited<ReturnType<typeof readMyStats>>, 
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getReadMyStatsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const readPublicStats = (params: ReadPublicStatsParams, signal?: AbortSignal) => {
+  return customInstance<MyStats>({ url: `/readPublicStats`, method: 'GET', params, signal })
+}
+
+export const getReadPublicStatsQueryKey = (params?: ReadPublicStatsParams) => {
+  return [`/readPublicStats`, ...(params ? [params] : [])] as const
+}
+
+export const getReadPublicStatsQueryOptions = <TData = Awaited<ReturnType<typeof readPublicStats>>, TError = unknown>(
+  params: ReadPublicStatsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPublicStats>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getReadPublicStatsQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof readPublicStats>>> = ({ signal }) =>
+    readPublicStats(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof readPublicStats>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ReadPublicStatsQueryResult = NonNullable<Awaited<ReturnType<typeof readPublicStats>>>
+export type ReadPublicStatsQueryError = unknown
+
+export function useReadPublicStats<TData = Awaited<ReturnType<typeof readPublicStats>>, TError = unknown>(
+  params: ReadPublicStatsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPublicStats>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readPublicStats>>,
+          TError,
+          Awaited<ReturnType<typeof readPublicStats>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPublicStats<TData = Awaited<ReturnType<typeof readPublicStats>>, TError = unknown>(
+  params: ReadPublicStatsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPublicStats>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readPublicStats>>,
+          TError,
+          Awaited<ReturnType<typeof readPublicStats>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPublicStats<TData = Awaited<ReturnType<typeof readPublicStats>>, TError = unknown>(
+  params: ReadPublicStatsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPublicStats>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useReadPublicStats<TData = Awaited<ReturnType<typeof readPublicStats>>, TError = unknown>(
+  params: ReadPublicStatsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPublicStats>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getReadPublicStatsQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>
