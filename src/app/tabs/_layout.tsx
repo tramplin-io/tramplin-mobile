@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Pressable, StyleSheet, View, type PressableProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Tabs } from 'expo-router'
+import { Tabs, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
@@ -106,11 +106,17 @@ function TabBarButtonWrapper({
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets()
+  const pathname = usePathname()
   const activeTint = useCSSVariable('--color-brand-primary')
   const inactiveTint = useCSSVariable('--color-content-tertiary')
   const backgroundColor = useCSSVariable('--color-fill-primary')
   const [stakeModalOpen, setStakeModalOpen] = useState(false)
   const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
+  const isStakeHide = pathname === '/tabs/settings' || pathname.startsWith('/tabs/settings/')
+
+  useEffect(() => {
+    if (isStakeHide) setStakeModalOpen(false)
+  }, [isStakeHide])
 
   return (
     <View className="flex-1">
@@ -199,20 +205,22 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      <View
-        className="items-center justify-center px-4 gap-5 z-50"
-        style={{
-          position: 'absolute',
-          bottom: 90 + insets.bottom,
-          left: 0,
-          right: 0,
-        }}
-      >
-        <Button variant="default" size="xl" onPress={handleOpenStake} className="w-full border-brand-primary">
-          <PlusIcon size={20} className="drop-shadow-md" />
-          <Text variant="body">Stake SOL</Text>
-        </Button>
-      </View>
+      {!isStakeHide && (
+        <View
+          className="items-center justify-center px-4 gap-5 z-50"
+          style={{
+            position: 'absolute',
+            bottom: 90 + insets.bottom,
+            left: 0,
+            right: 0,
+          }}
+        >
+          <Button variant="default" size="xl" onPress={handleOpenStake} className="w-full border-brand-primary">
+            <PlusIcon size={20} className="drop-shadow-md" />
+            <Text variant="body">Stake SOL</Text>
+          </Button>
+        </View>
+      )}
 
       <StakeModal open={stakeModalOpen} onOpenChange={setStakeModalOpen} />
     </View>
