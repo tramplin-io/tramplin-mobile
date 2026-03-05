@@ -1,33 +1,70 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Modal, Pressable, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
 import { QRCode } from '@/components/general'
 import { CopyIcon } from '@/components/icons'
 import { Text } from '@/components/ui/text'
-import { useReferralProfile, useReferralSignIn } from '@/hooks'
+import { AppConfig } from '@/constants'
+import { REFERRALS_LOGIN_PAYLOAD } from '@/constants/auth'
+import { useWalletActions } from '@/hooks'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
+import { useReferralsStore } from '@/lib/stores/referrals-store'
+import { signatureToBase58 } from '@/utils/format'
 
 import { LinkNewIcon, PointsIcon, SolanaCircleIcon } from '../icons/icons'
 
-function signInButtonLabel(status: string, hasPreviousSession: boolean): string {
-  if (status === 'pending') return 'Signing in…'
-  if (hasPreviousSession) return 'Create referral link' //Sign in to
-  return 'Create referral link'
-}
-
 export function ReferralStats({ className }: Readonly<{ className?: string }>) {
-  const { signIn, isAuthenticated, status, hasPreviousSession, error: signInError } = useReferralSignIn()
-  const { profile, referralUrl, isLoading, error } = useReferralProfile()
+  const { profile, isLoading, isAuthenticated, error } = useReferralsStore()
+
+  const { signLoginMessage } = useWalletActions()
+  const loginWithWallet = useReferralsStore((s) => s.signInWithWallet)
+
   const { copy, copied } = useCopyToClipboard()
   const [isQrModalOpen, setIsQrModalOpen] = useState(false)
 
+  const [signingIn, setSigningIn] = useState(false)
+
+  const handleConnectReference = useCallback(async () => {
+    setSigningIn(true)
+
+    try {
+      const result = await signLoginMessage(REFERRALS_LOGIN_PAYLOAD)
+      if (!result || !result.publicKey) {
+        Toast.show({ type: 'error', text1: 'Signing failed' })
+        return
+      }
+
+      const signatureBase58 = signatureToBase58(result.signature)
+
+      const success = await loginWithWallet({
+        digest: result.message,
+        signature: signatureBase58,
+        publicKey: result.publicKey,
+      })
+
+      if (!success) {
+        Toast.show({ type: 'error', text1: error ?? 'Login failed' })
+      }
+    } catch (err) {
+      console.error('handleConnectReference - err:', err)
+      Toast.show({
+        type: 'error',
+        text1: err instanceof Error ? err.message : 'Failed to connect to referral program',
+      })
+    } finally {
+      setSigningIn(false)
+    }
+  }, [loginWithWallet, signLoginMessage, error])
+
   const colorContentTertiary = useCSSVariable('--color-content-tertiary') as string
 
-  if ((isAuthenticated && (error || !profile)) || isLoading) return null
+  // if ((isAuthenticated && (error || !profile)) || isLoading) return null
+
+  const referralUrl = profile?.referralToken ? `${AppConfig.uri}?ref=${profile.referralToken}` : null
 
   const shortUrl = referralUrl?.replace('https://', '')?.toUpperCase() ?? null
-  const errorMsg = signInError?.message ?? null
 
   async function handleCopy() {
     if (!referralUrl) return
@@ -85,7 +122,7 @@ export function ReferralStats({ className }: Readonly<{ className?: string }>) {
   return (
     <View className={className}>
       <Pressable
-        onPress={() => signIn().catch(() => {})}
+        onPress={handleConnectReference}
         className="flex-row items-center justify-between bg-fill-secondary rounded-xl p-3 gap-3 ring-1 ring-border-quaternary h-22"
       >
         <View className="flex-1 shrink gap-1 items-center justify-center">
@@ -93,7 +130,7 @@ export function ReferralStats({ className }: Readonly<{ className?: string }>) {
           <View className="flex-row items-center gap-1">
             <LinkNewIcon size={24} color={colorContentTertiary} />
             <Text variant="small" className="text-content-tertiary uppercase" numberOfLines={1}>
-              {signInButtonLabel(status, hasPreviousSession)}
+              {signingIn ? 'Signing in…' : 'Create referral link'}
             </Text>
           </View>
         </View>
@@ -112,11 +149,13 @@ export function ReferralStats({ className }: Readonly<{ className?: string }>) {
           stake
         </Text>
       </View>
-      {status === 'error' && errorMsg && (
-        <Text variant="small" className="text-destructive-primary text-center max-w-[280px]">
-          {errorMsg}
-        </Text>
-      )}
+      {/* {error && (
+        <View className="flex items-center justify-center mt-1">
+          <Text variant="small" className="text-critical-secondary text-center max-w-[280px]">
+            {error}
+          </Text>
+        </View>
+      )} */}
     </View>
   )
 }
