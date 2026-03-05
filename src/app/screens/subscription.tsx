@@ -46,6 +46,8 @@ function ContactRow({
     onChangeText?: (text: string) => void
   } & Omit<React.ComponentProps<typeof Input>, 'value' | 'placeholder' | 'onChangeText'>
 >) {
+  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
+
   return (
     <View className="gap-2">
       <Text variant="small" className="uppercase tracking-wide">
@@ -60,9 +62,10 @@ function ContactRow({
         <Input
           value={value}
           placeholder={placeholder}
+          placeholderTextColor={contentTertiary}
           onChangeText={onChangeText}
           hasError={!!error}
-          className="flex-1 h-14 min-w-0 border-0 bg-transparent px-1 py-2.5 text-content-primary placeholder:text-content-tertiary shadow-none"
+          className="flex-1 h-14 min-w-0 border-0 bg-transparent px-1 py-2.5 text-content-primary shadow-none"
           {...inputProps}
         />
       </View>
