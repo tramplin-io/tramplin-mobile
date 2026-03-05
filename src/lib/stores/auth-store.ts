@@ -3,9 +3,9 @@ import { isAxiosError } from 'axios'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import { queryClient } from '@/lib/api/query-client'
 import { createSessionByUserWallet, deleteMySession, readMySession } from '@/lib/api/generated/restApi'
 import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.schemas'
+import { queryClient } from '@/lib/api/query-client'
 import { tokenStore } from '@/lib/api/token-store'
 
 import { getExpoPushToken } from '../notifications/utils'
@@ -13,6 +13,7 @@ import { useApiConfigStore } from './api-config-store'
 import { useDeveloperStore } from './developer-store'
 import { useLogStore } from './log-store'
 import { useProfileStore } from './profile-store'
+import { useReferralsStore } from './referrals-store'
 import { useUserStore } from './user-store'
 
 type AuthState = {
@@ -24,6 +25,7 @@ type AuthState = {
   isForceUpdateModalVisible: boolean
   isUpdateAvailableModalVisible: boolean
   installAppDate: string | null
+  error: string | null
 
   // Actions
   loginWithWallet: (walletCredentials: WalletCredentials) => Promise<boolean>
@@ -48,6 +50,7 @@ export const useAuthStore = create<AuthState>()(
       isForceUpdateModalVisible: false,
       isUpdateAvailableModalVisible: false,
       installAppDate: null,
+      error: null,
 
       setEmail: (email: string) => {
         set({ email })
@@ -89,6 +92,7 @@ export const useAuthStore = create<AuthState>()(
 
           return false
         } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' })
           console.error('Error logging in with wallet:', error)
           return false
         } finally {
@@ -115,6 +119,8 @@ export const useAuthStore = create<AuthState>()(
 
           return session
         } catch (error: unknown) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' })
+
           const status = isAxiosError(error) ? error.response?.status : undefined
 
           if (status === 404) {
@@ -154,6 +160,7 @@ export const useAuthStore = create<AuthState>()(
             const session = await get().fetchSession()
             return { success: true, session }
           } catch (sessionError) {
+            set({ error: sessionError instanceof Error ? sessionError.message : 'Unknown error' })
             console.error('Error fetching session after token set:', sessionError)
             return { success: true, session: null }
           }
@@ -166,6 +173,7 @@ export const useAuthStore = create<AuthState>()(
         const setUserProfile = useProfileStore.getState().setUserProfile
         const resetProfile = useProfileStore.getState().resetProfile
         const deleteDeviceToken = useProfileStore.getState().deleteDeviceToken
+
         const currentToken = await getExpoPushToken()
         try {
           try {
@@ -199,11 +207,13 @@ export const useAuthStore = create<AuthState>()(
           useDeveloperStore.getState().reset()
           useLogStore.getState().clearLogs()
           queryClient.clear()
+          useReferralsStore.getState().logout()
 
           if (opts?.disconnect != null && opts?.router != null) {
             void opts.disconnect().then(() => opts.router?.replace('/'))
           }
         } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' })
           console.error('Error logging out:', error)
           tokenStore.clearToken()
           set({

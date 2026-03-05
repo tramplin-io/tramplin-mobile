@@ -34,12 +34,13 @@ const SLIDE_COMPONENTS = [
 export default function GreetingScreen() {
   const { account } = useMobileWallet()
   const { signLoginMessage } = useWalletActions()
+  const { error } = useAuthStore()
   const loginWithWallet = useAuthStore((s) => s.loginWithWallet)
   const insets = useSafeAreaInsets()
   const { width } = useWindowDimensions()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [signingIn, setSigningIn] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
   const flatListRef = useRef<FlatList>(null)
 
   const fillTop = useCSSVariable('--color-getting-gradient-secondary') as string | undefined
@@ -53,13 +54,12 @@ export default function GreetingScreen() {
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current
 
   const handleLaunchApp = useCallback(async () => {
-    setError(null)
     setSigningIn(true)
 
     try {
       const result = await signLoginMessage()
       if (!result || !result.publicKey) {
-        Toast.show({ type: 'error', text1: 'Signing failed' })
+        Toast.show({ type: 'error', text1: error ?? 'Signing failed' })
         return
       }
 
@@ -80,7 +80,7 @@ export default function GreetingScreen() {
     } finally {
       setSigningIn(false)
     }
-  }, [loginWithWallet, signLoginMessage])
+  }, [loginWithWallet, signLoginMessage, error])
 
   const renderSlide = useCallback(
     ({ item, index }: { item: (typeof SLIDE_COMPONENTS)[number]; index: number }) => {
@@ -133,11 +133,11 @@ export default function GreetingScreen() {
           right: 0,
         }}
       >
-        {error !== null && (
+        {/* {error !== null && (
           <Text variant="body" className="text-critical-primary text-center mb-3">
             {error}
           </Text>
-        )}
+        )} */}
         <View className="flex-row gap-1.5">
           {SLIDE_COMPONENTS.map((slide, index) => (
             <View
