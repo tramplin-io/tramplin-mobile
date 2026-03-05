@@ -10,6 +10,7 @@ import {
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
+import { ReferralStats } from '@/components/referrals'
 import { UnstakeModal } from '@/components/unstake'
 
 /**
@@ -38,7 +39,7 @@ export default function HomeTab() {
   return (
     <ScreenWrapper>
       <ScrollView
-        contentContainerClassName="px-4 pb-40 py-8 flex-grow"
+        contentContainerClassName="px-4 pb-40 py-8 flex-grow gap-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -49,9 +50,10 @@ export default function HomeTab() {
           />
         }
       >
-        <DashboardHeader className="mb-6" />
+        <DashboardHeader />
         {/* <StakePromptCard onMorePress={handleMore} className="mb-6" /> */}
-        <YourStake className="mb-6" onUnstakePress={handleOpenUnstake} />
+        <YourStake onUnstakePress={handleOpenUnstake} />
+        <ReferralStats />
 
         <CommunityStats
           // className="mt-16"
