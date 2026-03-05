@@ -1,6 +1,24 @@
 import axios, { isAxiosError, type AxiosInstance, type AxiosRequestHeaders, type AxiosResponse } from 'axios'
 
+import { useAuthStore } from '@/lib/stores/auth-store'
+
 import { tokenStore } from '../token-store'
+
+const HTTP_ERROR_MESSAGES = {
+  400: 'Validation Error',
+  401: 'You should be authenticated to be able to see this page',
+  403: 'Unauthorized',
+  404: 'Not found',
+  406: 'Bad request',
+  429: 'Too Many Requests - Please wait a moment and try again',
+} as const
+
+const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Try again later'
+
+const ignoreErrorList: string[] = []
+
+const getMessage = (status: number, data: { error?: string; message?: string }) =>
+  data.error ?? data.message ?? HTTP_ERROR_MESSAGES[status as keyof typeof HTTP_ERROR_MESSAGES] ?? DEFAULT_ERROR_MESSAGE
 
 /**
  * Creates a configured Axios instance with auth token injection and response unwrapping.
@@ -38,6 +56,28 @@ export function createApiInstance(baseURL: string, customGetToken?: () => string
   instance.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     (error) => {
+      if (error?.response) {
+        const { status, data } = error.response
+
+        console.error('API Error:', { status, data })
+
+        if (status === 401) {
+          if (data?.code && ignoreErrorList.includes(data.code)) {
+            return Promise.reject(new Error(getMessage(status, data)))
+          }
+
+          void useAuthStore.getState().logout()
+          return
+        }
+        if (status === 400) {
+          return Promise.reject(new Error(getMessage(status, data)))
+        }
+        if (status === 429) {
+          return Promise.reject(new Error(getMessage(status, data)))
+        }
+        return Promise.reject(new Error(getMessage(status, data)))
+      }
+
       if (isAxiosError(error) && error.response?.status === 401) {
         tokenStore.clearToken()
       }
@@ -53,7 +93,8 @@ export function createApiInstance(baseURL: string, customGetToken?: () => string
           data: error.response?.data,
         })
       }
-      return Promise.reject(error)
+
+      return Promise.reject(new Error(error?.message ?? 'Something went wrong'))
     },
   )
 
