@@ -5,7 +5,6 @@
  * between the Axios instance and Zustand auth store.
  * The auth store syncs tokens here on login/logout.
  *
- * Pattern from fem-fast-mobile.
  */
 
 let _token: string | null = null

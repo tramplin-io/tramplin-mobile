@@ -108,6 +108,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   ],
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL,
+    referralsApiUrl: process.env.EXPO_PUBLIC_REFERRALS_API_URL,
     solanaNetwork: process.env.EXPO_PUBLIC_SOLANA_NETWORK ?? 'devnet',
     solanaRpcUrl: process.env.EXPO_PUBLIC_SOLANA_RPC_URL,
     eas: {

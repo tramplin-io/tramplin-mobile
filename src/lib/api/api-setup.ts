@@ -3,7 +3,9 @@ import { setSentryApiSource } from '../sentry'
 import { useAuthStore } from '../stores/auth-store'
 import { useProfileStore } from '../stores/profile-store'
 import { setBaseURL } from './mutator/custom-instance'
+import { setReferralsBaseURL } from './mutator/referrals-instance'
 import { tokenStore } from './token-store'
+
 // import { storage, STORAGE_KEYS } from '@/utils/storage'
 
 /**
@@ -22,6 +24,11 @@ export async function initializeApi() {
   if (apiUrl) {
     setBaseURL(apiUrl)
     setSentryApiSource(apiUrl)
+  }
+
+  const referralsApiUrl = process.env.EXPO_PUBLIC_REFERRALS_API_URL
+  if (referralsApiUrl) {
+    setReferralsBaseURL(referralsApiUrl)
   }
 
   // console.log('initializeApi - apiUrl', apiUrl)

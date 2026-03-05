@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AppTheme, useAppTheme } from '@/components/app-theme'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { AppConfig } from '@/constants/app-config'
+import { ReferralContextProvider } from '@/hooks'
 import { queryClient } from '@/lib/api'
 
 function NavigationThemeProvider({ children }: Readonly<PropsWithChildren>) {
@@ -61,7 +62,9 @@ export function AppProviders({ children }: Readonly<PropsWithChildren>) {
               <AppTheme>
                 <NavigationThemeProvider>
                   <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
-                    <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+                    <ReferralContextProvider>
+                      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+                    </ReferralContextProvider>
                   </MobileWalletProvider>
                 </NavigationThemeProvider>
               </AppTheme>

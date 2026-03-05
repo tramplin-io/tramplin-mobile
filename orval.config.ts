@@ -1,33 +1,30 @@
 import { defineConfig } from 'orval'
 
 /**
- * Orval configuration for generating type-safe API client from OpenAPI spec.
+ * Orval configuration for generating type-safe API clients from OpenAPI specs.
  *
  * Usage:
  *   npm run generate-api
  *
- * This generates React Query hooks and TypeScript types from your API's
- * OpenAPI specification. The generated code uses a custom Axios instance
- * with auth token injection.
+ * Two API targets are configured:
+ *   - api:       Main Tramplin API  (EXPO_PUBLIC_API_URL)
+ *   - referrals: Referrals API      (EXPO_PUBLIC_REFERRALS_API_URL)
+ *
+ * Each target uses its own Axios instance so requests are routed
+ * to the correct base URL automatically.
  *
  * @see https://orval.dev/reference/configuration/output
  */
 export default defineConfig({
   api: {
     input: {
-      /** OpenAPI spec URL or local file path */
       target: 'https://develop-api.tramplin.io/api/openapi',
     },
     output: {
-      /** Generate separate files for hooks and schemas */
       mode: 'split',
-      /** Output directory for generated files */
       target: './src/lib/api/generated',
-      /** Generate React Query hooks */
       client: 'react-query',
-      /** Clean output directory before generating */
       clean: true,
-      /** Use custom Axios instance for all requests */
       override: {
         mutator: {
           path: './src/lib/api/mutator/custom-instance.ts',
@@ -36,8 +33,28 @@ export default defineConfig({
       },
     },
     hooks: {
-      /** Format generated files after generation */
       afterAllFilesWrite: 'npx prettier --write ./src/lib/api/generated',
+    },
+  },
+
+  referrals: {
+    input: {
+      target: 'https://develop-referrals-api.tramplin.io/api/openapi',
+    },
+    output: {
+      mode: 'split',
+      target: './src/lib/api/generated-referrals',
+      client: 'react-query',
+      clean: true,
+      override: {
+        mutator: {
+          path: './src/lib/api/mutator/referrals-instance.ts',
+          name: 'referralsInstance',
+        },
+      },
+    },
+    hooks: {
+      afterAllFilesWrite: 'npx prettier --write ./src/lib/api/generated-referrals',
     },
   },
 })

@@ -51,6 +51,9 @@ export const AppConfig = {
   /** API base URL */
   apiUrl: process.env.EXPO_PUBLIC_API_URL ?? '',
 
+  /** Referrals API base URL */
+  referralsApiUrl: process.env.EXPO_PUBLIC_REFERRALS_API_URL ?? '',
+
   /** Solana network configuration */
   network: solanaNetwork,
 
