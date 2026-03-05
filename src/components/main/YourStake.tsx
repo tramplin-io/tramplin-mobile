@@ -2,7 +2,7 @@ import { ActivityIndicator, Pressable, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useCSSVariable } from 'uniwind'
 
-import { QuestionIcon, SolanaIcon } from '@/components/icons/icons'
+import { BigCupIcon, QuestionIcon, SmallCupIcon, SolanaIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
@@ -12,16 +12,21 @@ import { LogoSmall } from '../icons'
 export interface YourStakeProps {
   /** Shown when no stats data (loading failed or empty) */
   message?: string
-  /** Participating status text when user has stake */
-  participatingLabel?: string
   onUnstakePress?: () => void
   onEarnedInfoPress?: () => void
   className?: string
 }
 
-const PARTICIPATING_LABEL = '✓ PARTICIPATING IN THE NEXT REWARD DISTRIBUTIONS'
-
-type MyStatsData = { totalStakeAmount: number; totalPoints: number }
+type MyStatsData = {
+  totalStakeAmount: number
+  totalPoints: number
+  effectiveStake?: number
+  apr?: number
+  totalWinSol?: number
+  multiplier?: number
+  isAttendingRegularDraw?: boolean
+  isAttendingBigDraw?: boolean
+}
 
 function getStatsDisplay(
   data: MyStatsData | undefined,
@@ -34,15 +39,31 @@ function getStatsDisplay(
     data: {
       totalStakeAmount: data.totalStakeAmount ?? 0,
       totalPoints: data.totalPoints ?? 0,
+      effectiveStake: data.effectiveStake,
+      apr: data.apr,
+      totalWinSol: data.totalWinSol,
+      multiplier: data.multiplier,
+      isAttendingRegularDraw: data.isAttendingRegularDraw,
+      isAttendingBigDraw: data.isAttendingBigDraw,
     },
     showStaked,
     showEarned,
   }
 }
 
-function SolanaCircleIcon() {
+function formatTruncated(value: number | undefined, fractionDigits = 2): string {
+  const safe = typeof value === 'number' && !Number.isNaN(value) ? value : 0
+  const factor = 10 ** fractionDigits
+  const truncated = Math.floor(safe * factor) / factor
+  return truncated.toLocaleString(undefined, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  })
+}
+
+function SolanaCircleIcon({ color }: { color?: string }) {
   const contentPrimaryColor = useCSSVariable('--color-brand-quaternary') as string | undefined
-  const iconColor = contentPrimaryColor
+  const iconColor = color ?? contentPrimaryColor
 
   return (
     <View
@@ -57,14 +78,18 @@ function SolanaCircleIcon() {
   )
 }
 
-function TramplinCircleIcon() {
+function TramplinCircleIcon({
+  size = 10,
+  color,
+  className,
+}: Readonly<{ size?: number; color?: string; className?: string }>) {
   const contentPrimaryColor = useCSSVariable('--color-reward-small-primary') as string | undefined
 
+  const iconColor = color ?? contentPrimaryColor
+
   return (
-    <View
-      className={cn('bg-content-primary rounded-[16px] flex justify-center items-center gap-2.5 mx-1 pb-0.5', 'size-4')}
-    >
-      <LogoSmall width={10} height={10} color={contentPrimaryColor} />
+    <View className={cn('bg-content-primary rounded-full flex justify-center items-center size-4', className)}>
+      <LogoSmall width={size} height={size} color={iconColor} />
     </View>
   )
 }
@@ -74,96 +99,196 @@ function TramplinCircleIcon() {
  */
 function StakedCard({
   value,
+  multiplier,
+  effectiveStake,
   onUnstakePress,
 }: Readonly<{
   value: number
+  multiplier?: number
+  effectiveStake?: number
   onUnstakePress?: () => void
 }>) {
-  const displayValue = typeof value === 'number' && !Number.isNaN(value) ? value : 0
-  const truncated = Math.floor(displayValue * 100) / 100
-  const formatted = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const formatted = formatTruncated(value)
+  const multiplierFormatted = formatTruncated(multiplier)
 
-  const primaryTint = useCSSVariable('--color-fill-primary')
-  const secondaryTint = useCSSVariable('--color-brand-tertiary')
+  const primaryTint = useCSSVariable('--color-fill-primary') as string
+  const secondaryTint = useCSSVariable('--color-brand-tertiary') as string
+  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
 
   return (
-    <LinearGradient
-      colors={[primaryTint, secondaryTint] as [string, string]}
-      locations={[0, 1]}
-      className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden"
-    >
-      <View className="flex-row items-center justify-between">
-        <Text variant="h4" className="text-brand-primary">
-          Staked
-        </Text>
-        {onUnstakePress ? (
-          <Pressable onPress={onUnstakePress} hitSlop={8} className="active:opacity-80">
+    <View className="flex-1 gap-2">
+      <LinearGradient
+        colors={[primaryTint, secondaryTint]}
+        locations={[0, 1]}
+        className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
+      >
+        <View className="flex-row items-center justify-between">
+          <Text variant="h4" className="text-brand-primary">
+            Staked
+          </Text>
+          {onUnstakePress ? (
+            <Pressable onPress={onUnstakePress} hitSlop={8} className="active:opacity-80">
+              <Text variant="small" className="text-brand-primary uppercase">
+                UNSTAKE
+              </Text>
+            </Pressable>
+          ) : (
             <Text variant="small" className="text-brand-primary uppercase">
               UNSTAKE
             </Text>
-          </Pressable>
-        ) : (
-          <Text variant="small" className="text-brand-primary uppercase">
-            UNSTAKE
-          </Text>
-        )}
-      </View>
-      <View className="flex-row items-end gap-0.5">
-        <Text variant="h3Digits" className="text-content-primary">
-          {formatted}
-        </Text>
-        <View className="flex-row items-center gap-0.5 pb-1">
-          <SolanaCircleIcon />
+          )}
         </View>
-      </View>
-    </LinearGradient>
+        <View className="gap-2">
+          {Number(multiplierFormatted) > 0 && (
+            <Text variant="small" className="text-brand-primary">
+              {multiplierFormatted}x
+            </Text>
+          )}
+          <View className="flex-row items-end gap-0.5">
+            <Text variant="h3Digits" className="text-content-primary">
+              {formatted}
+            </Text>
+            <View className="flex-row items-center gap-0.5 pb-1">
+              <SolanaCircleIcon />
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
+      {effectiveStake != null && (
+        <View className="flex-row items-center gap-0.5 px-0.5">
+          <Text variant="small" className="text-content-tertiary">
+            {formatTruncated(effectiveStake)}
+          </Text>
+          <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
+            <SolanaIcon size={16} color={contentTertiary} />
+          </View>
+          <Text variant="small" className="text-content-tertiary uppercase">
+            EFFECTIVE
+          </Text>
+        </View>
+      )}
+    </View>
   )
 }
 
 /**
- * Earned card: light gold gradient, title "Earned", info icon, value + points.
+ * Earned card — two visual states:
+ * 1. Points mode (default): shows totalPoints with Tramplin icon + "points"
+ * 2. SOL earnings mode: shows SOL amount, APR label, and points badge in top-right
  */
 function EarnedCard({
-  value,
+  totalPoints,
+  totalWinSol,
+  apr,
+  isAttendingBigDraw,
+  isAttendingRegularDraw,
   onInfoPress,
 }: Readonly<{
-  value: number
+  totalPoints: number
+  totalWinSol?: number
+  apr?: number
+  isAttendingBigDraw?: boolean
+  isAttendingRegularDraw?: boolean
   onInfoPress?: () => void
 }>) {
-  const displayValue = typeof value === 'number' && !Number.isNaN(value) ? value : 0
-  const primaryTint = useCSSVariable('--color-reward-large-primary')
-  const secondaryTint = useCSSVariable('--color-reward-small-primary')
+  const primaryTint = useCSSVariable('--color-reward-large-primary') as string
+  const secondaryTint = useCSSVariable('--color-reward-small-primary') as string
+  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
+
+  const hasSolEarnings = totalWinSol != null && totalWinSol > 0
+  const hasParticipation = isAttendingBigDraw || isAttendingRegularDraw
+
+  const participatingFooter = hasParticipation ? (
+    <View className="flex-row items-center gap-1 px-0.5">
+      <Text variant="small" className="text-content-tertiary uppercase">
+        PARTICIPATING IN
+      </Text>
+      {isAttendingRegularDraw && (
+        <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
+          <SmallCupIcon size={16} color={contentTertiary} />
+        </View>
+      )}
+      {isAttendingBigDraw && (
+        <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
+          <BigCupIcon size={16} color={contentTertiary} />
+        </View>
+      )}
+    </View>
+  ) : null
+
+  if (hasSolEarnings) {
+    const formatted = formatTruncated(totalWinSol, 3)
+
+    return (
+      <View className="flex-1 gap-2">
+        <LinearGradient
+          colors={[primaryTint, secondaryTint]}
+          locations={[0, 1]}
+          className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
+        >
+          <View className="flex-row items-center justify-between">
+            <Text variant="h4" className="text-reward-large-secondary">
+              Earned
+            </Text>
+            <View className="flex-row items-end gap-0.5">
+              <Text variant="body" className="text-reward-large-secondary">
+                {totalPoints.toLocaleString()}
+              </Text>
+              <TramplinCircleIcon size={8} color={primaryTint} className="bg-reward-large-secondary" />
+            </View>
+          </View>
+          <View className="gap-2">
+            {apr != null && (
+              <Text variant="small" className="text-reward-large-secondary">
+                APR {apr}%
+              </Text>
+            )}
+            <View className="flex-row items-end gap-0.5">
+              <Text variant="h3Digits" className="text-content-primary">
+                {formatted}
+              </Text>
+              <View className="flex-row items-center gap-0.5 pb-1">
+                <SolanaCircleIcon color={secondaryTint} />
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+        {participatingFooter}
+      </View>
+    )
+  }
 
   return (
-    <LinearGradient
-      colors={[primaryTint, secondaryTint] as [string, string]}
-      locations={[0, 1]}
-      className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden"
-    >
-      <View className="flex-row items-center justify-between">
-        <Text variant="h4" className="text-reward-large-secondary">
-          Earned
-        </Text>
-        {onInfoPress && (
-          <Pressable onPress={onInfoPress} hitSlop={8} className="active:opacity-80">
-            <QuestionIcon size={24} className="text-reward-large-secondary" />
-          </Pressable>
-        )}
-      </View>
-      <View className="flex-row items-end gap-0.5">
-        <Text variant="h3Digits" className="text-content-primary">
-          {displayValue.toLocaleString()}
-        </Text>
-        {/* <PointsIcon size={20} className="text-content-primary mb-1" /> */}
-
-        <View className="flex-row items-center gap-0.5 pb-1">
-          <TramplinCircleIcon />
-          <Text variant="body" className="text-content-primary">
-            points
+    <View className="flex-1 gap-2">
+      <LinearGradient
+        colors={[primaryTint, secondaryTint] as [string, string]}
+        locations={[0, 1]}
+        className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden"
+      >
+        <View className="flex-row items-center justify-between">
+          <Text variant="h4" className="text-reward-large-secondary">
+            Earned
           </Text>
+          {onInfoPress && (
+            <Pressable onPress={onInfoPress} hitSlop={8} className="active:opacity-80">
+              <QuestionIcon size={24} className="text-reward-large-secondary" />
+            </Pressable>
+          )}
         </View>
-      </View>
-    </LinearGradient>
+        <View className="flex-row items-end gap-0.5">
+          <Text variant="h3Digits" className="text-content-primary">
+            {formatTruncated(totalPoints, 0)}
+          </Text>
+          <View className="flex-row items-center gap-0.5 pb-1">
+            <TramplinCircleIcon />
+            <Text variant="body" className="text-content-primary">
+              points
+            </Text>
+          </View>
+        </View>
+      </LinearGradient>
+      {participatingFooter}
+    </View>
   )
 }
 
@@ -197,18 +322,12 @@ function PlaceholderCard({ staked, className }: Readonly<PlaceholderCardProps>) 
  */
 export function YourStake({
   message = 'Your stake will appear here',
-  participatingLabel = PARTICIPATING_LABEL,
   onUnstakePress,
   onEarnedInfoPress,
   className,
 }: Readonly<YourStakeProps>) {
   const { data: apiData, isLoading, isError } = useReadMyStats()
-  // console.log('apiData', apiData)
-  // const mockData = {
-  //   totalStakeAmount: 100,
-  //   totalPoints: 100,
-  // } as MyStats
-  // console.log('apiData', apiData)
+
   const stats = getStatsDisplay(apiData)
 
   if (isLoading) {
@@ -241,26 +360,31 @@ export function YourStake({
 
   const { data, showStaked, showEarned } = stats
   return (
-    <View className={cn('gap-4', className)}>
-      <View className="flex flex-row gap-3 h-[170px]">
-        <View className="flex-1 min-w-0">
-          {showStaked ? (
-            <StakedCard value={data.totalStakeAmount} onUnstakePress={onUnstakePress} />
-          ) : (
-            <PlaceholderCard staked={true} className={className} />
-          )}
-        </View>
-        <View className="flex-1 min-w-0">
-          {showEarned ? (
-            <EarnedCard value={data.totalPoints} onInfoPress={onEarnedInfoPress} />
-          ) : (
-            <PlaceholderCard staked={false} className={className} />
-          )}
-        </View>
+    <View className={cn('gap-2', className)}>
+      <View className="flex-row gap-3 min-h-[190px]">
+        {showStaked ? (
+          <StakedCard
+            value={data.totalStakeAmount}
+            multiplier={data.multiplier}
+            effectiveStake={data.effectiveStake}
+            onUnstakePress={onUnstakePress}
+          />
+        ) : (
+          <PlaceholderCard staked={true} className={className} />
+        )}
+        {showEarned ? (
+          <EarnedCard
+            totalPoints={data.totalPoints}
+            totalWinSol={data.totalWinSol}
+            apr={data.apr}
+            isAttendingBigDraw={data.isAttendingBigDraw}
+            isAttendingRegularDraw={data.isAttendingRegularDraw}
+            onInfoPress={onEarnedInfoPress}
+          />
+        ) : (
+          <PlaceholderCard staked={false} className={className} />
+        )}
       </View>
-      {/* <Text variant="small" className="text-content-tertiary">
-        {participatingLabel}
-      </Text> */}
     </View>
   )
 }
