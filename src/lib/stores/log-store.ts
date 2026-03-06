@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type LogEntry = {
+export type LogEntry = {
   type: 'log' | 'warn' | 'error'
   message: string
   timestamp: string

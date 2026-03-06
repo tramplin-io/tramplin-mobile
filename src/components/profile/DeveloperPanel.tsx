@@ -7,6 +7,7 @@ import {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import axios from 'axios'
+import { router } from 'expo-router'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -90,7 +91,7 @@ type Props = {
 }
 
 export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
-  const { apiUrl, setApiUrl } = useApiConfigStore()
+  const { apiUrl, setApiUrl, referralsApiUrl } = useApiConfigStore()
   // console.log('apiUrl', apiUrl)
   const { logout, isAuthenticated } = useAuthStore()
   const { isRoutePathOverlayEnabled, setIsRoutePathOverlayEnabled } = useDeveloperStore()
@@ -207,6 +208,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
 
   const currentSource = getApiSourceFromUrl(apiUrl)
   const currentUrl = apiUrl || API_URLS.PROD
+  const currentReferralsUrl = referralsApiUrl || API_URLS.PROD_REFERRALS
   const isCustomSelected = pendingSource === 'Custom'
 
   const hasPendingChanges = () => {
@@ -304,6 +306,16 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 </Button>
               </View>
               {/* <LogDisplay /> */}
+              <View className="mt-4">
+                <Button
+                  size="sm"
+                  onPress={() => {
+                    router.push('/screens/app-logs')
+                  }}
+                >
+                  <Text>App Logs</Text>
+                </Button>
+              </View>
             </View>
 
             {/* <View className="gap-2">
@@ -398,7 +410,9 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 <Text variant="body" className="text-textSecondary">
                   {/* Source: {currentSource} */}
                   {/* {'\n'} */}
-                  URL: {currentUrl}
+                  API URL: {currentUrl}
+                  {'\n'}
+                  Referrals API URL: {currentReferralsUrl}
                   {'\n'}
                   Environment: {__DEV__ ? 'Development' : 'Production'}
                   {'\n'}

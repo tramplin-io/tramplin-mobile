@@ -253,6 +253,16 @@ export default function ProfileTab() {
           >
             <Text>Show Error Toast</Text>
           </Button>
+          <View className="mt-4">
+            <Button
+              size="sm"
+              onPress={() => {
+                router.push('/screens/app-logs')
+              }}
+            >
+              <Text>App Logs</Text>
+            </Button>
+          </View>
         </View>
         {/* Toast Test */}
         <View style={styles.container}>
