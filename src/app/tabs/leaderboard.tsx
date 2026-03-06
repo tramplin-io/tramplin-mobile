@@ -116,20 +116,20 @@ function LeaderboardRow({
 
   return (
     <View className="flex-row items-center border-b border-border-quaternary py-4">
-      <View className="flex-1">
+      <View className={cn('min-w-[116px]', isStakers && 'min-w-[160px]')}>
         <Text variant="body" className={cn(`${rewardStakeTextClass} font-medium`)} numberOfLines={1}>
           {ellipsify(walletAddress, 4)}
         </Text>
       </View>
       {showReward && (
-        <View className="flex-row items-center gap-1 min-w-[56px] justify-end">
+        <View className="flex-row items-center gap-1 min-w-[120px] justify-start">
           <Text variant="body" className={`${rewardStakeTextClass}`}>
             {reward ?? '—'}
           </Text>
           <TokenRewardIcon drawType={drawType} />
         </View>
       )}
-      <View className="flex-row items-center gap-1 min-w-[56px] justify-end">
+      <View className=" flex-1 flex-row items-center gap-1 min-w-[56px] justify-start">
         <Text variant="body" className={`${rewardStakeTextClass}`}>
           {stake}
         </Text>
@@ -166,29 +166,29 @@ function LeaderboardTable({
   //   () => list.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
   //   [list, currentPage],
   // )
-
+  console.log('list', list)
   const pageItems = list
   return (
     <>
       {isWinners ? (
         <View className="flex-row items-center pb-4 mb-0">
-          <Text variant="small" className="flex-1 uppercase tracking-wide">
+          <Text variant="small" className="uppercase tracking-wide min-w-[116px]">
             Wallet
           </Text>
-          <Text variant="small" className="uppercase tracking-wide min-w-[56px] text-right mr-6">
+          <Text variant="small" className="uppercase tracking-wide min-w-[120px] text-left">
             Reward
           </Text>
-          <Text variant="small" className="uppercase tracking-wide min-w-[56px] text-right">
+          <Text variant="small" className="uppercase tracking-wide min-w-[56px] text-left">
             Stake
           </Text>
           <View className="w-8" />
         </View>
       ) : (
         <View className="flex-row items-center pb-4 mb-0">
-          <Text variant="small" className="flex-1  uppercase tracking-wide">
+          <Text variant="small" className="uppercase tracking-wide min-w-[160px]">
             Wallet
           </Text>
-          <Text variant="small" className=" uppercase tracking-wide min-w-[56px] text-right">
+          <Text variant="small" className=" uppercase tracking-wide min-w-[56px] text-left">
             Stake
           </Text>
           <View className="w-8" />
