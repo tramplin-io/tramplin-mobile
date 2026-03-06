@@ -58,12 +58,18 @@ export function createApiInstance(baseURL: string, customGetToken?: () => string
     (error) => {
       if (error?.response) {
         const { status, data } = error.response
+        const isDeleteSession = error.config?.url?.includes('deleteMySession') === true
 
-        console.error('API Error:', { status, data })
+        if (!isDeleteSession) {
+          console.error('API Error:', { status, data })
+        }
 
         if (status === 401) {
           if (data?.code && ignoreErrorList.includes(data.code)) {
             return Promise.reject(new Error(getMessage(status, data)))
+          }
+          if (isDeleteSession) {
+            return Promise.reject(new Error(error?.message ?? getMessage(status, data)))
           }
 
           void useAuthStore.getState().logout()
