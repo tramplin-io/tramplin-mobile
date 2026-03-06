@@ -18,7 +18,9 @@
         "EXPO_PUBLIC_SOLANA_RPC_URL": "https://theodora-ppq4tm-fast-mainnet.helius-rpc.com/",
         "EXPO_PUBLIC_SOLANA_VALIDATOR_VOTE_KEY": "TRAMp1Z9EXyWQQNwNjjoNvVksMUHKioVU7ky61yNsEq",
         "EXPO_PUBLIC_SOLANA_PROGRAM_ID": "3NJyzGWjSHP4hZvsqakodi7jAtbufwd52vn1ek6EzQ35",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://d23bf865ed2b4a787871626a4c0c6760@o4509627651194880.ingest.de.sentry.io/4509627659321424"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://d23bf865ed2b4a787871626a4c0c6760@o4509627651194880.ingest.de.sentry.io/4509627659321424",
+        "EXPO_PUBLIC_ENABLE_CHARLES_PROXY": "true",
+        "ENABLE_CHARLES_PROXY": "true"
       }
     },
     "production": {
