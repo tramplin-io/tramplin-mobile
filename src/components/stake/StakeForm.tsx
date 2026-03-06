@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { AppConfig } from '@/constants/app-config'
 import { LAMPORTS_PER_SOL, MIN_STAKE_SOL, MIN_SUBSEQUENT_STAKE_SOL } from '@/constants/solana'
+import { useUserStakeAccounts } from '@/hooks'
 import { useStake } from '@/hooks/useStake'
 import { useWalletBalance } from '@/hooks/useWalletBalance'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
@@ -52,6 +53,7 @@ export function StakeForm({ onClose }: Props) {
   const { balance } = useWalletBalance()
   const { client } = useMobileWallet()
   const { data: myStats, isLoading: isLoadingMyStats, refetch: refetchMyStats } = useReadMyStats()
+  const { refresh: refreshStakeAccounts } = useUserStakeAccounts()
 
   const { stake, isLoading } = useStake({
     rpc: (client?.rpc ?? undefined) as Rpc<SolanaRpcApi> | undefined,
@@ -69,6 +71,7 @@ export function StakeForm({ onClose }: Props) {
         const lamports = BigInt(Math.round(amountSol * Number(LAMPORTS_PER_SOL)))
         const result = await stake({ amountInLamports: lamports })
         refetchMyStats()
+        refreshStakeAccounts()
         return { success: true, signature: result.signature }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
@@ -76,7 +79,7 @@ export function StakeForm({ onClose }: Props) {
         return { success: false, error: msg, networkError }
       }
     },
-    [stake, refetchMyStats],
+    [stake, refetchMyStats, refreshStakeAccounts],
   )
 
   const loading = isLoading || isLoadingMyStats

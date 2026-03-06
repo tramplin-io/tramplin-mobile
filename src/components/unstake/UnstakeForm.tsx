@@ -23,7 +23,7 @@ type Props = Readonly<{
 }>
 
 export function UnstakeForm({ onClose }: Props) {
-  const { data: stakeAccounts } = useUserStakeAccounts()
+  const { data: stakeAccounts, refresh: refreshStakeAccounts } = useUserStakeAccounts()
   const { data: activeStake } = useUserActiveStake()
 
   const { unstake, isLoading } = useUnstake()
@@ -66,6 +66,7 @@ export function UnstakeForm({ onClose }: Props) {
         const amountLamports = BigInt(Math.round(amountSol * Number(LAMPORTS_PER_SOL)))
         const result = await unstake({ amountLamports, stakeAccounts: stakeAccounts ?? [] })
         refetchMyStats()
+        refreshStakeAccounts()
         return { success: true, signature: result.signature }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
@@ -73,7 +74,7 @@ export function UnstakeForm({ onClose }: Props) {
         return { success: false, error: msg, networkError }
       }
     },
-    [unstake, stakeAccounts, refetchMyStats],
+    [unstake, stakeAccounts, refetchMyStats, refreshStakeAccounts],
   )
 
   const handleConfirmUnstake = useCallback(async () => {

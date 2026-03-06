@@ -12,6 +12,7 @@ import {
 } from '@/components/main'
 import { ReferralStats } from '@/components/referrals'
 import { UnstakeModal } from '@/components/unstake'
+import { useUserStakeAccounts } from '@/hooks/useUserStakeAccounts'
 
 /**
  * Home / Dashboard Tab.
@@ -21,6 +22,7 @@ export default function HomeTab() {
   const queryClient = useQueryClient()
   const [unstakeModalOpen, setUnstakeModalOpen] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { refresh: refreshStakeAccounts } = useUserStakeAccounts()
 
   const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
 
@@ -32,9 +34,10 @@ export default function HomeTab() {
       queryClient.invalidateQueries(),
       queryClient.invalidateQueries({ queryKey: ['indexMyWins'] }),
       queryClient.invalidateQueries({ queryKey: ['indexMyStake'] }),
+      refreshStakeAccounts(),
     ])
     setRefreshing(false)
-  }, [queryClient])
+  }, [queryClient, refreshStakeAccounts])
 
   return (
     <ScreenWrapper>
