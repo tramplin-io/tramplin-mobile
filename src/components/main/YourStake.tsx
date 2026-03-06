@@ -120,7 +120,7 @@ function StakedCard({
       <LinearGradient
         colors={[primaryTint, secondaryTint]}
         locations={[0, 1]}
-        className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
+        className="rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
       >
         <View className="flex-row items-center justify-between">
           <Text variant="h4" className="text-brand-primary">
@@ -224,7 +224,7 @@ function EarnedCard({
         <LinearGradient
           colors={[primaryTint, secondaryTint]}
           locations={[0, 1]}
-          className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
+          className="rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
         >
           <View className="flex-row items-center justify-between">
             <Text variant="h4" className="text-reward-large-secondary">
@@ -263,7 +263,7 @@ function EarnedCard({
       <LinearGradient
         colors={[primaryTint, secondaryTint] as [string, string]}
         locations={[0, 1]}
-        className="flex-1 rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden"
+        className="rounded-lg border border-border-quaternary p-2.5 justify-between overflow-hidden h-[170px]"
       >
         <View className="flex-row items-center justify-between">
           <Text variant="h4" className="text-reward-large-secondary">
@@ -306,7 +306,7 @@ function PlaceholderCard({ staked, className }: Readonly<PlaceholderCardProps>) 
   return (
     <View
       className={cn(
-        'min-h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
+        'h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
         className,
       )}
     >
@@ -361,7 +361,7 @@ export function YourStake({
   const { data, showStaked, showEarned } = stats
   return (
     <View className={cn('gap-2', className)}>
-      <View className="flex-row gap-3 min-h-[190px]">
+      <View className="flex-row gap-3">
         {showStaked ? (
           <StakedCard
             value={data.totalStakeAmount}
