@@ -48,7 +48,7 @@ export const useReferralsStore = create<ReferralsState>()(
 
       signInWithWallet: async (walletCredentials: WalletCredentials) => {
         try {
-          set({ isLoading: true })
+          set({ isLoading: true, error: null })
 
           const response = await createSessionByUserWallet(walletCredentials)
 
@@ -77,7 +77,7 @@ export const useReferralsStore = create<ReferralsState>()(
 
       fetchProfile: async () => {
         try {
-          set({ isLoading: true })
+          set({ isLoading: true, error: null })
 
           const token = get().token
           if (!token) {

@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
       loginWithWallet: async (walletCredentials: WalletCredentials) => {
         const fetchUserProfile = useProfileStore.getState().fetchUserProfile
         try {
-          set({ isLoading: true })
+          set({ isLoading: true, error: null })
 
           const response = await createSessionByUserWallet(walletCredentials)
 
@@ -102,7 +102,7 @@ export const useAuthStore = create<AuthState>()(
 
       fetchSession: async () => {
         try {
-          set({ isLoading: true })
+          set({ isLoading: true, error: null })
 
           const token = get().token
           if (!token) {
@@ -143,6 +143,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       verifySession: async (token: string): Promise<{ success: boolean; session: Session | null }> => {
+        set({ error: null })
         if (token) {
           const cleanToken = token.trim()
 
@@ -170,6 +171,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: async (opts) => {
+        set({ error: null })
         const setUserProfile = useProfileStore.getState().setUserProfile
         const resetProfile = useProfileStore.getState().resetProfile
         const deleteDeviceToken = useProfileStore.getState().deleteDeviceToken
@@ -179,13 +181,13 @@ export const useAuthStore = create<AuthState>()(
           try {
             await deleteMySession()
           } catch (apiError) {
-            console.log('deleteMySession failed, continuing with logout', apiError)
+            console.error('deleteMySession failed, continuing with logout', apiError)
           }
 
           try {
             if (currentToken) await deleteDeviceToken(currentToken)
           } catch (deleteError) {
-            console.log('Device token removal failed, continuing with logout', deleteError)
+            console.error('Device token removal failed, continuing with logout', deleteError)
           }
 
           tokenStore.clearToken()
@@ -196,6 +198,7 @@ export const useAuthStore = create<AuthState>()(
             email: null,
             isForceUpdateModalVisible: false,
             isUpdateAvailableModalVisible: false,
+            error: null,
           })
 
           setUserProfile(null)
@@ -249,6 +252,7 @@ export const useAuthStore = create<AuthState>()(
             email: null,
             isForceUpdateModalVisible: false,
             isUpdateAvailableModalVisible: false,
+            error: null,
           })
           setUserProfile(null)
           resetProfile()
@@ -258,6 +262,7 @@ export const useAuthStore = create<AuthState>()(
           useLogStore.getState().clearLogs()
           queryClient.clear()
         } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Unknown error' })
           console.error('Error logging out:', error)
           tokenStore.clearToken()
           set({
