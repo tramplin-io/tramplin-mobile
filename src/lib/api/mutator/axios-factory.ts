@@ -1,7 +1,8 @@
 import axios, { isAxiosError, type AxiosInstance, type AxiosRequestHeaders, type AxiosResponse } from 'axios'
 
-import { useAuthStore } from '@/lib/stores/auth-store'
+// import { useAuthStore } from '@/lib/stores/auth-store'
 
+import { referralTokenStore } from '../referral-token-store'
 import { tokenStore } from '../token-store'
 
 const HTTP_ERROR_MESSAGES = {
@@ -56,6 +57,8 @@ export function createApiInstance(baseURL: string, customGetToken?: () => string
   instance.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     (error) => {
+      // console.error('API Error - error:', error)
+      // console.error('API Error - error.response:', error?.response)
       if (error?.response) {
         const { status, data } = error.response
         const isDeleteSession = error.config?.url?.includes('deleteMySession') === true
@@ -72,7 +75,9 @@ export function createApiInstance(baseURL: string, customGetToken?: () => string
             return Promise.reject(new Error(error?.message ?? getMessage(status, data)))
           }
 
-          void useAuthStore.getState().logout()
+          void tokenStore.clearToken()
+          void referralTokenStore.clearToken()
+          // void useAuthStore.getState().logout()
           return
         }
         if (status === 400) {
