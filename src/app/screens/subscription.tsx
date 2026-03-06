@@ -9,7 +9,7 @@ import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
 import { BigCupIcon, ImportantIcon, PointsIcon } from '@/components/icons/icons'
 import { Button } from '@/components/ui'
-import { Input } from '@/components/ui/input'
+import { InputRow } from '@/components/ui/InputRow'
 import { Text } from '@/components/ui/text'
 import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
 import { useProfileStore } from '@/lib/stores/profile-store'
@@ -27,55 +27,7 @@ function validateEmail(value: string): string | null {
 function validateTelegramUsername(value: string): string | null {
   const trimmed = value.trim()
   if (!trimmed) return null
-  return TELEGRAM_USERNAME_REGEX.test(trimmed) ? null : 'Use 2–32 characters, letters, numbers or underscore'
-}
-
-function ContactRow({
-  label,
-  value,
-  placeholder,
-  error,
-  onChangeText,
-  ...inputProps
-}: Readonly<
-  {
-    label: string
-    value: string
-    placeholder: string
-    error?: string | null
-    onChangeText?: (text: string) => void
-  } & Omit<React.ComponentProps<typeof Input>, 'value' | 'placeholder' | 'onChangeText'>
->) {
-  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
-
-  return (
-    <View className="gap-2">
-      <Text variant="small" className="uppercase tracking-wide">
-        {label}
-      </Text>
-      <View
-        className={cn(
-          'flex-row items-center rounded-lg bg-fill-tertiary border px-3 py-1',
-          error ? 'border-critical-secondary' : 'border-transparent',
-        )}
-      >
-        <Input
-          value={value}
-          placeholder={placeholder}
-          placeholderTextColor={contentTertiary}
-          onChangeText={onChangeText}
-          hasError={!!error}
-          className="flex-1 h-14 min-w-0 border-0 bg-transparent px-1 py-2.5 text-content-primary shadow-none"
-          {...inputProps}
-        />
-      </View>
-      {error ? (
-        <Text variant="small" className="text-error">
-          {error}
-        </Text>
-      ) : null}
-    </View>
-  )
+  return TELEGRAM_USERNAME_REGEX.test(trimmed) ? null : '2–32 letters, numbers, or _'
 }
 
 function SegmentButton({
@@ -94,7 +46,10 @@ function SegmentButton({
       variant="tertiary"
       size="xl"
       onPress={onPress}
-      className={cn('px-3 gap-0', isSelected && 'ring-1 ring-content-primary bg-fill-tertiary')}
+      className={cn(
+        'px-3 gap-0 flex-1 shadow-[0_0_3px_0_var(--border-quaternary,#FFF)]',
+        isSelected && 'ring-1 ring-content-primary bg-fill-tertiary shadow-none',
+      )}
     >
       <Icon size={24} />
       <Text variant="body" className={isSelected ? 'text-content-primary' : 'text-content-tertiary'}>
@@ -144,17 +99,29 @@ export default function SubscriptionScreen() {
   }, [])
 
   const handleSave = useCallback(async () => {
+    const trimmedEmail = email.trim()
+    const trimmedTelegram = telegramUsername.trim()
+
     const eErr = validateEmail(email)
     const tErr = validateTelegramUsername(telegramUsername)
     setEmailError(eErr)
     setTelegramError(tErr)
+
+    if (!trimmedEmail && !trimmedTelegram) {
+      const message = 'Enter email or Telegram'
+      setEmailError(message)
+      setTelegramError(message)
+
+      return
+    }
+
     if (eErr ?? tErr) return
 
     setIsSaving(true)
     const ok = await updateUserProfile({
       notificationTypes,
-      email: email.trim() || undefined,
-      telegramUsername: telegramUsername.trim() || undefined,
+      email: trimmedEmail || undefined,
+      telegramUsername: trimmedTelegram || undefined,
       isEmailNotificationsOn: true,
     })
     setIsSaving(false)
@@ -194,7 +161,7 @@ export default function SubscriptionScreen() {
         <ScrollView contentContainerClassName="px-4 py-8" showsVerticalScrollIndicator={false}>
           <View className="gap-6">
             <View className="gap-4">
-              <ContactRow
+              <InputRow
                 label="EMAIL"
                 value={email}
                 placeholder="johndoe@gmail.com"
@@ -207,7 +174,7 @@ export default function SubscriptionScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              <ContactRow
+              <InputRow
                 label="TELEGRAM"
                 value={telegramUsername}
                 placeholder="@johndoe"

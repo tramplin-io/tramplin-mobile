@@ -8,8 +8,7 @@ import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
-import { Button } from '@/components/ui'
-import { Input } from '@/components/ui/input'
+import { Button, InputRow } from '@/components/ui'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, type Option } from '@/components/ui/select'
 import { Text } from '@/components/ui/text'
 import { Textarea } from '@/components/ui/textarea'
@@ -30,11 +29,13 @@ export default function ContactUsScreen() {
   const [reason, setReason] = useState('')
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')
+  const [reasonError, setReasonError] = useState<string | null>(null)
   const [titleError, setTitleError] = useState<string | null>(null)
   const [messageError, setMessageError] = useState<string | null>(null)
 
   const fillPrimary = useCSSVariable('--color-fill-primary') as string
   const fillFade = useCSSVariable('--color-fill-fade') as string
+  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
 
   const { mutateAsync: sendContactUs, isPending } = useContactUs()
 
@@ -46,23 +47,32 @@ export default function ContactUsScreen() {
     setReason('')
     setTitle('')
     setMessage('')
+    setReasonError(null)
     setTitleError(null)
     setMessageError(null)
+    setReasonError(null)
   }, [])
 
   const handleSubmit = useCallback(async () => {
+    const trimmedReason = reason.trim()
     const trimmedTitle = title.trim()
     const trimmedMessage = message.trim()
 
+    setReasonError(null)
     setTitleError(null)
     setMessageError(null)
 
+    if (!trimmedReason) {
+      setReasonError('Reason is required')
+    }
     if (!trimmedTitle) {
       setTitleError('Title is required')
-      return
     }
     if (!trimmedMessage) {
       setMessageError('Message is required')
+    }
+
+    if (!trimmedReason || !trimmedTitle || !trimmedMessage) {
       return
     }
 
@@ -118,12 +128,19 @@ export default function ContactUsScreen() {
         <View className="gap-4 mt-2">
           {/* Reason */}
           <View className="gap-2">
-            <Text variant="body">REASON</Text>
+            <Text variant="small">REASON</Text>
             <Select
               value={reason ? (CONTACT_REASONS.find((r) => r.value === reason) as Option) : undefined}
               onValueChange={(v) => setReason(parseSelectValue(v))}
             >
-              <SelectTrigger>
+              <SelectTrigger
+                className={cn(
+                  'flex-row items-center rounded-md bg-fill-tertiary border px-4 py-0',
+                  reasonError
+                    ? 'border-critical-secondary bg-linear-to-b from-fill-primary to-critical-primary shadow-[0_0_3px_0_var(--critical-primary,#FFAFAF)]'
+                    : 'border-transparent',
+                )}
+              >
                 <SelectValue placeholder="Choose a reason" />
               </SelectTrigger>
               <SelectContent className="bg-fill-tertiary gap-1 py-3">
@@ -137,42 +154,60 @@ export default function ContactUsScreen() {
                 ))}
               </SelectContent>
             </Select>
+            {reasonError ? (
+              <Text variant="small" className="absolute top-0 right-0 text-content-tertiary uppercase text-end">
+                {reasonError}
+              </Text>
+            ) : null}
           </View>
 
           {/* Title */}
           <View className="gap-2">
-            <Text variant="body">TITLE</Text>
-            <Input
-              placeholder="Brief description of your inquiry"
-              maxLength={100}
+            <InputRow
+              label="TITLE"
               value={title}
+              placeholder="Brief description of your inquiry"
+              error={titleError}
               onChangeText={(t) => {
                 setTitle(t)
                 if (titleError) setTitleError(null)
               }}
-              hasError={!!titleError}
             />
-            {titleError ? <Text className="text-critical-primary text-sm">{titleError}</Text> : null}
           </View>
 
           {/* Message */}
           <View className="gap-2">
-            <Text variant="body">MESSAGE</Text>
-            <Textarea
-              placeholder="Tell us more about your inquiry..."
+            <Text variant="small">MESSAGE</Text>
+            <View
               className={cn(
-                'min-h-[120px] text-[16px] leading-[18px] bg-fill-tertiary text-content-primary',
-                messageError && 'border border-critical-primary',
+                'flex-row items-center rounded-md bg-fill-tertiary border px-0 py-0',
+                'shadow-[0_0_3px_0_var(--border-quaternary,#FFF)]',
+                messageError
+                  ? 'border-critical-secondary bg-linear-to-b from-fill-primary to-critical-primary shadow-[0_0_3px_0_var(--critical-primary,#FFAFAF)]'
+                  : 'border-transparent',
               )}
-              maxLength={1000}
-              value={message}
-              onChangeText={(t) => {
-                setMessage(t)
-                if (messageError) setMessageError(null)
-              }}
-            />
-            {messageError ? <Text className="text-critical-primary text-sm">{messageError}</Text> : null}
-            <Text className="text-[12px] leading-[14px] text-content-tertiary text-right">{message.length}/1000</Text>
+            >
+              <Textarea
+                placeholder="Tell us more about your inquiry..."
+                placeholderTextColor={contentTertiary}
+                className={cn('min-h-[120px] text-body bg-transparent text-content-primary', 'border-0 shadow-none')}
+                maxLength={1000}
+                value={message}
+                onChangeText={(t) => {
+                  setMessage(t)
+                  if (messageError) setMessageError(null)
+                }}
+              />
+            </View>
+
+            {messageError && (
+              <Text variant="small" className="absolute top-0 right-0 text-content-tertiary uppercase text-end">
+                {messageError}
+              </Text>
+            )}
+            <Text variant="small" className=" text-content-tertiary text-right">
+              {message.length}/1000
+            </Text>
           </View>
 
           <View className="flex justify-center mt-4">
