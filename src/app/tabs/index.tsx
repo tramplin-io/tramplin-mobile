@@ -39,7 +39,7 @@ export default function HomeTab() {
   return (
     <ScreenWrapper>
       <ScrollView
-        contentContainerClassName="px-4 pb-40 py-8 flex-grow gap-8"
+        contentContainerClassName="px-4 pb-34 py-8 flex-grow gap-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
