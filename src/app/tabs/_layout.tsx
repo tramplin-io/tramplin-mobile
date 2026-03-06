@@ -169,6 +169,13 @@ export default function TabsLayout() {
         }}
       >
         <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: StakeTabIcon,
+          }}
+        />
+        <Tabs.Screen
           name="leaderboard"
           options={{
             title: 'Leaderboard',
@@ -180,13 +187,6 @@ export default function TabsLayout() {
           options={{
             title: 'Rewards',
             tabBarIcon: RewardsTabIcon,
-          }}
-        />
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: StakeTabIcon,
           }}
         />
         <Tabs.Screen
