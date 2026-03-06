@@ -4,6 +4,7 @@ import { useCSSVariable } from 'uniwind'
 
 import { BigCupIcon, QuestionIcon, SmallCupIcon, SolanaIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
+import { useUserActiveStake } from '@/hooks/useUserActiveStake'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
 
@@ -101,11 +102,13 @@ function StakedCard({
   value,
   multiplier,
   effectiveStake,
+  hasActiveStake,
   onUnstakePress,
 }: Readonly<{
   value: number
   multiplier?: number
   effectiveStake?: number
+  hasActiveStake?: boolean | null
   onUnstakePress?: () => void
 }>) {
   const formatted = formatTruncated(value)
@@ -139,7 +142,7 @@ function StakedCard({
           )}
         </View>
         <View className="gap-2">
-          {Number(multiplierFormatted) > 0 && (
+          {Number(multiplierFormatted) > 0 && hasActiveStake && (
             <Text variant="small" className="text-brand-primary">
               {multiplierFormatted}x
             </Text>
@@ -154,7 +157,7 @@ function StakedCard({
           </View>
         </View>
       </LinearGradient>
-      {effectiveStake != null && (
+      {effectiveStake != null && hasActiveStake && (
         <View className="flex-row items-center gap-0.5 px-0.5">
           <Text variant="small" className="text-content-tertiary">
             {formatTruncated(effectiveStake)}
@@ -182,6 +185,7 @@ function EarnedCard({
   apr,
   isAttendingBigDraw,
   isAttendingRegularDraw,
+  hasActiveStake,
   onInfoPress,
 }: Readonly<{
   totalPoints: number
@@ -189,6 +193,7 @@ function EarnedCard({
   apr?: number
   isAttendingBigDraw?: boolean
   isAttendingRegularDraw?: boolean
+  hasActiveStake?: boolean | null
   onInfoPress?: () => void
 }>) {
   const primaryTint = useCSSVariable('--color-reward-large-primary') as string
@@ -217,7 +222,7 @@ function EarnedCard({
   ) : null
 
   if (hasSolEarnings) {
-    const formatted = formatTruncated(totalWinSol, 3)
+    // const formatted = formatTruncated(totalWinSol, 2)
 
     return (
       <View className="flex-1 gap-2">
@@ -238,14 +243,14 @@ function EarnedCard({
             </View>
           </View>
           <View className="gap-2">
-            {apr != null && (
+            {apr != null && hasActiveStake && (
               <Text variant="small" className="text-reward-large-secondary">
                 APR {apr}%
               </Text>
             )}
             <View className="flex-row items-end gap-0.5">
               <Text variant="h3Digits" className="text-content-primary">
-                {formatted}
+                {totalWinSol}
               </Text>
               <View className="flex-row items-center gap-0.5 pb-1">
                 <SolanaCircleIcon color={secondaryTint} />
@@ -253,7 +258,8 @@ function EarnedCard({
             </View>
           </View>
         </LinearGradient>
-        {participatingFooter}
+
+        {hasActiveStake && participatingFooter}
       </View>
     )
   }
@@ -327,8 +333,11 @@ export function YourStake({
   className,
 }: Readonly<YourStakeProps>) {
   const { data: apiData, isLoading, isError } = useReadMyStats()
+  const { data: activeStake } = useUserActiveStake()
 
   const stats = getStatsDisplay(apiData)
+
+  const hasActiveStake = activeStake && activeStake?.active >= 1
 
   if (isLoading) {
     return (
@@ -367,6 +376,7 @@ export function YourStake({
             value={data.totalStakeAmount}
             multiplier={data.multiplier}
             effectiveStake={data.effectiveStake}
+            hasActiveStake={hasActiveStake}
             onUnstakePress={onUnstakePress}
           />
         ) : (
@@ -379,12 +389,18 @@ export function YourStake({
             apr={data.apr}
             isAttendingBigDraw={data.isAttendingBigDraw}
             isAttendingRegularDraw={data.isAttendingRegularDraw}
+            hasActiveStake={hasActiveStake}
             onInfoPress={onEarnedInfoPress}
           />
         ) : (
           <PlaceholderCard staked={false} className={className} />
         )}
       </View>
+      {!hasActiveStake && (
+        <Text variant="small" className="text-content-tertiary uppercase mt-1">
+          + stake to participate in distribution
+        </Text>
+      )}
     </View>
   )
 }
