@@ -2,6 +2,11 @@ import 'dotenv/config'
 
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
+import withCharlesProxy from './plugins/withCharlesProxy'
+
+const enableCharlesProxy =
+  process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
+
 /**
  * Expo app configuration (TypeScript).
  *
@@ -55,6 +60,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './src/assets/images/favicon.png',
   },
   plugins: [
+    ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }] as unknown as [string, unknown]] : []),
     'expo-router',
     // [
     //   'expo-splash-screen',
