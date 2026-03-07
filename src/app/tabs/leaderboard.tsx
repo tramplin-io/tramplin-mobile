@@ -166,7 +166,7 @@ function LeaderboardTable({
   //   () => list.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
   //   [list, currentPage],
   // )
-  console.log('list', list)
+  // console.log('list', list)
   const pageItems = list
   return (
     <>
