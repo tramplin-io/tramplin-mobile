@@ -59,6 +59,13 @@ const buttonVariants = cva(
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-critical-secondary/90' }),
         ),
+        errorSmall: cn(
+          'rounded-full border border-critical-secondary',
+          'bg-content-primary',
+          // '[background-image:linear-gradient(to_bottom,var(--color-critical-secondary),var(--color-fill-overlay))]',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-critical-secondary/90' }),
+        ),
         preset: cn(
           'rounded-full px-2 py-1 border border-border-quaternary flex-row items-center',
           'hover:scale-[1.02] active:scale-[0.99]',
@@ -110,6 +117,7 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
       tertiary: 'text-body text-content-tertiary',
       gray: 'text-body text-content-tertiary',
       error: 'text-body text-critical-secondary',
+      errorSmall: 'text-body text-critical-secondary',
       preset: 'text-smallBold',
       outline: cn(
         'text-foreground text-sm font-medium',
