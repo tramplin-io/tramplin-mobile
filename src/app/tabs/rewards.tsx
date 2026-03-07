@@ -9,6 +9,7 @@ import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
 import { RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
+import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
 import { useIndexMyWins } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
@@ -115,7 +116,11 @@ export default function RewardsTab() {
 
   const bigWins = wins.filter((w) => w.drawType === 'big')
   const regularWins = wins.filter((w) => w.drawType === 'regular')
-  const regularRewardsTotal = useMemo(() => regularWins.reduce((acc, r) => acc + (r.prizeSol ?? 0), 0), [regularWins])
+  const regularRewardsTotalLamports = useMemo(
+    () => regularWins.reduce((acc, r) => acc + Number(r.prizeLamports ?? 0), 0),
+    [regularWins],
+  )
+  const regularRewardsTotal = regularRewardsTotalLamports / Number(LAMPORTS_PER_SOL)
   const shouldPlayVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
 
   const useLazyRegularList = regularWins.length > 0
