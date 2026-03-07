@@ -8,8 +8,6 @@ import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.sch
 import { queryClient } from '@/lib/api/query-client'
 import { tokenStore } from '@/lib/api/token-store'
 
-import { storage } from '@/utils/storage'
-
 import { getExpoPushToken } from '../notifications/utils'
 import { useApiConfigStore } from './api-config-store'
 import { useDeveloperStore } from './developer-store'
@@ -264,7 +262,6 @@ export const useAuthStore = create<AuthState>()(
           useDeveloperStore.getState().reset()
           useLogStore.getState().clearLogs()
           queryClient.clear()
-          await storage.clear()
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Unknown error' })
           console.error('Error logging out:', error)
@@ -285,7 +282,6 @@ export const useAuthStore = create<AuthState>()(
           useDeveloperStore.getState().reset()
           useLogStore.getState().clearLogs()
           queryClient.clear()
-          await storage.clear()
         }
       },
     }),

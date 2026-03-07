@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Uniwind } from 'uniwind'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import { STORAGE_KEYS } from '@/utils/storage'
+import { createJSONStorage, persist } from 'zustand/middleware'
+
 import type { ThemeMode } from '@/constants/theme'
 
 interface ThemeStore {
@@ -32,7 +32,7 @@ export const useThemeStore = create<ThemeStore>()(
       },
     }),
     {
-      name: STORAGE_KEYS.THEME_MODE,
+      name: '@tramplin_theme_mode',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
         if (state?.themeMode) {

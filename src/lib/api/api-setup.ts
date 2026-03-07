@@ -6,13 +6,11 @@ import { setBaseURL } from './mutator/custom-instance'
 import { setReferralsBaseURL } from './mutator/referrals-instance'
 import { tokenStore } from './token-store'
 
-// import { storage, STORAGE_KEYS } from '@/utils/storage'
-
 /**
  * Initialize the API layer on app startup.
  *
  * - Sets the base URL for Axios
- * - Restores auth token from storage
+ * - Invalid/expired tokens (e.g. after reinstall with restored storage) are cleared by logout().
  *
  * Call this in the root layout before rendering the app.
  *
@@ -31,21 +29,10 @@ export async function initializeApi() {
     setReferralsBaseURL(referralsApiUrl)
   }
 
-  // console.log('initializeApi - apiUrl', apiUrl)
-
-  const { token, isAuthenticated, fetchSession } = useAuthStore.getState()
-
+  const { token, fetchSession } = useAuthStore.getState()
   const { fetchUserProfile } = useProfileStore.getState()
 
-  // Restore auth token from persistent storage
-  // const token = await storage.get(STORAGE_KEYS.AUTH_TOKEN)
-  // if (token) {
-  //   tokenStore.setToken(token)
-  //   return true
-  // }
-
-  // return false
-  // If we have a token, set it and fetch the session
+  // If we have a token, set it in tokenStore and validate with the server
   if (token) {
     try {
       // Ensure token is properly formatted and set in tokenStore

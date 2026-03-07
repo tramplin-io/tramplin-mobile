@@ -1,28 +1,41 @@
 /**
  * Token store for managing auth tokens.
  *
- * This is a simple in-memory store that breaks the circular dependency
- * between the Axios instance and Zustand auth store.
- * The auth store syncs tokens here on login/logout.
- *
+ * Zustand store that breaks the circular dependency between the Axios instance
+ * and Zustand auth store. The auth store syncs tokens here on login/logout.
+ * Use tokenStore (getToken/setToken/clearToken) for non-React code (e.g. interceptors).
  */
 
-let _token: string | null = null
+import { create } from 'zustand'
+
+type TokenState = {
+  token: string | null
+  setToken: (token: string | null) => void
+  clearToken: () => void
+}
+
+export const useTokenStore = create<TokenState>()((set) => ({
+  token: null,
+  setToken: (token) => set({ token }),
+  clearToken: () => set({ token: null }),
+}))
+
+const getState = () => useTokenStore.getState()
 
 export const tokenStore = {
   getToken(): string | null {
-    return _token
+    return getState().token
   },
 
   setToken(token: string | null): void {
-    _token = token
+    getState().setToken(token)
   },
 
   clearToken(): void {
-    _token = null
+    getState().clearToken()
   },
 
   hasToken(): boolean {
-    return _token !== null
+    return getState().token !== null
   },
 } as const

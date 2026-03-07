@@ -4,24 +4,39 @@
  * Separate from the main tokenStore because the referrals API
  * has its own auth system (REFERRALS_LOGIN_PAYLOAD vs LOGIN_PAYLOAD).
  * The auth store syncs tokens here on referral login/logout.
+ * Use referralTokenStore (getToken/setToken/clearToken) for non-React code (e.g. interceptors).
  */
 
-let _token: string | null = null
+import { create } from 'zustand'
+
+type ReferralTokenState = {
+  token: string | null
+  setToken: (token: string | null) => void
+  clearToken: () => void
+}
+
+export const useReferralTokenStore = create<ReferralTokenState>()((set) => ({
+  token: null,
+  setToken: (token) => set({ token }),
+  clearToken: () => set({ token: null }),
+}))
+
+const getState = () => useReferralTokenStore.getState()
 
 export const referralTokenStore = {
   getToken(): string | null {
-    return _token
+    return getState().token
   },
 
   setToken(token: string | null): void {
-    _token = token
+    getState().setToken(token)
   },
 
   clearToken(): void {
-    _token = null
+    getState().clearToken()
   },
 
   hasToken(): boolean {
-    return _token !== null
+    return getState().token !== null
   },
 } as const
