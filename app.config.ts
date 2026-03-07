@@ -2,10 +2,12 @@ import 'dotenv/config'
 
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
+import withAndroidBackupConfig from './plugins/withAndroidBackupConfig'
 import withCharlesProxy from './plugins/withCharlesProxy'
 
 const enableCharlesProxy =
   process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
+// const disableAndroidBackup = process.env.EAS_BUILD_PROFILE !== 'production'
 
 /**
  * Expo app configuration (TypeScript).
@@ -60,6 +62,8 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './src/assets/images/favicon.png',
   },
   plugins: [
+    // [withAndroidBackupConfig, { enabled: disableAndroidBackup }],
+    [withAndroidBackupConfig],
     ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }] as unknown as [string, unknown]] : []),
     'expo-router',
     // [
