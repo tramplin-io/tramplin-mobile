@@ -1,4 +1,5 @@
 import { ActivityIndicator, ImageBackground, StyleSheet, View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
@@ -39,6 +40,8 @@ export function RewardCardRegular({
   const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
 
   const solColor = useCSSVariable('--color-reward-small-primary') as string
+  const criticalSecondary = useCSSVariable('--color-critical-secondary') as string
+  const contentPrimary = useCSSVariable('--color-content-primary') as string
 
   return (
     <View
@@ -47,11 +50,18 @@ export function RewardCardRegular({
         'border border-reward-small-secondary',
         'h-17',
         hasError && 'border-critical-secondary bg-critical-primary/20',
-        disabled && 'opacity-50',
+        disabled && 'opacity-95',
       )}
     >
-      {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground hasError={hasError} />}
+      {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground />}
 
+      {hasError && (
+        <LinearGradient
+          colors={[criticalSecondary, contentPrimary]}
+          locations={[0, 1]}
+          style={[StyleSheet.absoluteFillObject, { opacity: 0.75 }]}
+        />
+      )}
       {variant === 'empty' && (
         <View className="flex-col justify-center items-center gap-2 mx-auto py-1">
           <Text variant="body" className="text-reward-small-primary ">
@@ -74,42 +84,57 @@ export function RewardCardRegular({
           {['claim', 'summary'].includes(variant) && (
             <View className="flex-1">
               <View className="flex-row items-center">
-                <Text variant="h4Digits" className="text-reward-small-primary">
+                <Text
+                  variant="h4Digits"
+                  className={cn(hasError ? 'text-critical-secondary' : 'text-reward-small-primary')}
+                >
                   +{amountSol}
                 </Text>
-                <SolanaCircleIcon size={32} color={solColor} />
+                <SolanaCircleIcon size={32} color={hasError ? criticalSecondary : solColor} />
               </View>
-              {awardedText && (
-                <Text variant="small" className="text-reward-small-primary">
+              {awardedText && !hasError && (
+                <Text
+                  variant="small"
+                  className={cn(hasError ? 'text-critical-secondary' : 'text-reward-small-primary')}
+                >
                   {awardedText}
+                </Text>
+              )}
+              {hasError && (
+                <Text variant="small" className="text-critical-secondary uppercase">
+                  ERROR CLAIMING
                 </Text>
               )}
             </View>
           )}
           {variant === 'claim' && (
             <Button
-              variant={hasError ? 'error' : 'black'}
+              variant={hasError ? 'errorSmall' : 'black'}
               size="lg"
               onPress={onClaim}
               disabled={disabled}
               className="rounded-full px-4 "
             >
-              {buttonText ? <GradientText>{buttonText}</GradientText> : <GradientText>Claim Now</GradientText>}
+              {buttonText ? (
+                <GradientText hasError={hasError}>{buttonText}</GradientText>
+              ) : (
+                <GradientText hasError={hasError}>Claim Now</GradientText>
+              )}
             </Button>
           )}
 
           {variant === 'summary' && (
             <Button
-              variant={hasError ? 'error' : 'black'}
+              variant={hasError ? 'errorSmall' : 'black'}
               size="lg"
               onPress={onClaim}
               disabled={disabled}
               className="rounded-full px-4 my-0.5 "
             >
               {buttonText ? (
-                <GradientText>{buttonText}</GradientText>
+                <GradientText hasError={hasError}>{buttonText}</GradientText>
               ) : (
-                <GradientText>{`Claim ${claimCount} rewards`}</GradientText>
+                <GradientText hasError={hasError}>{`Claim ${claimCount} rewards`}</GradientText>
               )}
             </Button>
           )}
@@ -129,8 +154,7 @@ function RewardCardBackgroundVideo() {
   return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
 }
 
-function RewardCardStaticBackground({ hasError }: Readonly<{ hasError: boolean }>) {
-  if (hasError) return null
+function RewardCardStaticBackground() {
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
       <ImageBackground source={rewardSilverSmallImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />

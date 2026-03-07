@@ -13,6 +13,7 @@ type GradientTextProps = Readonly<{
   colors?: [string, string, ...string[]]
   className?: string
   variant?: ComponentProps<typeof Text>['variant']
+  hasError?: boolean
 }>
 
 class GradientTextErrorBoundary extends Component<
@@ -46,7 +47,9 @@ export function GradientText({
   colors = ['--color-fill-primary', '--color-content-tertiary'],
   className,
   variant = 'default',
+  hasError = false,
 }: GradientTextProps) {
+  const criticalSecondary = useCSSVariable('--color-critical-secondary') as string
   const rewardSmallPrimary = useCSSVariable(colors[0]) as string
   const rewardSmallSecondary = useCSSVariable(colors[1]) as string
 
@@ -68,7 +71,7 @@ export function GradientText({
             {children}
           </Text>
           <LinearGradient
-            colors={[rewardSmallPrimary, rewardSmallSecondary]}
+            colors={hasError ? [criticalSecondary, criticalSecondary] : [rewardSmallPrimary, rewardSmallSecondary]}
             start={{ x: 0, y: 0.5 }}
             end={{ x: 1, y: 0.5 }}
             style={StyleSheet.absoluteFillObject}
