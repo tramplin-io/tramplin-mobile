@@ -14,7 +14,10 @@
   "scripts": {
     "android": "expo run:android",
     "android:build": "expo prebuild -p android",
-    "android:build:local:app": "eas build --platform android --profile preview --local && mv *.apk app_builds/",
+    "android:build:local:development": "eas build --platform android --profile development --local && mv *.apk app_builds/",
+    "android:build:local:preview": "eas build --platform android --profile preview --local && mv *.apk app_builds/",
+    "android:build:local:production": "eas build --platform android --profile production --local && mv *.apk app_builds/",
+    "android:build:preview": "eas build --platform android --profile preview",
     "build": "tsc --noEmit && npm run android:build",
     "ci": "tsc --noEmit && npm run lint:check && npm run fmt:check && npm run android:build",
     "dev": "expo start --clear --dev-client --reset-cache",
