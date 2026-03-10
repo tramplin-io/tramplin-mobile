@@ -1,6 +1,8 @@
 export const TERMS_OF_USE_URL = 'https://tramplin.io/terms'
 export const PRIVACY_POLICY_URL = 'https://tramplin.io/privacy'
 
+export const TELEGRAM_BOT_NAME = process.env.EXPO_PUBLIC_TELEGRAM_BOT_NAME
+
 export const CONTACT_REASONS = [
   { value: 'GENERAL', label: 'General Inquiry' },
   { value: 'TECHNICAL', label: 'Technical Support' },

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
+import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, Stack } from 'expo-router'
 import Toast from 'react-native-toast-message'
@@ -11,12 +11,13 @@ import { BigCupIcon, ImportantIcon, PointsIcon } from '@/components/icons/icons'
 import { Button } from '@/components/ui'
 import { InputRow } from '@/components/ui/InputRow'
 import { Text } from '@/components/ui/text'
+import { TELEGRAM_BOT_NAME } from '@/constants/profile'
 import type { NotificationType } from '@/lib/api/generated/restApi.schemas'
 import { useProfileStore } from '@/lib/stores/profile-store'
 import { cn } from '@/lib/utils'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const TELEGRAM_USERNAME_REGEX = /^@?\w{2,32}$/
+const DISCORD_ID_REGEX = /^[^\s]{2,32}$/
 
 function validateEmail(value: string): string | null {
   const trimmed = value.trim()
@@ -24,10 +25,10 @@ function validateEmail(value: string): string | null {
   return EMAIL_REGEX.test(trimmed) ? null : 'Enter a valid email address'
 }
 
-function validateTelegramUsername(value: string): string | null {
+function validateDiscordId(value: string): string | null {
   const trimmed = value.trim()
   if (!trimmed) return null
-  return TELEGRAM_USERNAME_REGEX.test(trimmed) ? null : '2–32 letters, numbers, or _'
+  return DISCORD_ID_REGEX.test(trimmed) ? null : '2–32 characters, no spaces'
 }
 
 function SegmentButton({
@@ -62,11 +63,11 @@ function SegmentButton({
 export default function SubscriptionScreen() {
   const { userProfile, fetchUserProfile, updateUserProfile } = useProfileStore()
   const [email, setEmail] = useState('')
-  const [telegramUsername, setTelegramUsername] = useState('')
+  const [discordId, setDiscordId] = useState('')
   const [notificationTypes, setNotificationTypes] = useState<NotificationType[]>(['product'])
   const [isSaving, setIsSaving] = useState(false)
   const [emailError, setEmailError] = useState<string | null>(null)
-  const [telegramError, setTelegramError] = useState<string | null>(null)
+  const [discordError, setDiscordError] = useState<string | null>(null)
 
   const fillPrimary = useCSSVariable('--color-fill-primary') as string
   const fillFade = useCSSVariable('--color-fill-fade') as string
@@ -78,7 +79,7 @@ export default function SubscriptionScreen() {
   useEffect(() => {
     if (userProfile) {
       setEmail(userProfile.email ?? '')
-      setTelegramUsername(userProfile.telegramUsername ?? '')
+      setDiscordId(userProfile.discordId ?? '')
       setNotificationTypes(userProfile.notificationTypes?.length ? userProfile.notificationTypes : ['product'])
     }
   }, [userProfile])
@@ -98,30 +99,54 @@ export default function SubscriptionScreen() {
     })
   }, [])
 
+  const handleTelegramPress = useCallback(() => {
+    if (!TELEGRAM_BOT_NAME || !userProfile?.tgAuthCode) {
+      Toast.show({ type: 'error', text1: 'Telegram connection is unavailable' })
+      return
+    }
+
+    const startParam = encodeURIComponent(userProfile.tgAuthCode)
+    const appUrl = `tg://resolve?domain=${TELEGRAM_BOT_NAME}&start=${startParam}`
+    const webUrl = `https://t.me/${TELEGRAM_BOT_NAME}?start=${startParam}`
+
+    Linking.canOpenURL(appUrl)
+      .then((supported) => {
+        const target = supported ? appUrl : webUrl
+        return Linking.openURL(target)
+      })
+      .catch(() => {
+        Toast.show({ type: 'error', text1: 'Could not open Telegram' })
+      })
+
+    setTimeout(() => {
+      void fetchUserProfile()
+    }, 5000)
+  }, [userProfile, fetchUserProfile])
+
   const handleSave = useCallback(async () => {
     const trimmedEmail = email.trim()
-    const trimmedTelegram = telegramUsername.trim()
+    const trimmedDiscord = discordId.trim()
 
     const eErr = validateEmail(email)
-    const tErr = validateTelegramUsername(telegramUsername)
+    const dErr = validateDiscordId(discordId)
     setEmailError(eErr)
-    setTelegramError(tErr)
+    setDiscordError(dErr)
 
-    if (!trimmedEmail && !trimmedTelegram) {
-      const message = 'Enter email or Telegram'
+    if (!trimmedEmail && !trimmedDiscord) {
+      const message = 'Enter email or Discord'
       setEmailError(message)
-      setTelegramError(message)
+      setDiscordError(message)
 
       return
     }
 
-    if (eErr ?? tErr) return
+    if (eErr ?? dErr) return
 
     setIsSaving(true)
     const ok = await updateUserProfile({
       notificationTypes,
       email: trimmedEmail || undefined,
-      telegramUsername: trimmedTelegram || undefined,
+      discordId: trimmedDiscord || undefined,
       isEmailNotificationsOn: true,
     })
     setIsSaving(false)
@@ -130,7 +155,7 @@ export default function SubscriptionScreen() {
     } else {
       Toast.show({ type: 'error', text1: 'Could not save subscription' })
     }
-  }, [notificationTypes, email, telegramUsername, updateUserProfile])
+  }, [notificationTypes, email, discordId, updateUserProfile])
 
   return (
     <KeyboardAvoidingView
@@ -175,17 +200,26 @@ export default function SubscriptionScreen() {
                 autoCorrect={false}
               />
               <InputRow
-                label="TELEGRAM"
-                value={telegramUsername}
-                placeholder="@johndoe"
-                error={telegramError}
+                label="DISCORD"
+                value={discordId}
+                placeholder="user_name"
+                error={discordError}
                 onChangeText={(text) => {
-                  setTelegramUsername(text)
-                  if (telegramError) setTelegramError(validateTelegramUsername(text))
+                  setDiscordId(text)
+                  if (discordError) setDiscordError(validateDiscordId(text))
                 }}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
+              <Pressable onPress={handleTelegramPress}>
+                <InputRow
+                  label="TELEGRAM"
+                  value={userProfile?.telegramUsername ?? ''}
+                  placeholder="Press to connect"
+                  editable={false}
+                  onChangeText={undefined}
+                />
+              </Pressable>
             </View>
 
             <View className="flex-row gap-1">

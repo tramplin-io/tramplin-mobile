@@ -3,6 +3,7 @@ import 'dotenv/config'
 import type { ConfigContext, ExpoConfig } from 'expo/config'
 
 import withAndroidBackupConfig from './plugins/withAndroidBackupConfig'
+import withAndroidTelegramQueries from './plugins/withAndroidTelegramQueries'
 import withCharlesProxy from './plugins/withCharlesProxy'
 
 const enableCharlesProxy =
@@ -63,7 +64,8 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     // [withAndroidBackupConfig, { enabled: disableAndroidBackup }],
-    [withAndroidBackupConfig],
+    withAndroidBackupConfig,
+    withAndroidTelegramQueries,
     ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }] as unknown as [string, unknown]] : []),
     'expo-router',
     // [
