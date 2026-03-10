@@ -80,6 +80,44 @@ export function signatureToBase58(bytes: Uint8Array): string {
 }
 
 /**
+ * Format a JS Date or ISO string into relative time like "2 DAYS AGO".
+ * - < 1 minute → "NOW"
+ * - < 1 hour → "N MIN AGO"
+ * - < 24 hours → "N HOURS AGO"
+ * - otherwise → "N DAY(S) AGO"
+ */
+export function formatRelativeTime(dateInput: string | Date | undefined): string {
+  if (!dateInput) return '—'
+
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
+  if (Number.isNaN(date.getTime())) return '—'
+
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffSeconds = Math.floor(diffMs / 1000)
+
+  if (diffSeconds < 60) {
+    return 'NOW'
+  }
+
+  const diffMinutes = Math.floor(diffSeconds / 60)
+  if (diffMinutes < 60) {
+    if (diffMinutes === 1) return '1 MIN AGO'
+    return `${diffMinutes} MINS AGO`
+  }
+
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) {
+    if (diffHours === 1) return '1 HOUR AGO'
+    return `${diffHours} HOURS AGO`
+  }
+
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffDays === 1) return '1 DAY AGO'
+  return `${diffDays} DAYS AGO`
+}
+
+/**
  * Format a timestamp to a locale string.
  */
 export function formatTimestamp(timestamp: number): string {
