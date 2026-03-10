@@ -14,11 +14,17 @@ import { AppProviders } from '@/components/app-providers'
 import { AuthGuard } from '@/components/auth-guard'
 import { Header, RoutePathOverlay } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
-import { initializeApi } from '@/lib/api'
+import { initializeApi, queryClient, tokenStore } from '@/lib/api'
 import { useNetworkStatus } from '@/lib/network'
 import { setNotificationHandler } from '@/lib/notifications/utils'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 import { useLogStore } from '@/lib/stores/log-store'
+import {
+  getIndexMyWinsQueryOptions,
+  getListPublicStakeLeadersQueryOptions,
+  getListPublicWinLeadersQueryOptions,
+  getReadMyStatsQueryOptions,
+} from '@/lib/api/generated/restApi'
 
 import NoInternetScreen from './no-internet'
 
@@ -105,6 +111,24 @@ function RootLayout() {
 
       // Initialize API layer (restore auth token, set base URL)
       await initializeApi()
+      // Prefetch key queries on app start to hydrate local cache when user is authenticated
+      if (tokenStore.hasToken()) {
+        try {
+          await Promise.all([
+            queryClient.prefetchQuery(getReadMyStatsQueryOptions()),
+            queryClient.prefetchQuery(getListPublicWinLeadersQueryOptions()),
+            queryClient.prefetchQuery(getListPublicStakeLeadersQueryOptions()),
+            queryClient.prefetchQuery(
+              getIndexMyWinsQueryOptions({
+                isClaimed: 'false',
+                limit: 250,
+              }),
+            ),
+          ])
+        } catch (error) {
+          console.error('Failed to prefetch initial queries', error)
+        }
+      }
       // await Promise.all([initializeApi(), minSplashTime]) // Wait for both to complete
 
       // Add other async initialization here:
