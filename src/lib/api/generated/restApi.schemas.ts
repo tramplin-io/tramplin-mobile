@@ -125,6 +125,8 @@ export interface Profile {
   email?: string
   telegramUsername?: string
   telegramUserId?: string
+  discordId?: string
+  tgAuthCode?: string
   id?: string
   createdAt?: string
   updatedAt?: string
@@ -136,7 +138,7 @@ export interface UpdateMyProfileInput {
   isPushNotificationsOn?: boolean
   notificationTypes?: NotificationType[]
   email?: string
-  telegramUsername?: string
+  discordId?: string
 }
 
 export interface ProtocolStatistic {
