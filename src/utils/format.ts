@@ -1,5 +1,6 @@
-import { LAMPORTS_PER_SOL, SOL_DECIMALS } from '@/constants/solana'
 import bs58 from 'bs58'
+
+import { LAMPORTS_PER_SOL, SOL_DECIMALS } from '@/constants/solana'
 
 /**
  * Truncate an address or string with ellipsis in the middle.
@@ -151,6 +152,23 @@ export function formatPrizeUSD(cents: number | undefined): string {
 }
 
 /**
+ * Format a number to a truncated string with specified fraction digits.
+ *
+ * @example formatTruncated(1.2345, 2) => '1.23'
+ * @example formatTruncated(1.2345, 3) => '1.234'
+ * @example formatTruncated(1.2345, 4) => '1.2345'
+ */
+export function formatTruncated(value: number | undefined, fractionDigits = 2): string {
+  const safe = typeof value === 'number' && !Number.isNaN(value) ? value : 0
+  const factor = 10 ** fractionDigits
+  const truncated = Math.floor(safe * factor) / factor
+  return truncated.toLocaleString(undefined, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  })
+}
+
+/**
  * Format a date string to "X DAYS AGO" or "AWARDED X DAYS AGO".
  */
 export function formatAwardedAgo(dateStr: string | undefined, prefix = 'AWARDED '): string {
@@ -162,4 +180,57 @@ export function formatAwardedAgo(dateStr: string | undefined, prefix = 'AWARDED 
   if (days <= 0) return `${prefix}TODAY`
   if (days === 1) return `${prefix}1 DAY AGO`
   return `${prefix}${days} DAYS AGO`
+}
+
+/**
+ * Format numbers with K/M abbreviations without rounding.
+ *
+ * Rules:
+ * - 0–999.99 → plain number (up to 2 decimal places, no grouping)
+ * - 1_000–9_999.99 → integer part only (no decimals)
+ * - 10_000–999_999 → K suffix
+ * - ≥ 1_000_000 → M suffix
+ * - Always dot as decimal separator, max 2 fraction digits, no trailing zeros.
+ *
+ * @example 850.23 => "850.23"
+ * @example 1234.56 => "1234"
+ * @example 9999.99 => "9999"
+ * @example 10000.00 => "10K"
+ * @example 15678.99 => "15.67K"
+ * @example 999999.99 => "999.99K"
+ * @example 1234567.89 => "1.23M"
+ * @example 1600000.00 => "1.6M"
+ */
+export function formatAbbreviatedNumber(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return '0'
+
+  const sign = value < 0 ? '-' : ''
+  const abs = Math.abs(value)
+
+  const formatWithSuffix = (num: number, divisor: number, suffix: string) => {
+    const factor = 100
+    const truncated = Math.trunc((num / divisor) * factor) / factor
+    let str = truncated.toFixed(2)
+    str = str.replace(/\.?0+$/, '')
+    return `${sign}${str}${suffix}`
+  }
+
+  if (abs < 1_000) {
+    const factor = 100
+    const truncated = Math.trunc(abs * factor) / factor
+    let str = truncated.toFixed(2)
+    str = str.replace(/\.?0+$/, '')
+    return `${sign}${str}`
+  }
+
+  if (abs < 10_000) {
+    const truncatedInt = Math.trunc(abs)
+    return `${sign}${truncatedInt}`
+  }
+
+  if (abs < 1_000_000) {
+    return formatWithSuffix(abs, 1_000, 'K')
+  }
+
+  return formatWithSuffix(abs, 1_000_000, 'M')
 }

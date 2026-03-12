@@ -13,7 +13,7 @@ import { Text } from '@/components/ui/text'
 import { useListPublicStakeLeaders, useListPublicWinLeaders } from '@/lib/api/generated/restApi'
 import type { DrawType, Win } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
-import { ellipsify } from '@/utils/format'
+import { ellipsify, formatAbbreviatedNumber } from '@/utils/format'
 import { getSolscanAccountUrl } from '@/utils/wallet'
 
 const CLUSTER = (process.env.EXPO_PUBLIC_SOLANA_NETWORK as 'devnet' | 'mainnet-beta' | 'testnet') ?? 'devnet'
@@ -83,6 +83,7 @@ function LeaderboardRow({
   walletAddress,
   reward,
   stake,
+  points,
   showReward,
   drawType,
   epochOrSlot,
@@ -91,6 +92,7 @@ function LeaderboardRow({
   walletAddress: string
   reward?: string
   stake: number
+  points?: number
   showReward: boolean
   drawType?: DrawType
   epochOrSlot?: string
@@ -113,10 +115,12 @@ function LeaderboardRow({
   }, [walletAddress])
 
   const rewardStakeTextClass = drawTypeTextClass(drawType)
+  const formattedStake = stake != null ? formatAbbreviatedNumber(stake) : '-'
+  const formattedPoints = points != null ? formatAbbreviatedNumber(points) : '-'
 
   return (
     <View className="flex-row items-center border-b border-border-quaternary py-4">
-      <View className={cn('min-w-[116px]', isStakers && 'min-w-[160px]')}>
+      <View className={cn('min-w-[116px]', isStakers && 'min-w-[116px]')}>
         <Text variant="body" className={cn(`${rewardStakeTextClass} font-medium`)} numberOfLines={1}>
           {ellipsify(walletAddress, 4)}
         </Text>
@@ -129,12 +133,23 @@ function LeaderboardRow({
           <TokenRewardIcon drawType={drawType} />
         </View>
       )}
-      <View className=" flex-1 flex-row items-center gap-1 min-w-[56px] justify-start">
+
+      <View
+        className={cn('flex-row items-center gap-1 min-w-[120px] justify-start', !isStakers && 'flex-1 min-w-[56px]')}
+      >
         <Text variant="body" className={`${rewardStakeTextClass}`}>
-          {stake}
+          {formattedStake}
         </Text>
         <TokenStakeIcon drawType={drawType} />
       </View>
+
+      {!showReward && (
+        <View className="flex-1 flex-row items-center gap-1 min-w-[56px] justify-start">
+          <Text variant="body" className={`${rewardStakeTextClass}`}>
+            {formattedPoints}
+          </Text>
+        </View>
+      )}
       <Pressable
         onPress={isStakers ? handleOpenSolscan : handleOpenDetail}
         className="ml-0 p-2 -m-2"
@@ -178,18 +193,21 @@ function LeaderboardTable({
           <Text variant="small" className="uppercase tracking-wide min-w-[120px] text-left">
             Reward
           </Text>
-          <Text variant="small" className="uppercase tracking-wide min-w-[56px] text-left">
+          <Text variant="small" className="uppercase tracking-wide min-w-[76px] text-left">
             Stake
           </Text>
           <View className="w-8" />
         </View>
       ) : (
         <View className="flex-row items-center pb-4 mb-0">
-          <Text variant="small" className="uppercase tracking-wide min-w-[160px]">
+          <Text variant="small" className="uppercase tracking-wide min-w-[116px]">
             Wallet
           </Text>
-          <Text variant="small" className=" uppercase tracking-wide min-w-[56px] text-left">
+          <Text variant="small" className=" uppercase tracking-wide min-w-[120px] text-left">
             Stake
+          </Text>
+          <Text variant="small" className=" uppercase tracking-wide min-w-[56px] text-left">
+            Points
           </Text>
           <View className="w-8" />
         </View>
@@ -236,6 +254,7 @@ function LeaderboardTable({
               key={staker.walletAddress}
               walletAddress={staker.walletAddress}
               stake={staker.stake}
+              points={staker?.points}
               showReward={false}
               isStakers
             />

@@ -7,6 +7,7 @@ import { Text } from '@/components/ui/text'
 import { useUserActiveStake } from '@/hooks/useUserActiveStake'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
+import { formatAbbreviatedNumber, formatTruncated } from '@/utils/format'
 
 import { LogoSmall } from '../icons'
 
@@ -50,16 +51,6 @@ function getStatsDisplay(
     showStaked,
     showEarned,
   }
-}
-
-function formatTruncated(value: number | undefined, fractionDigits = 2): string {
-  const safe = typeof value === 'number' && !Number.isNaN(value) ? value : 0
-  const factor = 10 ** fractionDigits
-  const truncated = Math.floor(safe * factor) / factor
-  return truncated.toLocaleString(undefined, {
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
-  })
 }
 
 function SolanaCircleIcon({ color }: { color?: string }) {
@@ -111,7 +102,7 @@ function StakedCard({
   hasActiveStake?: boolean | null
   onUnstakePress?: () => void
 }>) {
-  const formatted = formatTruncated(value)
+  const formatted = formatAbbreviatedNumber(value)
   const multiplierFormatted = formatTruncated(multiplier)
 
   const primaryTint = useCSSVariable('--color-fill-primary') as string
@@ -142,7 +133,7 @@ function StakedCard({
           )}
         </View>
         <View className="gap-2">
-          {Number(multiplierFormatted) > 0 && hasActiveStake && (
+          {multiplier != null && multiplier > 0 && hasActiveStake && (
             <Text variant="small" className="text-brand-primary">
               {multiplierFormatted}x
             </Text>
@@ -160,7 +151,7 @@ function StakedCard({
       {effectiveStake != null && hasActiveStake && (
         <View className="flex-row items-center gap-0.5 px-0.5">
           <Text variant="small" className="text-content-tertiary">
-            {formatTruncated(effectiveStake)}
+            {formatAbbreviatedNumber(effectiveStake)}
           </Text>
           <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
             <SolanaIcon size={16} color={contentTertiary} />
@@ -222,8 +213,8 @@ function EarnedCard({
   ) : null
 
   if (hasSolEarnings) {
-    // const formatted = formatTruncated(totalWinSol, 2)
-
+    const formattedSol = formatAbbreviatedNumber(totalWinSol)
+    const formattedTotalPoints = formatAbbreviatedNumber(totalPoints)
     return (
       <View className="flex-1 gap-2">
         <LinearGradient
@@ -237,7 +228,7 @@ function EarnedCard({
             </Text>
             <View className="flex-row items-end gap-0.5">
               <Text variant="body" className="text-reward-large-secondary">
-                {totalPoints.toLocaleString()}
+                {formattedTotalPoints}
               </Text>
               <TramplinCircleIcon size={8} color={primaryTint} className="bg-reward-large-secondary" />
             </View>
@@ -250,7 +241,7 @@ function EarnedCard({
             )}
             <View className="flex-row items-end gap-0.5">
               <Text variant="h3Digits" className="text-content-primary">
-                {totalWinSol}
+                {formattedSol}
               </Text>
               <View className="flex-row items-center gap-0.5 pb-1">
                 <SolanaCircleIcon color={secondaryTint} />
@@ -283,7 +274,7 @@ function EarnedCard({
         </View>
         <View className="flex-row items-end gap-0.5">
           <Text variant="h3Digits" className="text-content-primary">
-            {formatTruncated(totalPoints, 0)}
+            {formatAbbreviatedNumber(totalPoints)}
           </Text>
           <View className="flex-row items-center gap-0.5 pb-1">
             <TramplinCircleIcon />
