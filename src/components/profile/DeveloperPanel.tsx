@@ -7,6 +7,7 @@ import {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import axios from 'axios'
+import Constants from 'expo-constants'
 import { router } from 'expo-router'
 
 import { Button } from '@/components/ui/button'
@@ -104,6 +105,8 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
   const [isValidating, setIsValidating] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
   const bottomSheetRef = useRef<BottomSheetModal>(null)
+
+  const androidPackage = Constants.expoConfig?.android?.package
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -306,7 +309,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 </Button>
               </View>
               {/* <LogDisplay /> */}
-              <View className="mt-4">
+              {/* <View className="mt-4">
                 <Button
                   size="sm"
                   onPress={() => {
@@ -315,7 +318,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 >
                   <Text>App Logs</Text>
                 </Button>
-              </View>
+              </View> */}
             </View>
 
             {/* <View className="gap-2">
@@ -419,6 +422,10 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                   Route Overlay: {isRoutePathOverlayEnabled ? 'Enabled' : 'Disabled'}
                   {'\n'}
                   Cluster: {AppConfig.networkCluster}
+                  {'\n'}
+                  Package (Android): {androidPackage ?? 'unknown'}
+                  {/* {'\n'}
+                  Bundle ID (iOS): {iosBundleId ?? 'unknown'} */}
                 </Text>
               </View>
 
