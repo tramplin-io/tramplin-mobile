@@ -35,7 +35,7 @@
     "postinstall": "test -f .env || cp .env.example .env"
   },
   "displayName": "Tramplin Mobile",
-  "description": "A template for building a Solana mobile app with Expo, React Native, Solana Kit, and Uniwind.",
+  "description": "Tramplin. Premium staking on Solana",
   "usecase": "Mobile",
   "keywords": [
     "expo",
