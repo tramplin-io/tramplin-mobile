@@ -1,7 +1,8 @@
+import { View, type ViewProps } from 'react-native'
+import { cva, type VariantProps } from 'class-variance-authority'
+
 import { Text, TextClassContext } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { View, type ViewProps } from 'react-native'
 
 const cardVariants = cva('flex flex-col gap-6 rounded-xl', {
   variants: {
@@ -11,6 +12,7 @@ const cardVariants = cva('flex flex-col gap-6 rounded-xl', {
         'bg-border-quaternary border-border-quaternary border shadow-sm shadow-black/5 rounded-lg py-2 px-5 gap-0',
       elevated: 'bg-card border-0 py-6 shadow-md shadow-black/10 rounded-lg p-4',
       outlined: 'bg-transparent border border-border py-6 rounded-lg p-4',
+      notification: 'bg-fill-secondary border-border-quaternary border rounded-md p-2.5 gap-0',
       ghost: 'bg-transparent border-0 py-6 rounded-lg p-4',
     },
     padding: {
