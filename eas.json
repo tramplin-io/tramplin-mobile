@@ -39,6 +39,7 @@
     },
     "production": {
       "autoIncrement": true,
+      "android": { "buildType": "apk" },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.tramplin.io/api",
         "EXPO_PUBLIC_REFERRALS_API_URL": "https://referrals-api.tramplin.io/api",
