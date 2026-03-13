@@ -9,7 +9,7 @@ const BUILD_NUMBER: number = Number.parseInt(Application.nativeBuildVersion || '
 // const CONTACT_US_EMAIL: string = 'support@tramplin.io'
 
 const ITUNES_ITEM_ID: number = 6 // App ID for iOS
-const ANDROID_PACKAGE_NAME: string = 'com.tramplin' // Package name for Android
+const ANDROID_PACKAGE_NAME: string = 'io.tramplin.app' // Package name for Android
 
 // App Store URLs for force update
 const IOS_APP_STORE_URL: string =

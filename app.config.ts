@@ -24,7 +24,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
   slug: 'tramplin-mobile',
   scheme: 'tramplin',
-  version: '0.0.1',
+  version: '1.0.0',
   orientation: 'portrait', //'default',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -42,21 +42,23 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   // },
 
   android: {
-    package: 'com.tramplin',
+    package: 'io.tramplin.app',
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       // foregroundImage: './src/assets/images/adaptive-icon.png',
       // backgroundImage: './src/assets/images/splash.png',
       // backgroundColor: '#DABC58',
     },
+    versionCode: 2,
   },
   ios: {
-    bundleIdentifier: 'com.tramplin',
+    bundleIdentifier: 'io.tramplin.app',
     supportsTablet: true,
     // icon: {
     //   foregroundImage: './src/assets/images/icon.png',
     //   backgroundColor: '#8682F7',
     // },
+    buildNumber: '2',
   },
   web: {
     output: 'static' as const,
@@ -66,7 +68,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     // [withAndroidBackupConfig, { enabled: disableAndroidBackup }],
     withAndroidBackupConfig,
     withAndroidTelegramQueries,
-    ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }] as unknown as [string, unknown]] : []),
+    ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }]] : []),
     'expo-router',
     // [
     //   'expo-splash-screen',
@@ -117,7 +119,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     //     position: 'absolute',
     //   },
     // ],
-  ],
+  ] as unknown as ExpoConfig['plugins'],
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL,
     referralsApiUrl: process.env.EXPO_PUBLIC_REFERRALS_API_URL,
