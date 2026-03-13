@@ -7,6 +7,7 @@ import { ScreenWrapper } from '@/components/general'
 import {
   CommunityStats,
   DashboardHeader,
+  // NotificationsCollapsibleStack,
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
@@ -34,6 +35,7 @@ export default function HomeTab() {
       queryClient.invalidateQueries(),
       queryClient.invalidateQueries({ queryKey: ['indexMyWins'] }),
       queryClient.invalidateQueries({ queryKey: ['indexMyStake'] }),
+      queryClient.invalidateQueries({ queryKey: ['indexMyNotifications'] }),
       refreshStakeAccounts(),
     ])
     setRefreshing(false)
@@ -54,7 +56,7 @@ export default function HomeTab() {
         }
       >
         <DashboardHeader />
-        {/* <StakePromptCard onMorePress={handleMore} className="mb-6" /> */}
+        {/* <NotificationsCollapsibleStack /> */}
         <YourStake onUnstakePress={handleOpenUnstake} />
         <ReferralStats />
 
