@@ -15,16 +15,17 @@ import { AuthGuard } from '@/components/auth-guard'
 import { Header, RoutePathOverlay } from '@/components/general'
 import { toastConfig } from '@/components/ToastConfig'
 import { initializeApi, queryClient, tokenStore } from '@/lib/api'
-import { useNetworkStatus } from '@/lib/network'
-import { setNotificationHandler } from '@/lib/notifications/utils'
-import { useDeveloperStore } from '@/lib/stores/developer-store'
-import { useLogStore } from '@/lib/stores/log-store'
 import {
+  getIndexMyNotificationsQueryOptions,
   getIndexMyWinsQueryOptions,
   getListPublicStakeLeadersQueryOptions,
   getListPublicWinLeadersQueryOptions,
   getReadMyStatsQueryOptions,
 } from '@/lib/api/generated/restApi'
+import { useNetworkStatus } from '@/lib/network'
+import { setNotificationHandler } from '@/lib/notifications/utils'
+import { useDeveloperStore } from '@/lib/stores/developer-store'
+import { useLogStore } from '@/lib/stores/log-store'
 
 import NoInternetScreen from './no-internet'
 
@@ -118,6 +119,7 @@ function RootLayout() {
             queryClient.prefetchQuery(getReadMyStatsQueryOptions()),
             queryClient.prefetchQuery(getListPublicWinLeadersQueryOptions()),
             queryClient.prefetchQuery(getListPublicStakeLeadersQueryOptions()),
+            queryClient.prefetchQuery(getIndexMyNotificationsQueryOptions()),
             queryClient.prefetchQuery(
               getIndexMyWinsQueryOptions({
                 isClaimed: 'false',
