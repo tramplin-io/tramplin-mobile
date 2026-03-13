@@ -40,12 +40,14 @@ import type {
   IndexAgenciesParams,
   IndexEpochsParams,
   IndexJobsParams,
+  IndexMyPayoutRequestsParams,
   IndexMyPayoutsParams,
   IndexMyReferralProfilesParams,
   IndexMyReferralStakesParams,
   IndexMyStakesOutput,
   IndexMyStakesParams,
   IndexPartnersParams,
+  IndexPayoutRequestsParams,
   IndexPayoutsParams,
   IndexProfilesParams,
   IndexReferralConfigsParams,
@@ -56,8 +58,11 @@ import type {
   Job,
   Partner,
   Payout,
+  PayoutRequest,
   ProcessPayoutInput,
   ProcessPayoutParams,
+  ProcessPayoutRequestInput,
+  ProcessPayoutRequestParams,
   Profile,
   ProfileStats,
   ReadActivityParams,
@@ -67,6 +72,7 @@ import type {
   ReadMyProfileStatsParams,
   ReadPartnerParams,
   ReadPayoutParams,
+  ReadPayoutRequestParams,
   ReadProfileParams,
   ReadReferralConfigParams,
   ReadReferralStakeParams,
@@ -84,10 +90,13 @@ import type {
   UpdateAgencyParams,
   UpdateJobInput,
   UpdateJobParams,
+  UpdatePartnerAgencyInput,
+  UpdatePartnerAgencyParams,
   UpdatePartnerInput,
   UpdatePartnerParams,
   UpdateReferralConfigInput,
   UpdateReferralConfigParams,
+  UpgradeToPartnerInput,
   User,
   VerifyEmailParams,
   WalletCredentials,
@@ -1379,6 +1388,434 @@ export const useUpdatePartner = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 
+export const updatePartnerAgency = (
+  updatePartnerAgencyInput: UpdatePartnerAgencyInput,
+  params: UpdatePartnerAgencyParams,
+) => {
+  return referralsInstance<Partner>({
+    url: `/updatePartnerAgency`,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    data: updatePartnerAgencyInput,
+    params,
+  })
+}
+
+export const getUpdatePartnerAgencyMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePartnerAgency>>,
+    TError,
+    { data: UpdatePartnerAgencyInput; params: UpdatePartnerAgencyParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePartnerAgency>>,
+  TError,
+  { data: UpdatePartnerAgencyInput; params: UpdatePartnerAgencyParams },
+  TContext
+> => {
+  const mutationKey = ['updatePartnerAgency']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePartnerAgency>>,
+    { data: UpdatePartnerAgencyInput; params: UpdatePartnerAgencyParams }
+  > = (props) => {
+    const { data, params } = props ?? {}
+
+    return updatePartnerAgency(data, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpdatePartnerAgencyMutationResult = NonNullable<Awaited<ReturnType<typeof updatePartnerAgency>>>
+export type UpdatePartnerAgencyMutationBody = UpdatePartnerAgencyInput
+export type UpdatePartnerAgencyMutationError = unknown
+
+export const useUpdatePartnerAgency = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updatePartnerAgency>>,
+      TError,
+      { data: UpdatePartnerAgencyInput; params: UpdatePartnerAgencyParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updatePartnerAgency>>,
+  TError,
+  { data: UpdatePartnerAgencyInput; params: UpdatePartnerAgencyParams },
+  TContext
+> => {
+  const mutationOptions = getUpdatePartnerAgencyMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const createMyPayoutRequest = (signal?: AbortSignal) => {
+  return referralsInstance<PayoutRequest>({ url: `/createMyPayoutRequest`, method: 'POST', signal })
+}
+
+export const getCreateMyPayoutRequestMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof createMyPayoutRequest>>, TError, void, TContext>
+}): UseMutationOptions<Awaited<ReturnType<typeof createMyPayoutRequest>>, TError, void, TContext> => {
+  const mutationKey = ['createMyPayoutRequest']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof createMyPayoutRequest>>, void> = () => {
+    return createMyPayoutRequest()
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type CreateMyPayoutRequestMutationResult = NonNullable<Awaited<ReturnType<typeof createMyPayoutRequest>>>
+
+export type CreateMyPayoutRequestMutationError = unknown
+
+export const useCreateMyPayoutRequest = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof createMyPayoutRequest>>, TError, void, TContext>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof createMyPayoutRequest>>, TError, void, TContext> => {
+  const mutationOptions = getCreateMyPayoutRequestMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const indexMyPayoutRequests = (params?: IndexMyPayoutRequestsParams, signal?: AbortSignal) => {
+  return referralsInstance<PayoutRequest[]>({ url: `/indexMyPayoutRequests`, method: 'GET', params, signal })
+}
+
+export const getIndexMyPayoutRequestsQueryKey = (params?: IndexMyPayoutRequestsParams) => {
+  return [`/indexMyPayoutRequests`, ...(params ? [params] : [])] as const
+}
+
+export const getIndexMyPayoutRequestsQueryOptions = <
+  TData = Awaited<ReturnType<typeof indexMyPayoutRequests>>,
+  TError = unknown,
+>(
+  params?: IndexMyPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexMyPayoutRequestsQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexMyPayoutRequests>>> = ({ signal }) =>
+    indexMyPayoutRequests(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexMyPayoutRequests>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexMyPayoutRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof indexMyPayoutRequests>>>
+export type IndexMyPayoutRequestsQueryError = unknown
+
+export function useIndexMyPayoutRequests<TData = Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError = unknown>(
+  params: undefined | IndexMyPayoutRequestsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMyPayoutRequests>>,
+          TError,
+          Awaited<ReturnType<typeof indexMyPayoutRequests>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMyPayoutRequests<TData = Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError = unknown>(
+  params?: IndexMyPayoutRequestsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMyPayoutRequests>>,
+          TError,
+          Awaited<ReturnType<typeof indexMyPayoutRequests>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMyPayoutRequests<TData = Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError = unknown>(
+  params?: IndexMyPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexMyPayoutRequests<TData = Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError = unknown>(
+  params?: IndexMyPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPayoutRequests>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexMyPayoutRequestsQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const indexPayoutRequests = (params?: IndexPayoutRequestsParams, signal?: AbortSignal) => {
+  return referralsInstance<PayoutRequest[]>({ url: `/indexPayoutRequests`, method: 'GET', params, signal })
+}
+
+export const getIndexPayoutRequestsQueryKey = (params?: IndexPayoutRequestsParams) => {
+  return [`/indexPayoutRequests`, ...(params ? [params] : [])] as const
+}
+
+export const getIndexPayoutRequestsQueryOptions = <
+  TData = Awaited<ReturnType<typeof indexPayoutRequests>>,
+  TError = unknown,
+>(
+  params?: IndexPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPayoutRequests>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexPayoutRequestsQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexPayoutRequests>>> = ({ signal }) =>
+    indexPayoutRequests(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexPayoutRequests>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexPayoutRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof indexPayoutRequests>>>
+export type IndexPayoutRequestsQueryError = unknown
+
+export function useIndexPayoutRequests<TData = Awaited<ReturnType<typeof indexPayoutRequests>>, TError = unknown>(
+  params: undefined | IndexPayoutRequestsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPayoutRequests>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexPayoutRequests>>,
+          TError,
+          Awaited<ReturnType<typeof indexPayoutRequests>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexPayoutRequests<TData = Awaited<ReturnType<typeof indexPayoutRequests>>, TError = unknown>(
+  params?: IndexPayoutRequestsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPayoutRequests>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexPayoutRequests>>,
+          TError,
+          Awaited<ReturnType<typeof indexPayoutRequests>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexPayoutRequests<TData = Awaited<ReturnType<typeof indexPayoutRequests>>, TError = unknown>(
+  params?: IndexPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPayoutRequests>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexPayoutRequests<TData = Awaited<ReturnType<typeof indexPayoutRequests>>, TError = unknown>(
+  params?: IndexPayoutRequestsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPayoutRequests>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexPayoutRequestsQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const processPayoutRequest = (
+  processPayoutRequestInput: ProcessPayoutRequestInput,
+  params: ProcessPayoutRequestParams,
+) => {
+  return referralsInstance<PayoutRequest>({
+    url: `/processPayoutRequest`,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    data: processPayoutRequestInput,
+    params,
+  })
+}
+
+export const getProcessPayoutRequestMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof processPayoutRequest>>,
+    TError,
+    { data: ProcessPayoutRequestInput; params: ProcessPayoutRequestParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof processPayoutRequest>>,
+  TError,
+  { data: ProcessPayoutRequestInput; params: ProcessPayoutRequestParams },
+  TContext
+> => {
+  const mutationKey = ['processPayoutRequest']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof processPayoutRequest>>,
+    { data: ProcessPayoutRequestInput; params: ProcessPayoutRequestParams }
+  > = (props) => {
+    const { data, params } = props ?? {}
+
+    return processPayoutRequest(data, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type ProcessPayoutRequestMutationResult = NonNullable<Awaited<ReturnType<typeof processPayoutRequest>>>
+export type ProcessPayoutRequestMutationBody = ProcessPayoutRequestInput
+export type ProcessPayoutRequestMutationError = unknown
+
+export const useProcessPayoutRequest = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof processPayoutRequest>>,
+      TError,
+      { data: ProcessPayoutRequestInput; params: ProcessPayoutRequestParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof processPayoutRequest>>,
+  TError,
+  { data: ProcessPayoutRequestInput; params: ProcessPayoutRequestParams },
+  TContext
+> => {
+  const mutationOptions = getProcessPayoutRequestMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const readPayoutRequest = (params: ReadPayoutRequestParams, signal?: AbortSignal) => {
+  return referralsInstance<PayoutRequest>({ url: `/readPayoutRequest`, method: 'GET', params, signal })
+}
+
+export const getReadPayoutRequestQueryKey = (params?: ReadPayoutRequestParams) => {
+  return [`/readPayoutRequest`, ...(params ? [params] : [])] as const
+}
+
+export const getReadPayoutRequestQueryOptions = <
+  TData = Awaited<ReturnType<typeof readPayoutRequest>>,
+  TError = unknown,
+>(
+  params: ReadPayoutRequestParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPayoutRequest>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getReadPayoutRequestQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof readPayoutRequest>>> = ({ signal }) =>
+    readPayoutRequest(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof readPayoutRequest>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ReadPayoutRequestQueryResult = NonNullable<Awaited<ReturnType<typeof readPayoutRequest>>>
+export type ReadPayoutRequestQueryError = unknown
+
+export function useReadPayoutRequest<TData = Awaited<ReturnType<typeof readPayoutRequest>>, TError = unknown>(
+  params: ReadPayoutRequestParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPayoutRequest>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readPayoutRequest>>,
+          TError,
+          Awaited<ReturnType<typeof readPayoutRequest>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPayoutRequest<TData = Awaited<ReturnType<typeof readPayoutRequest>>, TError = unknown>(
+  params: ReadPayoutRequestParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPayoutRequest>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readPayoutRequest>>,
+          TError,
+          Awaited<ReturnType<typeof readPayoutRequest>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPayoutRequest<TData = Awaited<ReturnType<typeof readPayoutRequest>>, TError = unknown>(
+  params: ReadPayoutRequestParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPayoutRequest>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useReadPayoutRequest<TData = Awaited<ReturnType<typeof readPayoutRequest>>, TError = unknown>(
+  params: ReadPayoutRequestParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPayoutRequest>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getReadPayoutRequestQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
 export const indexMyPayouts = (params?: IndexMyPayoutsParams, signal?: AbortSignal) => {
   return referralsInstance<Payout[]>({ url: `/indexMyPayouts`, method: 'GET', params, signal })
 }
@@ -2225,6 +2662,72 @@ export function useReadProfile<TData = Awaited<ReturnType<typeof readProfile>>, 
   query.queryKey = queryOptions.queryKey
 
   return query
+}
+
+export const upgradeToPartner = (upgradeToPartnerInput: UpgradeToPartnerInput, signal?: AbortSignal) => {
+  return referralsInstance<Partner>({
+    url: `/upgradeToPartner`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: upgradeToPartnerInput,
+    signal,
+  })
+}
+
+export const getUpgradeToPartnerMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof upgradeToPartner>>,
+    TError,
+    { data: UpgradeToPartnerInput },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof upgradeToPartner>>,
+  TError,
+  { data: UpgradeToPartnerInput },
+  TContext
+> => {
+  const mutationKey = ['upgradeToPartner']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof upgradeToPartner>>, { data: UpgradeToPartnerInput }> = (
+    props,
+  ) => {
+    const { data } = props ?? {}
+
+    return upgradeToPartner(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpgradeToPartnerMutationResult = NonNullable<Awaited<ReturnType<typeof upgradeToPartner>>>
+export type UpgradeToPartnerMutationBody = UpgradeToPartnerInput
+export type UpgradeToPartnerMutationError = unknown
+
+export const useUpgradeToPartner = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof upgradeToPartner>>,
+      TError,
+      { data: UpgradeToPartnerInput },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof upgradeToPartner>>,
+  TError,
+  { data: UpgradeToPartnerInput },
+  TContext
+> => {
+  const mutationOptions = getUpgradeToPartnerMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
 }
 
 export const indexReferralConfigs = (params?: IndexReferralConfigsParams, signal?: AbortSignal) => {

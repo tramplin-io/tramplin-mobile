@@ -95,6 +95,86 @@ export interface UpdateJobInput {
   defaultIntervalInMinutes?: number
 }
 
+export interface CreateNotificationInput {
+  type: NotificationExtraType
+  title: string
+  description: string
+  category: NotificationCategory
+  url?: string
+  template?: string
+  targetType: NotificationTargetType
+  targetWalletAddresses?: string[]
+  targetFilter?: NotificationTargetFilter
+}
+
+export interface MarkAsReadMyNotificationInput {
+  isSean?: boolean
+}
+
+export interface Notification {
+  profileId: string
+  type?: NotificationExtraType
+  title: string
+  description: string
+  metadata?: string
+  isSean?: boolean
+  category?: NotificationCategory
+  status: NotificationStatus
+  error?: string
+  url?: string
+  template?: string
+  id?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export type NotificationCategory = (typeof NotificationCategory)[keyof typeof NotificationCategory]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationCategory = {
+  product: 'product',
+  rewards: 'rewards',
+  points: 'points',
+} as const
+
+export type NotificationExtraType = (typeof NotificationExtraType)[keyof typeof NotificationExtraType]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationExtraType = {
+  telegram: 'telegram',
+  tramplin: 'tramplin',
+  success: 'success',
+  solana: 'solana',
+  discord: 'discord',
+} as const
+
+export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationStatus = {
+  pending: 'pending',
+  processing: 'processing',
+  delivered: 'delivered',
+  error: 'error',
+} as const
+
+export type NotificationTargetType = (typeof NotificationTargetType)[keyof typeof NotificationTargetType]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationTargetType = {
+  all: 'all',
+  wallets: 'wallets',
+  filter: 'filter',
+} as const
+
+export type NotificationTargetFilter = (typeof NotificationTargetFilter)[keyof typeof NotificationTargetFilter]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationTargetFilter = {
+  has_stake: 'has_stake',
+  has_win: 'has_win',
+} as const
+
 export interface ContactUsInput {
   reason?: string
   title: string
@@ -500,6 +580,77 @@ export type UpdateJobParams = {
   id: string
 }
 
+export type IndexMyNotificationsParams = {
+  ids?: string
+  type?: string
+  isSean?: string
+  category?: string
+  sortOrder?: IndexMyNotificationsSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexMyNotificationsSortOrder =
+  (typeof IndexMyNotificationsSortOrder)[keyof typeof IndexMyNotificationsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexMyNotificationsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type IndexNotificationsParams = {
+  ids?: string
+  profileId?: string
+  type?: string
+  category?: string
+  status?: string
+  template?: string
+  sortOrder?: IndexNotificationsSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexNotificationsSortOrder = (typeof IndexNotificationsSortOrder)[keyof typeof IndexNotificationsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexNotificationsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type MarkAsReadMyNotificationParams = {
+  id: string
+}
+
+export type ReadMyNotificationParams = {
+  id: string
+}
+
+export type ReadNotificationParams = {
+  id: string
+}
+
 export type CreateMyDeviceTokenParams = {
   search?: string
 }
@@ -856,6 +1007,11 @@ export const IndexWinsSortOrder = {
 } as const
 
 export type ReadMyWinParams = {
+  id: string
+  search?: string
+}
+
+export type ReadPublicWinParams = {
   id: string
   search?: string
 }

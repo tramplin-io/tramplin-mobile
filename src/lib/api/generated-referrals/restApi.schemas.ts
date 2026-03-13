@@ -132,14 +132,60 @@ export interface Partner {
   referralToken?: string
   bonusPercentage: number
   agencyBonusPercentage: number
+  isUpgradedFromUser?: boolean
   id?: string
   createdAt?: string
   updatedAt?: string
 }
 
+export interface UpdatePartnerAgencyInput {
+  agencyId: string
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  bonusPercentage?: number
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  agencyBonusPercentage?: number
+}
+
 export interface UpdatePartnerInput {
   title?: string
   referralToken?: string
+}
+
+export interface PayoutRequest {
+  profileId: string
+  partnerId?: string
+  amountInLamports: number
+  payoutIds: string[]
+  status: PayoutRequestStatus
+  transactionHash?: string
+  processedAt?: string
+  processedBy?: string
+  note?: string
+  walletAddress?: string
+  id?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export type PayoutRequestStatus = (typeof PayoutRequestStatus)[keyof typeof PayoutRequestStatus]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PayoutRequestStatus = {
+  pending: 'pending',
+  completed: 'completed',
+  rejected: 'rejected',
+} as const
+
+export interface ProcessPayoutRequestInput {
+  isRejected: boolean
+  note?: string
+  transactionHash?: string
 }
 
 export interface Payout {
@@ -205,6 +251,7 @@ export interface Profile {
   invitedByWalletAddress?: string
   isPartner?: boolean
   referralToken?: string
+  isAbleToCreatePayoutRequest?: boolean
   id?: string
   createdAt?: string
   updatedAt?: string
@@ -216,6 +263,23 @@ export interface ProfileStats {
   totalReferralPoints?: number
   epochEarnings?: number
   monthEarnings?: number
+}
+
+export interface UpgradeToPartnerInput {
+  profileId: string
+  title?: string
+  agencyId?: string
+  referralToken?: string
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  bonusPercentage: number
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  agencyBonusPercentage?: number
 }
 
 export interface ReferralConfig {
@@ -567,6 +631,78 @@ export type ReadPartnerParams = {
 }
 
 export type UpdatePartnerParams = {
+  id: string
+}
+
+export type UpdatePartnerAgencyParams = {
+  id: string
+}
+
+export type IndexMyPayoutRequestsParams = {
+  ids?: string
+  status?: string
+  transactionHash?: string
+  sortOrder?: IndexMyPayoutRequestsSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexMyPayoutRequestsSortOrder =
+  (typeof IndexMyPayoutRequestsSortOrder)[keyof typeof IndexMyPayoutRequestsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexMyPayoutRequestsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type IndexPayoutRequestsParams = {
+  ids?: string
+  profileId?: string
+  partnerId?: string
+  status?: string
+  transactionHash?: string
+  processedBy?: string
+  walletAddress?: string
+  sortOrder?: IndexPayoutRequestsSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexPayoutRequestsSortOrder =
+  (typeof IndexPayoutRequestsSortOrder)[keyof typeof IndexPayoutRequestsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexPayoutRequestsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type ProcessPayoutRequestParams = {
+  id: string
+}
+
+export type ReadPayoutRequestParams = {
   id: string
 }
 
