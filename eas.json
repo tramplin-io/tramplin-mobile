@@ -9,7 +9,7 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.tramplin.io/api",
+        "EXPO_PUBLIC_API_URL": "https://develop-api.tramplin.io/api",
         "EXPO_PUBLIC_REFERRALS_API_URL": "https://referrals-api.tramplin.io/api",
         "EXPO_PUBLIC_SOLANA_NETWORK": "mainnet-beta",
         "EXPO_PUBLIC_SOLANA_RPC_URL": "https://theodora-ppq4tm-fast-mainnet.helius-rpc.com/",
