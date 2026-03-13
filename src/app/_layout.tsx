@@ -87,20 +87,20 @@ function RootLayout() {
   //   originalLog(...args)
   // }
 
-  const originalError = console.error
-  console.error = (...args) => {
-    const combinedMessage = args.map(safeStringify).join(' ')
-    if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
-      originalError(...args)
-      return
-    }
-    useLogStore.getState().addLog({
-      type: 'error',
-      message: combinedMessage,
-      timestamp: new Date().toISOString(),
-    })
-    originalError(...args)
-  }
+  // const originalError = console.error
+  // console.error = (...args) => {
+  //   const combinedMessage = args.map(safeStringify).join(' ')
+  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+  //     originalError(...args)
+  //     return
+  //   }
+  //   useLogStore.getState().addLog({
+  //     type: 'error',
+  //     message: combinedMessage,
+  //     timestamp: new Date().toISOString(),
+  //   })
+  //   originalError(...args)
+  // }
 
   const pathname = usePathname()
   const hideHeader = pathname === '/greeting' || pathname === '/splash' || pathname === '/'
