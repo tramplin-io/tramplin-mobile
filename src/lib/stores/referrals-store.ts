@@ -47,12 +47,12 @@ export const useReferralsStore = create<ReferralsState>()(
       },
 
       signInWithWallet: async (walletCredentials: WalletCredentials) => {
-        console.error('signInWithWallet - walletCredentials:', walletCredentials)
+        // console.error('signInWithWallet - walletCredentials:', walletCredentials)
         try {
           set({ isLoading: true, error: null })
 
           const response = await createSessionByUserWallet(walletCredentials)
-          console.error('signInWithWallet - response:', response)
+          // console.error('signInWithWallet - response:', response)
 
           if (response?.token) {
             const cleanToken = response.token.trim()

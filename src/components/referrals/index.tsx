@@ -35,10 +35,10 @@ export function ReferralStats({ className }: Readonly<{ className?: string }>) {
         Toast.show({ type: 'error', text1: 'Signing failed' })
         return
       }
-      console.error('handleConnectReference - signLoginMessage - result:', result)
+      // console.error('handleConnectReference - signLoginMessage - result:', result)
 
       const signatureBase58 = signatureToBase58(result.signature)
-      console.error('handleConnectReference - signatureBase58:', signatureBase58)
+      // console.error('handleConnectReference - signatureBase58:', signatureBase58)
 
       const success = await loginWithWallet({
         digest: result.message,

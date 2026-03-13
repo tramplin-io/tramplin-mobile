@@ -45,17 +45,17 @@ export function useUnstake() {
 
       setIsLoading(true)
 
-      console.log('unstake - stakeAccounts:', stakeAccounts)
-      console.log('unstake - amountLamports:', amountLamports)
+      // console.log('unstake - stakeAccounts:', stakeAccounts)
+      // console.log('unstake - amountLamports:', amountLamports)
 
       try {
         const latest = await rpc.getLatestBlockhash().send()
-        console.log('unstake - latestBlockhash:', latest.value)
+        // console.log('unstake - latestBlockhash:', latest.value)
         const minContextSlot = BigInt(latest.context.slot)
-        console.log('unstake - minContextSlot:', minContextSlot)
+        // console.log('unstake - minContextSlot:', minContextSlot)
         const payerSigner = getTransactionSigner(account.address, minContextSlot)
 
-        console.log('unstake - payerSigner:', payerSigner)
+        // console.log('unstake - payerSigner:', payerSigner)
 
         const { transaction, deactivatedAccounts } = await prepareUnstakeInstructions({
           payerSigner,
@@ -63,11 +63,11 @@ export function useUnstake() {
           stakeAccounts,
           amountLamports,
         })
-        console.log('unstake - transaction:', transaction)
-        console.log('unstake - deactivatedAccounts:', deactivatedAccounts)
+        // console.log('unstake - transaction:', transaction)
+        // console.log('unstake - deactivatedAccounts:', deactivatedAccounts)
 
         const signatures = await signAndSendTransaction(transaction, minContextSlot)
-        console.log('unstake - signatures:', signatures)
+        // console.log('unstake - signatures:', signatures)
         if (!signatures?.length) {
           throw new Error('Transaction was not sent (rejected or failed)')
         }

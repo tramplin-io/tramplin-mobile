@@ -85,14 +85,14 @@ export function useStake({ rpc }: UseStakeOptions) {
         // 1. Generate a fresh ephemeral keypair for the new stake account
         const stakeAccountSigner = await generateKeyPairSigner()
         const stakeAccountAddress = stakeAccountSigner.address
-        console.log('stake - stakeAccountAddress:', stakeAccountAddress)
+        // console.log('stake - stakeAccountAddress:', stakeAccountAddress)
         // 2. Fetch latest blockhash for transaction lifetime
         //    NOTE: minContextSlot should be a *slot*, not block height.
         const latest = await rpc.getLatestBlockhash().send()
         const latestBlockhash = latest.value
         const minContextSlot = BigInt(latest.context.slot)
         const payerSigner = getTransactionSigner(account.address, minContextSlot)
-        console.log('stake - payerSigner:', payerSigner)
+        // console.log('stake - payerSigner:', payerSigner)
         // Rent-exempt minimum depends on cluster parameters; fetch it instead of hardcoding.
         const rentResult = await rpc.getMinimumBalanceForRentExemption(STAKE_ACCOUNT_SPACE).send()
         const rentNum =
@@ -100,7 +100,7 @@ export function useStake({ rpc }: UseStakeOptions) {
             ? Number((rentResult as { value: number }).value)
             : Number(rentResult)
         const rentExemptLamports = BigInt(Number.isFinite(rentNum) ? rentNum : 0)
-        console.log('stake - rentNum:', rentNum)
+        // console.log('stake - rentNum:', rentNum)
         // 3. Build the three instructions
         //
         //    ix1: system::create_account
@@ -113,7 +113,7 @@ export function useStake({ rpc }: UseStakeOptions) {
           space: STAKE_ACCOUNT_SPACE,
           programAddress: STAKE_PROGRAM_ADDRESS,
         })
-        console.log('stake - createAccountIx:', createAccountIx)
+        // console.log('stake - createAccountIx:', createAccountIx)
         //    ix2: stake::initialize
         //         – sets staker + withdrawer authority (both = connected wallet)
         //
@@ -126,7 +126,7 @@ export function useStake({ rpc }: UseStakeOptions) {
             custodian: address('11111111111111111111111111111111'),
           },
         })
-        console.log('stake - initializeIx:', initializeIx)
+        // console.log('stake - initializeIx:', initializeIx)
         //    ix3: stake::delegate_stake
         //         – delegates to the target validator vote account
         //
@@ -139,7 +139,7 @@ export function useStake({ rpc }: UseStakeOptions) {
           unused: STAKE_CONFIG_ADDRESS,
           stakeAuthority: payerSigner,
         })
-        console.log('stake - delegateIx:', delegateIx)
+        // console.log('stake - delegateIx:', delegateIx)
         // 4. Compose and compile the versioned transaction message.
         //    The stake account signer co-signs (it's a new account being created).
         //    The wallet (payer) signs and sends via signAndSendTransaction below.
@@ -149,15 +149,15 @@ export function useStake({ rpc }: UseStakeOptions) {
           (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
           (tx) => appendTransactionMessageInstructions([createAccountIx, initializeIx, delegateIx], tx),
         )
-        console.log('stake - txMessage:', txMessage)
+        // console.log('stake - txMessage:', txMessage)
         // 5. Pre-sign with the stake account ephemeral keypair (partial sign),
         //    then have the wallet co-sign (payer) and send via signAndSendTransaction.
         const compiledTx = compileTransaction(txMessage)
-        console.log('stake - compiledTx:', compiledTx)
+        // console.log('stake - compiledTx:', compiledTx)
         // Stake account signer signs the compiled transaction bytes directly.
         // signTransactions expects __transactionSize brand; compileTransaction doesn't add it — safe to assert.
         const txToSign = compiledTx as unknown as Transaction
-        console.log('stake - txToSign:', txToSign)
+        // console.log('stake - txToSign:', txToSign)
         // signTransactions returns Record<Address, SignatureBytes>[]; we need the bytes for this signer.
         // @ts-expect-error - brand TransactionWithinSizeLimit not present on compileTransaction output; runtime valid
         const [stakeAccountSignatureMap] = await stakeAccountSigner.signTransactions([txToSign])
@@ -173,11 +173,11 @@ export function useStake({ rpc }: UseStakeOptions) {
             [stakeAccountAddress]: stakeAccountSignatureBytes,
           },
         }
-        console.log('stake - partiallySignedTxRaw:', partiallySignedTxRaw)
+        // console.log('stake - partiallySignedTxRaw:', partiallySignedTxRaw)
         const partiallySignedTx = partiallySignedTxRaw as Transaction
-        console.log('stake - partiallySignedTx:', partiallySignedTx)
+        // console.log('stake - partiallySignedTx:', partiallySignedTx)
         const signatures = await signAndSendTransaction(partiallySignedTx, minContextSlot)
-        console.log('stake - signatures:', signatures)
+        // console.log('stake - signatures:', signatures)
         if (!signatures?.length) {
           throw new Error('Transaction was not sent (rejected or failed)')
         }
@@ -185,7 +185,7 @@ export function useStake({ rpc }: UseStakeOptions) {
         const sigBytes = signatures[0]
         const signature =
           sigBytes instanceof Uint8Array ? signatureToBase58(sigBytes) : signatureToBase58(new Uint8Array(sigBytes))
-        console.log('stake - signature:', signature)
+        // console.log('stake - signature:', signature)
         return {
           stakeAccountAddress,
           signature,
