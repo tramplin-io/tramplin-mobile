@@ -12,7 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/Container'
 import { Text } from '@/components/ui/text'
 import { useWalletActions } from '@/hooks/useWalletActions'
+import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { useAuthStore } from '@/lib/stores/auth-store'
+import { useProfileStore } from '@/lib/stores/profile-store'
 import { signatureToBase58 } from '@/utils/format'
 
 const SLIDE_COMPONENTS = [
@@ -40,6 +42,9 @@ export default function GreetingScreen() {
   const { width } = useWindowDimensions()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [signingIn, setSigningIn] = useState(false)
+
+  const { hasSystemPushPermission, registerForPushNotifications } = useSystemPushPermission()
+  const { createDeviceToken, updateUserProfile, isPushNotificationsOn } = useProfileStore()
 
   const flatListRef = useRef<FlatList>(null)
 
@@ -71,6 +76,19 @@ export default function GreetingScreen() {
       })
       if (!success) {
         Toast.show({ type: 'error', text1: 'Login failed' })
+        return
+      }
+
+      try {
+        if (!hasSystemPushPermission && !isPushNotificationsOn) {
+          const token = await registerForPushNotifications()
+          if (token) {
+            await createDeviceToken(token)
+            await updateUserProfile({ isPushNotificationsOn: true })
+          }
+        }
+      } catch (error) {
+        console.error('Failed to register push notifications after login:', error)
       }
     } catch (err) {
       Toast.show({
@@ -80,7 +98,16 @@ export default function GreetingScreen() {
     } finally {
       setSigningIn(false)
     }
-  }, [loginWithWallet, signLoginMessage, error])
+  }, [
+    loginWithWallet,
+    signLoginMessage,
+    error,
+    hasSystemPushPermission,
+    isPushNotificationsOn,
+    registerForPushNotifications,
+    createDeviceToken,
+    updateUserProfile,
+  ])
 
   const renderSlide = useCallback(
     ({ item, index }: { item: (typeof SLIDE_COMPONENTS)[number]; index: number }) => {
