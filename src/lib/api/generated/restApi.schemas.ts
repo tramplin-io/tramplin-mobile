@@ -182,7 +182,8 @@ export interface ContactUsInput {
 }
 
 export interface CreateMyDeviceTokenInput {
-  deviceToken: string
+  expoDeviceToken: string
+  fcmDeviceToken: string
 }
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -308,8 +309,8 @@ export type DeviceTokenType = (typeof DeviceTokenType)[keyof typeof DeviceTokenT
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DeviceTokenType = {
-  ios: 'ios',
-  android: 'android',
+  expo: 'expo',
+  fcm: 'fcm',
 } as const
 
 export interface EpochPoints {
