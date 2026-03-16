@@ -9,7 +9,12 @@ import {
   readProfile,
   updateMyProfile,
 } from '@/lib/api/generated/restApi'
-import type { Profile, ReadProfileParams, UpdateMyProfileInput } from '@/lib/api/generated/restApi.schemas'
+import type {
+  CreateMyDeviceTokenInput,
+  Profile,
+  ReadProfileParams,
+  UpdateMyProfileInput,
+} from '@/lib/api/generated/restApi.schemas'
 
 import { useAuthStore } from './auth-store'
 
@@ -21,7 +26,8 @@ type ProfileState = {
   isPushNotificationsOn: boolean
 
   // App-local
-  initialDeviceToken: string | null
+  expoDeviceToken: string | null
+  fcmDeviceToken: string | null
   storeReviewDate: string | null
 
   // API: full profile
@@ -35,14 +41,15 @@ type ProfileState = {
   setUtcOffset: (value: number) => void
   setIsEmailNotificationsOn: (value: boolean) => void
   setIsPushNotificationsOn: (value: boolean) => void
-  setInitialDeviceToken: (value: string) => void
+  setExpoDeviceToken: (value: string) => void
+  setFcmDeviceToken: (value: string) => void
 
   // Actions - profile API
   setUserProfile: (userProfile: Profile | null) => void
   fetchUserProfile: () => Promise<Profile | null>
   fetchUserProfileById: (userId: string) => Promise<Profile | null>
   updateUserProfile: (profileData: UpdateMyProfileInput) => Promise<boolean>
-  createDeviceToken: (deviceToken: string) => Promise<boolean>
+  createDeviceToken: (deviceTokens: CreateMyDeviceTokenInput) => Promise<boolean>
   deleteDeviceToken: (deviceToken: string) => Promise<boolean>
 
   // Actions - app-local
@@ -55,7 +62,8 @@ const initialState = {
   utcOffset: 0,
   isEmailNotificationsOn: true,
   isPushNotificationsOn: false,
-  initialDeviceToken: null,
+  expoDeviceToken: null,
+  fcmDeviceToken: null,
   storeReviewDate: null,
 }
 
@@ -79,7 +87,8 @@ export const useProfileStore = create<ProfileState>()(
       setUtcOffset: (utcOffset: number) => set({ utcOffset }),
       setIsEmailNotificationsOn: (isEmailNotificationsOn: boolean) => set({ isEmailNotificationsOn }),
       setIsPushNotificationsOn: (isPushNotificationsOn: boolean) => set({ isPushNotificationsOn }),
-      setInitialDeviceToken: (deviceToken: string) => set({ initialDeviceToken: deviceToken }),
+      setExpoDeviceToken: (value: string) => set({ expoDeviceToken: value }),
+      setFcmDeviceToken: (value: string) => set({ fcmDeviceToken: value }),
 
       // Actions - Store review
       setStoreReviewDate: (date: string | null) => set({ storeReviewDate: date }),
@@ -161,17 +170,25 @@ export const useProfileStore = create<ProfileState>()(
         }
       },
 
-      createDeviceToken: async (deviceToken: string): Promise<boolean> => {
+      createDeviceToken: async (deviceTokens: CreateMyDeviceTokenInput): Promise<boolean> => {
         try {
           set({ isLoading: true })
 
-          const tokenExists = get().userProfile?.deviceTokens?.some((token) => token.token === deviceToken)
+          const profileTokens = get().userProfile?.deviceTokens ?? []
+          const tokenExists = profileTokens.some(
+            (dt) =>
+              dt.token === deviceTokens.expoDeviceToken || dt.token === deviceTokens.fcmDeviceToken,
+          )
           if (tokenExists) {
             return true
           }
 
-          const result = await createMyDeviceToken({ deviceToken })
-          set({ userProfile: result, initialDeviceToken: deviceToken })
+          const result = await createMyDeviceToken(deviceTokens)
+          set({
+            userProfile: result,
+            expoDeviceToken: deviceTokens.expoDeviceToken,
+            fcmDeviceToken: deviceTokens.fcmDeviceToken,
+          })
           return true
         } catch (error) {
           console.error('Error creating device token:', error)
@@ -188,6 +205,10 @@ export const useProfileStore = create<ProfileState>()(
           await deleteMyDeviceToken({ token: deviceToken })
 
           const currentProfile = get().userProfile
+          const state = get()
+          const clearedExpo = state.expoDeviceToken === deviceToken ? null : state.expoDeviceToken
+          const clearedFcm = state.fcmDeviceToken === deviceToken ? null : state.fcmDeviceToken
+
           if (currentProfile?.deviceTokens) {
             const updatedDeviceTokens = currentProfile.deviceTokens.filter((token) => token.token !== deviceToken)
             set({
@@ -195,7 +216,11 @@ export const useProfileStore = create<ProfileState>()(
                 ...currentProfile,
                 deviceTokens: updatedDeviceTokens,
               },
+              expoDeviceToken: clearedExpo,
+              fcmDeviceToken: clearedFcm,
             })
+          } else {
+            set({ expoDeviceToken: clearedExpo, fcmDeviceToken: clearedFcm })
           }
 
           return true

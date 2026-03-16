@@ -11,6 +11,7 @@ import { Card } from '@/components/ui'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
+import { getExpoPushToken } from '@/lib/notifications/utils'
 import { useProfileStore } from '@/lib/stores/profile-store'
 
 export default function NotificationSettingsScreen() {
@@ -24,8 +25,9 @@ export default function NotificationSettingsScreen() {
     isEmailNotificationsOn,
     setIsEmailNotificationsOn,
     createDeviceToken,
-    deleteDeviceToken,
-    initialDeviceToken,
+    // deleteDeviceToken,
+    // expoDeviceToken,
+    // fcmDeviceToken,
   } = useProfileStore()
 
   const pushOn = userProfile?.isPushNotificationsOn ?? isPushNotificationsOn
@@ -60,12 +62,19 @@ export default function NotificationSettingsScreen() {
       isPushNotificationsOn: newValue,
     })
 
-    if (!newValue && success) {
-      const tokenToDelete = initialDeviceToken ?? userProfile?.deviceTokens?.[0]?.token
-      if (tokenToDelete) {
-        await deleteDeviceToken(tokenToDelete)
-      }
-    }
+    // if (!newValue && success) {
+    //   const deviceTokens = await getExpoPushToken()
+    //   const expoTokenToDelete = expoDeviceToken ?? deviceTokens?.expoDeviceToken
+
+    //   const fcmTokenToDelete = fcmDeviceToken ?? deviceTokens?.fcmDeviceToken
+
+    //   if (expoTokenToDelete) {
+    //     await deleteDeviceToken(expoTokenToDelete)
+    //   }
+    //   if (fcmTokenToDelete) {
+    //     await deleteDeviceToken(fcmTokenToDelete)
+    //   }
+    // }
 
     if (success) {
       Toast.show({

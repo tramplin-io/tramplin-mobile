@@ -3,6 +3,8 @@ import Constants from 'expo-constants'
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
 
+import type { CreateMyDeviceTokenInput } from '../api/generated/restApi.schemas'
+
 // Call this function early in the app to set the notification handler
 export function setNotificationHandler() {
   Notifications.setNotificationHandler({
@@ -50,18 +52,25 @@ function isFirebaseNotInitializedError(error: unknown): boolean {
   return message.includes('FirebaseApp') || message.includes('not initialized') || message.includes('Firebase')
 }
 
-export async function getExpoPushToken(): Promise<string | null> {
+export async function getExpoPushToken(): Promise<CreateMyDeviceTokenInput | null> {
   try {
     const projectId = getProjectId()
     if (!projectId) {
       throw new Error('Project ID not found')
     }
 
-    const expoPushToken = await Notifications.getExpoPushTokenAsync({
+    const expoDeviceToken = await Notifications.getExpoPushTokenAsync({
       projectId,
     })
-    console.log('expoPushToken', expoPushToken)
-    return expoPushToken.data
+
+    const fcmDeviceToken = await Notifications.getDevicePushTokenAsync()
+
+    const deviceTokens = {
+      expoDeviceToken: expoDeviceToken.data,
+      fcmDeviceToken: fcmDeviceToken.data,
+    }
+
+    return deviceTokens
   } catch (e) {
     if (Platform.OS === 'android' && isFirebaseNotInitializedError(e)) {
       console.warn(

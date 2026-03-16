@@ -52,13 +52,11 @@ export function useNotificationObserver({
 
   // In rare situations, a push token may be changed by the push notification
   // service while the app is running. When a token is rolled, the old one becomes
-  // invalid and sending notifications to it will fail. A push token listener will
-  // let you handle this situation gracefully by registering the new token with your
-  // backend right away.
+  // invalid. Register the new Expo token with the backend (CreateMyDeviceTokenInput.expoDeviceToken).
   // biome-ignore lint/correctness/useExhaustiveDependencies: need to use onTokenUpdate
   useEffect(() => {
     if (onTokenUpdate) {
-      const subscription = Notifications.addPushTokenListener((devicePushToken) => {
+      const subscription = Notifications.addPushTokenListener(() => {
         return Notifications.getExpoPushTokenAsync().then(onTokenUpdate)
       })
       return () => subscription.remove()
