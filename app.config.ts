@@ -50,6 +50,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       // backgroundColor: '#DABC58',
     },
     versionCode: 2,
+    googleServicesFile: './google-services.json',
   },
   ios: {
     bundleIdentifier: 'io.tramplin.app',
