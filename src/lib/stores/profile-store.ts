@@ -1,9 +1,7 @@
-import type { Profile, ReadProfileParams, UpdateMyProfileInput } from '@/lib/api/generated/restApi.schemas'
-import { useAuthStore } from './auth-store'
-
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+
 import {
   createMyDeviceToken,
   deleteMyDeviceToken,
@@ -11,6 +9,9 @@ import {
   readProfile,
   updateMyProfile,
 } from '@/lib/api/generated/restApi'
+import type { Profile, ReadProfileParams, UpdateMyProfileInput } from '@/lib/api/generated/restApi.schemas'
+
+import { useAuthStore } from './auth-store'
 
 // Profile state: API-backed fields (Profile, UpdateMyProfileInput) + app-local state
 type ProfileState = {
