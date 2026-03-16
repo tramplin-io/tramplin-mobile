@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { ANDROID_APP_STORE_URL } from '@/constants/appConstants'
+import { ANDROID_APP_STORE_URL, SOLANA_APP_STORE_URL } from '@/constants/appConstants'
 
 const updateAvailableAnimation = require('@/assets/animation/update.json')
 
@@ -19,7 +19,7 @@ export const UpdateAvailableModal = ({ visible, onClose }: UpdateAvailableModalP
     try {
       const storeUrl = Platform.select({
         ios: '',
-        android: ANDROID_APP_STORE_URL,
+        android: SOLANA_APP_STORE_URL,
       })
 
       if (storeUrl) {

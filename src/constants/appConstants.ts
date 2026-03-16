@@ -18,6 +18,9 @@ const ANDROID_APP_STORE_URL: string =
   process.env.EXPO_PUBLIC_ANDROID_APP_STORE_URL ||
   `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`
 
+const SOLANA_APP_STORE_URL: string =
+  process.env.EXPO_PUBLIC_SOLANA_APP_STORE_URL || `solanadappstore://details?id=${ANDROID_PACKAGE_NAME}`
+
 const API_URLS = {
   PROD: process.env.EXPO_PUBLIC_API_URL || 'https://api.tramplin.io/api',
   DEV: process.env.EXPO_PUBLIC_API_URL || 'https://develop-api.tramplin.io/api',
@@ -35,5 +38,6 @@ export {
   ANDROID_PACKAGE_NAME,
   IOS_APP_STORE_URL,
   ANDROID_APP_STORE_URL,
+  SOLANA_APP_STORE_URL,
   API_URLS,
 }
