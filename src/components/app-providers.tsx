@@ -14,6 +14,8 @@ import { AppConfig } from '@/constants/app-config'
 import { queryClient } from '@/lib/api'
 import { initSentry } from '@/lib/sentry'
 
+// import { NotificationModalProvider } from './NotificationModalProvider'
+
 initSentry()
 
 function NavigationThemeProvider({ children }: Readonly<PropsWithChildren>) {
@@ -64,7 +66,12 @@ export function AppProviders({ children }: Readonly<PropsWithChildren>) {
               <AppTheme>
                 <NavigationThemeProvider>
                   <MobileWalletProvider cluster={AppConfig.network.cluster} identity={AppConfig.identity}>
-                    <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+                    <BottomSheetModalProvider>
+                      {/* <NotificationModalProvider> */}
+                      {children}
+
+                      {/* </NotificationModalProvider> */}
+                    </BottomSheetModalProvider>
                   </MobileWalletProvider>
                 </NavigationThemeProvider>
               </AppTheme>
