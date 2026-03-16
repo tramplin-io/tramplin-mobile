@@ -14,6 +14,7 @@ import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
 import { AccountInfo } from '@/components/wallet/AccountInfo'
 import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { SignMessageForm } from '@/components/wallet/SignMessageForm'
+import { NotificationsDebug } from '@/lib/notifications/debug'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { getExpoPushToken } from '@/lib/notifications/utils'
 import { useAuthStore } from '@/lib/stores/auth-store'
@@ -72,15 +73,15 @@ export default function ProfileTab() {
 
   const wallet = useMobileWallet()
 
-  console.log('account', account)
-  console.log('accounts', accounts)
-  console.log('client', client)
-  console.log('store', store)
-  console.log('cache', cache)
-  console.log('chain', chain)
-  console.log('identity', identity)
+  // console.log('account', account)
+  // console.log('accounts', accounts)
+  // console.log('client', client)
+  // console.log('store', store)
+  // console.log('cache', cache)
+  // console.log('chain', chain)
+  // console.log('identity', identity)
 
-  console.log('wallet', wallet)
+  // console.log('wallet', wallet)
   // wallet_uri_base from MWA authorize response (optional; many wallets leave it null)
   const walletUriBase = (wallet as { walletUriBase?: string | null }).walletUriBase
   const storeUriBase = (store as { $walletUriBase?: { get: () => string | null } }).$walletUriBase?.get?.()
@@ -189,6 +190,11 @@ export default function ProfileTab() {
             />
           </View>
         )}
+
+        {/* Notifications debug */}
+        <View className="mb-6">
+          <NotificationsDebug />
+        </View>
 
         {/* Wallet Connection */}
         <View className="mb-6">
