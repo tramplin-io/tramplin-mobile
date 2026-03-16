@@ -59,6 +59,13 @@ const initialState = {
   storeReviewDate: null,
 }
 
+// Function to get UTC offset in hours
+const getUtcOffset = () => {
+  const offsetInMinutes = new Date().getTimezoneOffset()
+  const offsetInHours = -offsetInMinutes / 60
+  return offsetInHours
+}
+
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set, get) => ({
@@ -126,8 +133,10 @@ export const useProfileStore = create<ProfileState>()(
       updateUserProfile: async (profileData: UpdateMyProfileInput) => {
         try {
           set({ isLoading: true })
+          const utcOffset = getUtcOffset()
           const payload: UpdateMyProfileInput = {
             ...profileData,
+            utcOffset,
           }
           const userProfile = await updateMyProfile(payload)
           set({
@@ -137,6 +146,9 @@ export const useProfileStore = create<ProfileState>()(
             }),
             ...(typeof userProfile?.isEmailNotificationsOn === 'boolean' && {
               isEmailNotificationsOn: userProfile.isEmailNotificationsOn,
+            }),
+            ...(typeof userProfile?.utcOffset === 'number' && {
+              utcOffset: userProfile.utcOffset,
             }),
           })
 
