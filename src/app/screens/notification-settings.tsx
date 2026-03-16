@@ -10,20 +10,26 @@ import { BackButton } from '@/components/general/BackButton'
 import { Card } from '@/components/ui'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
+import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { useProfileStore } from '@/lib/stores/profile-store'
 
 export default function NotificationSettingsScreen() {
+  const { hasSystemPushPermission, registerForPushNotifications } = useSystemPushPermission()
+
   const {
     userProfile,
     fetchUserProfile,
     updateUserProfile,
     isPushNotificationsOn,
     isEmailNotificationsOn,
-    setIsPushNotificationsOn,
     setIsEmailNotificationsOn,
+    createDeviceToken,
+    deleteDeviceToken,
+    initialDeviceToken,
   } = useProfileStore()
 
   const pushOn = userProfile?.isPushNotificationsOn ?? isPushNotificationsOn
+  const isPushNotificationsAllowed = Boolean(hasSystemPushPermission && pushOn)
   const emailOn = userProfile?.isEmailNotificationsOn ?? isEmailNotificationsOn
 
   const fillPrimary = useCSSVariable('--color-fill-primary') as string
@@ -37,19 +43,58 @@ export default function NotificationSettingsScreen() {
     router.push('/profile')
   }, [])
 
-  const handlePushToggle = useCallback(
-    // TODO: add check for system push permission
+  const handleSystemPermission = async () => {
+    const token = await registerForPushNotifications({
+      forceOpenSettings: true,
+    })
 
-    async (checked: boolean) => {
-      setIsPushNotificationsOn(checked)
-      const ok = await updateUserProfile({ isPushNotificationsOn: checked })
-      if (!ok) {
-        setIsPushNotificationsOn(!checked)
-        Toast.show({ type: 'error', text1: 'Could not update push notifications' })
+    if (!token) return false
+
+    await createDeviceToken(token)
+    return true
+  }
+
+  const updateNotificationState = async (newValue: boolean) => {
+    const success = await updateUserProfile({
+      isPushNotificationsOn: newValue,
+    })
+
+    if (!newValue && success) {
+      const tokenToDelete = initialDeviceToken ?? userProfile?.deviceTokens?.[0]?.token
+      if (tokenToDelete) {
+        await deleteDeviceToken(tokenToDelete)
       }
-    },
-    [updateUserProfile, setIsPushNotificationsOn],
-  )
+    }
+
+    if (success) {
+      Toast.show({
+        type: 'success',
+        text1: 'Notifications updated successfully.',
+      })
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Could not update push notifications',
+      })
+    }
+  }
+
+  const handlePushToggle = async (checked: boolean) => {
+    try {
+      if (checked) {
+        const permissionGranted = await handleSystemPermission()
+        if (!permissionGranted) return
+      }
+
+      await updateNotificationState(checked)
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to handle notifications. Please try again.',
+      })
+      console.error('Failed to handle notifications:', error)
+    }
+  }
 
   const handleEmailToggle = useCallback(
     async (checked: boolean) => {
@@ -90,7 +135,7 @@ export default function NotificationSettingsScreen() {
             <Text variant="body" className="text-content-primary">
               Push notifications
             </Text>
-            <Switch checked={pushOn} onCheckedChange={handlePushToggle} />
+            <Switch checked={isPushNotificationsAllowed} onCheckedChange={handlePushToggle} />
           </Card>
           <Card variant="profile" className="flex-row items-center justify-between p-4">
             <Text variant="body" className="text-content-primary">
