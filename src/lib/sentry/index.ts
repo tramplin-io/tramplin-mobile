@@ -16,6 +16,11 @@ const getApiSourceFromUrl = (url: string | undefined): ApiSource => {
 export const initSentry = (): void => {
   Sentry.init({
     dsn: process.env.EXPO_PUBLIC_SENTRY_DSN, // Use env variable for DSN
+    ignoreErrors: [
+      // Benign Expo dev-time error when keep-awake fails (e.g. screen lock during bundling)
+      'Unable to activate keep awake',
+      'Unable to deactivate keep awake',
+    ],
     enableNative: true, // Enables native crash reporting (iOS + Android)
     enableAutoSessionTracking: true, // Tracks sessions (helps with crash-free metrics)
     enableNativeCrashHandling: true, // Handles native crashes (iOS + Android)
