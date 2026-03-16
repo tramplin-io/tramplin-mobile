@@ -95,9 +95,11 @@ export default function ProfileTab() {
     createDeviceToken,
     deleteDeviceToken,
     updateUserProfile,
-    initialDeviceToken,
+    expoDeviceToken,
+    fcmDeviceToken,
     isLoading: isProfileLoading,
   } = useProfileStore()
+  // registerForPushNotifications returns Expo push token → used as expoDeviceToken (DeviceTokenType.expo)
   const { registerForPushNotifications } = useSystemPushPermission()
   const [isTogglingNotifications, setIsTogglingNotifications] = useState(false)
 
@@ -132,9 +134,14 @@ export default function ProfileTab() {
           await updateUserProfile({ isPushNotificationsOn: true })
           Toast.show({ type: 'success', text1: 'Notifications enabled' })
         } else {
-          const tokenToDelete = initialDeviceToken ?? (await getExpoPushToken())
+          const deviceTokens = await getExpoPushToken()
+          const tokenToDelete = expoDeviceToken ?? deviceTokens?.expoDeviceToken
+          const fcmTokenToDelete = fcmDeviceToken ?? deviceTokens?.fcmDeviceToken
           if (tokenToDelete) {
             await deleteDeviceToken(tokenToDelete)
+          }
+          if (fcmTokenToDelete) {
+            await deleteDeviceToken(fcmTokenToDelete)
           }
           await updateUserProfile({ isPushNotificationsOn: false })
           Toast.show({ type: 'success', text1: 'Notifications disabled' })
@@ -152,7 +159,8 @@ export default function ProfileTab() {
       createDeviceToken,
       deleteDeviceToken,
       updateUserProfile,
-      initialDeviceToken,
+      expoDeviceToken,
+      fcmDeviceToken,
     ],
   )
 
