@@ -1,42 +1,37 @@
-import * as Clipboard from 'expo-clipboard'
-import * as Notifications from 'expo-notifications'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, Platform, Text, View } from 'react-native'
+import * as Clipboard from 'expo-clipboard'
+import * as Notifications from 'expo-notifications'
 
-import { registerForPushNotificationsAsync } from './utils'
+import { getExpoPushToken, registerForPushNotificationsAsync } from './utils'
 
 export function useDebugPushNotification() {
   const [expoPushToken, setExpoPushToken] = useState('')
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
-    [],
-  )
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined)
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([])
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined)
   const notificationListener = useRef<Notifications.EventSubscription | undefined>(undefined)
   const responseListener = useRef<Notifications.EventSubscription | undefined>(undefined)
 
   const registerForPushNotifications = useCallback(async () => {
-    registerForPushNotificationsAsync().then(
-      token => token && setExpoPushToken(token),
-    )
+    registerForPushNotificationsAsync().then((token) => token && setExpoPushToken(token))
+  }, [])
+
+  const getExpoPushTokenHandler = useCallback(async () => {
+    const token = await getExpoPushToken()
+    setExpoPushToken(token ?? '')
   }, [])
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      Notifications.getNotificationChannelsAsync().then(value =>
-        setChannels(value ?? []),
-      )
+      Notifications.getNotificationChannelsAsync().then((value) => setChannels(value ?? []))
     }
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification)
-      })
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification)
+    })
 
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response)
-      })
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response)
+    })
 
     return () => {
       notificationListener.current?.remove()
@@ -44,7 +39,7 @@ export function useDebugPushNotification() {
     }
   }, [])
 
-  return { expoPushToken, channels, notification, registerForPushNotifications }
+  return { expoPushToken, channels, notification, registerForPushNotifications, getExpoPushTokenHandler }
 }
 
 async function sendPushNotification(expoPushToken: string) {
@@ -69,12 +64,8 @@ async function sendPushNotification(expoPushToken: string) {
 
 // Use https://expo.dev/notifications to send a test notification
 export function NotificationsDebug() {
-  const {
-    expoPushToken,
-    channels,
-    notification,
-    registerForPushNotifications,
-  } = useDebugPushNotification()
+  const { expoPushToken, channels, notification, registerForPushNotifications, getExpoPushTokenHandler } =
+    useDebugPushNotification()
   const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async () => {
@@ -84,31 +75,19 @@ export function NotificationsDebug() {
   }
 
   return (
-    <View
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <View className="flex-1 items-center justify-around px-4">
+      <View className="flex-col items-center gap-1">
         <Text>Your Expo push token: {expoPushToken}</Text>
-        <View style={{ marginLeft: 8 }}>
-          <Button
-            title={copied ? 'Copied!' : 'Copy'}
-            onPress={copyToClipboard}
-          />
+        <View className="ml-2">
+          <Button title={copied ? 'Copied!' : 'Copy'} onPress={copyToClipboard} />
         </View>
-        <Button
-          title="Register for Push Notifications"
-          onPress={registerForPushNotifications}
-        />
+        <Button title="Register for Push Notifications" onPress={registerForPushNotifications} />
+        <Button title="Get Expo Push Token" onPress={getExpoPushTokenHandler} />
       </View>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text>
-          Title: {notification && notification.request.content.title}{' '}
-        </Text>
+      <View className="items-center justify-center">
+        <Text>Title: {notification && notification.request.content.title} </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Data:{' '}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
+        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
       </View>
       <Button
         title="Press to Send Notification"
