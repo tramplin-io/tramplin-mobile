@@ -1,8 +1,8 @@
-import * as Notifications from 'expo-notifications'
-import type { ExpoPushToken } from 'expo-notifications'
-import { type Href, router } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import { AppState, type AppStateStatus } from 'react-native'
+import * as Notifications from 'expo-notifications'
+import type { ExpoPushToken } from 'expo-notifications'
+import { router, type Href } from 'expo-router'
 
 import { checkNotificationPermissions, registerForPushNotificationsAsync } from './utils'
 

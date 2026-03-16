@@ -1,13 +1,12 @@
+import { Alert, Linking, Platform } from 'react-native'
 import Constants from 'expo-constants'
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
-import { Alert, Linking, Platform } from 'react-native'
 
 // Call this function early in the app to set the notification handler
 export function setNotificationHandler() {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
       shouldShowBanner: true,
@@ -18,6 +17,7 @@ export function setNotificationHandler() {
 
 export async function checkNotificationPermissions() {
   const { status: existingStatus } = await Notifications.getPermissionsAsync()
+  console.log('existingStatus', existingStatus)
   return existingStatus === 'granted'
 }
 
@@ -33,9 +33,7 @@ export async function openNotificationSettings() {
 // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
 // EAS projectId is used here.
 function getProjectId(): string | null {
-  const projectId =
-    Constants?.expoConfig?.extra?.eas?.projectId ??
-    Constants?.easConfig?.projectId
+  const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId
 
   if (!projectId) {
     console.error('Project ID not found')
@@ -49,11 +47,7 @@ const FCM_SETUP_URL = 'https://docs.expo.dev/push-notifications/fcm-credentials/
 
 function isFirebaseNotInitializedError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error)
-  return (
-    message.includes('FirebaseApp') ||
-    message.includes('not initialized') ||
-    message.includes('Firebase')
-  )
+  return message.includes('FirebaseApp') || message.includes('not initialized') || message.includes('Firebase')
 }
 
 export async function getExpoPushToken(): Promise<string | null> {
@@ -80,9 +74,7 @@ export async function getExpoPushToken(): Promise<string | null> {
   }
 }
 
-export async function registerForPushNotificationsAsync({
-  forceOpenSettings = false,
-} = {}) {
+export async function registerForPushNotificationsAsync({ forceOpenSettings = false } = {}) {
   if (!Device.isDevice) {
     Alert.alert('Must use physical device for Push Notifications')
     return null
@@ -91,11 +83,11 @@ export async function registerForPushNotificationsAsync({
   // Android 13+: system permission prompt only appears after at least one channel exists.
   // Must run before getExpoPushTokenAsync / getPermissionsAsync.
   if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('myNotificationChannel', {
+    await Notifications.setNotificationChannelAsync('tramplinNotificationChannel', {
       name: 'A channel is needed for the permissions prompt to appear',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+      lightColor: '#9f9cf9',
     })
   }
 
