@@ -23,7 +23,7 @@ import {
   getReadMyStatsQueryOptions,
 } from '@/lib/api/generated/restApi'
 import { useNetworkStatus } from '@/lib/network'
-import { setNotificationHandler } from '@/lib/notifications/utils'
+import { setNotificationHandler } from '@/lib/notifications'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 import { useLogStore } from '@/lib/stores/log-store'
 
