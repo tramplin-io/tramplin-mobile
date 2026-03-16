@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications'
 
 import { getExpoPushToken, registerForPushNotificationsAsync } from './utils'
 
+/** Debug hook for Expo push token (used as expoDeviceToken in CreateMyDeviceTokenInput). */
 export function useDebugPushNotification() {
   const [expoPushToken, setExpoPushToken] = useState('')
   const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([])
@@ -13,12 +14,13 @@ export function useDebugPushNotification() {
   const responseListener = useRef<Notifications.EventSubscription | undefined>(undefined)
 
   const registerForPushNotifications = useCallback(async () => {
-    registerForPushNotificationsAsync().then((token) => token && setExpoPushToken(token))
+    const deviceTokens = await registerForPushNotificationsAsync()
+    if (deviceTokens) setExpoPushToken(deviceTokens.expoDeviceToken)
   }, [])
 
   const getExpoPushTokenHandler = useCallback(async () => {
-    const token = await getExpoPushToken()
-    setExpoPushToken(token ?? '')
+    const deviceTokens = await getExpoPushToken()
+    setExpoPushToken(deviceTokens?.expoDeviceToken ?? '')
   }, [])
 
   useEffect(() => {
