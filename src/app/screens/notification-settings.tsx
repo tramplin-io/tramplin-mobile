@@ -31,7 +31,8 @@ export default function NotificationSettingsScreen() {
   const pushOn = userProfile?.isPushNotificationsOn ?? isPushNotificationsOn
   const isPushNotificationsAllowed = Boolean(hasSystemPushPermission && pushOn)
   const emailOn = userProfile?.isEmailNotificationsOn ?? isEmailNotificationsOn
-
+  const discordOn = userProfile?.isDiscordNotificationsOn ?? false
+  const telegramOn = userProfile?.isTelegramNotificationsOn ?? false
   const fillPrimary = useCSSVariable('--color-fill-primary') as string
   const fillFade = useCSSVariable('--color-fill-fade') as string
 
@@ -96,6 +97,46 @@ export default function NotificationSettingsScreen() {
     }
   }
 
+  const handleDiscordToggle = useCallback(
+    async (checked: boolean) => {
+      setIsEmailNotificationsOn(checked)
+      const success = await updateUserProfile({ isDiscordNotificationsOn: checked })
+
+      if (success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Discord notifications updated.',
+        })
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Could not update discord notifications',
+        })
+      }
+    },
+    [updateUserProfile, setIsEmailNotificationsOn],
+  )
+
+  const handleTelegramToggle = useCallback(
+    async (checked: boolean) => {
+      setIsEmailNotificationsOn(checked)
+      const success = await updateUserProfile({ isTelegramNotificationsOn: checked })
+
+      if (success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Telegram notifications updated.',
+        })
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Could not update telegram notifications',
+        })
+      }
+    },
+    [updateUserProfile, setIsEmailNotificationsOn],
+  )
+
   const handleEmailToggle = useCallback(
     async (checked: boolean) => {
       setIsEmailNotificationsOn(checked)
@@ -137,6 +178,19 @@ export default function NotificationSettingsScreen() {
             </Text>
             <Switch checked={isPushNotificationsAllowed} onCheckedChange={handlePushToggle} />
           </Card>
+          <Card variant="profile" className="flex-row items-center justify-between p-4">
+            <Text variant="body" className="text-content-primary">
+              Discord notifications
+            </Text>
+            <Switch checked={discordOn} onCheckedChange={handleDiscordToggle} />
+          </Card>
+          <Card variant="profile" className="flex-row items-center justify-between p-4">
+            <Text variant="body" className="text-content-primary">
+              Telegram notifications
+            </Text>
+            <Switch checked={telegramOn} onCheckedChange={handleTelegramToggle} />
+          </Card>
+
           <Card variant="profile" className="flex-row items-center justify-between p-4">
             <Text variant="body" className="text-content-primary">
               Email

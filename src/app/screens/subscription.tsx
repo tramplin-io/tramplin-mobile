@@ -99,7 +99,7 @@ export default function SubscriptionScreen() {
     })
   }, [])
 
-  const handleTelegramPress = useCallback(() => {
+  const handleTelegramPress = useCallback(async () => {
     if (!TELEGRAM_BOT_NAME || !userProfile?.tgAuthCode) {
       Toast.show({ type: 'error', text1: 'Telegram connection is unavailable' })
       return
@@ -118,10 +118,21 @@ export default function SubscriptionScreen() {
         Toast.show({ type: 'error', text1: 'Could not open Telegram' })
       })
 
+    const ok = await updateUserProfile({
+      isTelegramNotificationsOn: true,
+    })
+
+    if (ok) {
+      Toast.show({ type: 'success', text1: 'Telegram connected' })
+    } else {
+      Toast.show({ type: 'error', text1: 'Could not activate Telegram notifications' })
+      router.push('/screens/notification-settings')
+    }
+
     setTimeout(() => {
       void fetchUserProfile()
     }, 5000)
-  }, [userProfile, fetchUserProfile])
+  }, [userProfile, fetchUserProfile, updateUserProfile])
 
   const handleSave = useCallback(async () => {
     const trimmedEmail = email.trim()
@@ -148,6 +159,7 @@ export default function SubscriptionScreen() {
       email: trimmedEmail || undefined,
       discordId: trimmedDiscord || undefined,
       isEmailNotificationsOn: true,
+      // isDiscordNotificationsOn: !!trimmedDiscord,
     })
     setIsSaving(false)
     if (ok) {
