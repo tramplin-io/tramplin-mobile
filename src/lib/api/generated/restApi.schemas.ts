@@ -199,6 +199,8 @@ export interface Profile {
   deviceTokens?: DeviceToken[]
   isEmailNotificationsOn?: boolean
   isPushNotificationsOn?: boolean
+  isDiscordNotificationsOn?: boolean
+  isTelegramNotificationsOn?: boolean
   walletAddress: string[]
   lastAuthenticatedAt?: string
   notificationTypes?: NotificationType[]
@@ -216,6 +218,8 @@ export interface UpdateMyProfileInput {
   utcOffset?: number
   isEmailNotificationsOn?: boolean
   isPushNotificationsOn?: boolean
+  isDiscordNotificationsOn?: boolean
+  isTelegramNotificationsOn?: boolean
   notificationTypes?: NotificationType[]
   email?: string
   discordId?: string

@@ -27,6 +27,7 @@ import type {
   Activity,
   Agency,
   AttemptCredentials,
+  BulkCreatePartnerInputBody,
   ContactUsInput,
   CreateAgencyInput,
   CreateEpochSnaphostProcessJobInput,
@@ -94,10 +95,13 @@ import type {
   UpdatePartnerAgencyParams,
   UpdatePartnerInput,
   UpdatePartnerParams,
+  UpdateProfilePartnerInput,
+  UpdateProfilePartnerParams,
   UpdateReferralConfigInput,
   UpdateReferralConfigParams,
   UpgradeToPartnerInput,
   User,
+  VerifyBulkCreatePartnersOutput,
   VerifyEmailParams,
   WalletCredentials,
 } from './restApi.schemas'
@@ -1049,6 +1053,73 @@ export const useUpdateJob = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 
+export const bulkCreatePartners = (bulkCreatePartnerInputBody: BulkCreatePartnerInputBody, signal?: AbortSignal) => {
+  return referralsInstance<Partner[]>({
+    url: `/bulkCreatePartners`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: bulkCreatePartnerInputBody,
+    signal,
+  })
+}
+
+export const getBulkCreatePartnersMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof bulkCreatePartners>>,
+    TError,
+    { data: BulkCreatePartnerInputBody },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof bulkCreatePartners>>,
+  TError,
+  { data: BulkCreatePartnerInputBody },
+  TContext
+> => {
+  const mutationKey = ['bulkCreatePartners']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof bulkCreatePartners>>,
+    { data: BulkCreatePartnerInputBody }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return bulkCreatePartners(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type BulkCreatePartnersMutationResult = NonNullable<Awaited<ReturnType<typeof bulkCreatePartners>>>
+export type BulkCreatePartnersMutationBody = BulkCreatePartnerInputBody
+export type BulkCreatePartnersMutationError = unknown
+
+export const useBulkCreatePartners = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof bulkCreatePartners>>,
+      TError,
+      { data: BulkCreatePartnerInputBody },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof bulkCreatePartners>>,
+  TError,
+  { data: BulkCreatePartnerInputBody },
+  TContext
+> => {
+  const mutationOptions = getBulkCreatePartnersMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
 export const createPartner = (createPartnerInput: CreatePartnerInput, signal?: AbortSignal) => {
   return referralsInstance<Partner>({
     url: `/createPartner`,
@@ -1454,6 +1525,83 @@ export const useUpdatePartnerAgency = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getUpdatePartnerAgencyMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+/**
+ * Validates partner params and returns isPassed and errors
+ * @summary Verify bulk partner params without creating
+ */
+export const verifyBulkCreatePartners = (
+  bulkCreatePartnerInputBody: BulkCreatePartnerInputBody,
+  signal?: AbortSignal,
+) => {
+  return referralsInstance<VerifyBulkCreatePartnersOutput>({
+    url: `/verifyBulkCreatePartners`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: bulkCreatePartnerInputBody,
+    signal,
+  })
+}
+
+export const getVerifyBulkCreatePartnersMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyBulkCreatePartners>>,
+    TError,
+    { data: BulkCreatePartnerInputBody },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyBulkCreatePartners>>,
+  TError,
+  { data: BulkCreatePartnerInputBody },
+  TContext
+> => {
+  const mutationKey = ['verifyBulkCreatePartners']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyBulkCreatePartners>>,
+    { data: BulkCreatePartnerInputBody }
+  > = (props) => {
+    const { data } = props ?? {}
+
+    return verifyBulkCreatePartners(data)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type VerifyBulkCreatePartnersMutationResult = NonNullable<Awaited<ReturnType<typeof verifyBulkCreatePartners>>>
+export type VerifyBulkCreatePartnersMutationBody = BulkCreatePartnerInputBody
+export type VerifyBulkCreatePartnersMutationError = unknown
+
+/**
+ * @summary Verify bulk partner params without creating
+ */
+export const useVerifyBulkCreatePartners = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof verifyBulkCreatePartners>>,
+      TError,
+      { data: BulkCreatePartnerInputBody },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof verifyBulkCreatePartners>>,
+  TError,
+  { data: BulkCreatePartnerInputBody },
+  TContext
+> => {
+  const mutationOptions = getVerifyBulkCreatePartnersMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
@@ -2662,6 +2810,76 @@ export function useReadProfile<TData = Awaited<ReturnType<typeof readProfile>>, 
   query.queryKey = queryOptions.queryKey
 
   return query
+}
+
+export const updateProfilePartner = (
+  updateProfilePartnerInput: UpdateProfilePartnerInput,
+  params: UpdateProfilePartnerParams,
+) => {
+  return referralsInstance<Profile>({
+    url: `/updateProfilePartner`,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    data: updateProfilePartnerInput,
+    params,
+  })
+}
+
+export const getUpdateProfilePartnerMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateProfilePartner>>,
+    TError,
+    { data: UpdateProfilePartnerInput; params: UpdateProfilePartnerParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateProfilePartner>>,
+  TError,
+  { data: UpdateProfilePartnerInput; params: UpdateProfilePartnerParams },
+  TContext
+> => {
+  const mutationKey = ['updateProfilePartner']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateProfilePartner>>,
+    { data: UpdateProfilePartnerInput; params: UpdateProfilePartnerParams }
+  > = (props) => {
+    const { data, params } = props ?? {}
+
+    return updateProfilePartner(data, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpdateProfilePartnerMutationResult = NonNullable<Awaited<ReturnType<typeof updateProfilePartner>>>
+export type UpdateProfilePartnerMutationBody = UpdateProfilePartnerInput
+export type UpdateProfilePartnerMutationError = unknown
+
+export const useUpdateProfilePartner = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateProfilePartner>>,
+      TError,
+      { data: UpdateProfilePartnerInput; params: UpdateProfilePartnerParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateProfilePartner>>,
+  TError,
+  { data: UpdateProfilePartnerInput; params: UpdateProfilePartnerParams },
+  TContext
+> => {
+  const mutationOptions = getUpdateProfilePartnerMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
 }
 
 export const upgradeToPartner = (upgradeToPartnerInput: UpgradeToPartnerInput, signal?: AbortSignal) => {

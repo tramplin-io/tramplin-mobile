@@ -107,6 +107,27 @@ export interface UpdateJobInput {
   defaultIntervalInMinutes?: number
 }
 
+export interface BulkCreatePartnerItem {
+  title: string
+  walletAddress: string
+  agencyId: string
+  referralToken: string
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  bonusPercentage: number
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  agencyBonusPercentage: number
+}
+
+export interface BulkCreatePartnerInput {
+  partners: BulkCreatePartnerItem[]
+}
+
 export interface CreatePartnerInput {
   title?: string
   walletAddress: string
@@ -155,6 +176,17 @@ export interface UpdatePartnerAgencyInput {
 export interface UpdatePartnerInput {
   title?: string
   referralToken?: string
+}
+
+export interface VerifyBulkCreatePartnersErrorItem {
+  index?: number
+  field?: string
+  message?: string
+}
+
+export interface VerifyBulkCreatePartnersOutput {
+  isPassed: boolean
+  errors: VerifyBulkCreatePartnersErrorItem[]
 }
 
 export interface PayoutRequest {
@@ -263,6 +295,10 @@ export interface ProfileStats {
   totalReferralPoints?: number
   epochEarnings?: number
   monthEarnings?: number
+}
+
+export interface UpdateProfilePartnerInput {
+  partnerId: string
 }
 
 export interface UpgradeToPartnerInput {
@@ -450,6 +486,8 @@ export const UserRole = {
   AGENCY: 'AGENCY',
   OPERATOR: 'OPERATOR',
 } as const
+
+export type BulkCreatePartnerInputBody = BulkCreatePartnerInput
 
 export type IndexActivitiesParams = {
   type?: string
@@ -839,6 +877,13 @@ export type ReadMyProfileStatsParams = {
 }
 
 export type ReadProfileParams = {
+  id: string
+}
+
+export type UpdateProfilePartnerParams = {
+  /**
+   * Profile ID
+   */
   id: string
 }
 
