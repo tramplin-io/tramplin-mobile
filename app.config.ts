@@ -24,7 +24,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
   slug: 'tramplin-mobile',
   scheme: 'tramplin',
-  version: '1.0.0',
+  version: '1.0.1',
   orientation: 'portrait', //'default',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -50,7 +50,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       // backgroundColor: '#DABC58',
     },
     versionCode: 2,
-    googleServicesFile: './google-services.json',
+    googleServicesFile: './src/config/google-services.json',
   },
   ios: {
     bundleIdentifier: 'io.tramplin.app',
