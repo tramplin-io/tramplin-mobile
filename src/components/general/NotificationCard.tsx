@@ -126,9 +126,9 @@ export const NotificationCard = memo(function NotificationCard({
             </Text>
             {showExternalIcon && <LeaveIcon size={20} />}
           </Pressable>
-          {!!isDetails && !!notification.description && (
+          {!!isDetails && !!notification.body && (
             <Text variant="small" className="flex-1">
-              {notification.description}
+              {notification.body}
             </Text>
           )}
           <Text variant="small" className="text-content-tertiary">
