@@ -88,6 +88,7 @@ export const JobType = {
   claimSync: 'claimSync',
   aprSync: 'aprSync',
   validatorStakeAccountSync: 'validatorStakeAccountSync',
+  sendNotification: 'sendNotification',
 } as const
 
 export interface UpdateJobInput {
@@ -98,7 +99,7 @@ export interface UpdateJobInput {
 export interface CreateNotificationInput {
   type: NotificationExtraType
   title: string
-  description: string
+  body: string
   category: NotificationCategory
   url?: string
   template?: string
@@ -115,7 +116,7 @@ export interface Notification {
   profileId: string
   type?: NotificationExtraType
   title: string
-  description: string
+  body: string
   metadata?: string
   isSean?: boolean
   category?: NotificationCategory
