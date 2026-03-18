@@ -17,11 +17,28 @@ export function useNotificationObserver({
     // TODO: Clear notification badge count when app becomes active
     // Notifications.setBadgeCountAsync(0)
 
+    // {
+    //   "title": "Day 1 in app",
+    //   "body": "{{userName}} Congrats on day 1 in the app! Keep going.",
+    //   "data": {
+    //     "contentType": "modal", // modal, screen, none
+    //     "modalType": "rewardClaim",
+    //     "modalData": "{}",
+    //     "screen": "/tabs/rewards"
+    //   }
+    // }
+
     function handleNotificationAction(notification: Notifications.Notification) {
-      const { contentType, modalType, screen = '/tabs' } = notification.request.content.data
+      // console.log('notification', notification)
+      const { contentType, modalType, screen } = notification.request.content.data
 
       if (contentType === 'modal' && modalType) {
         router.push(`${screen}?modalType=${modalType}` as Href)
+        return
+      }
+
+      if (contentType === 'screen' && screen) {
+        router.push(`${screen}` as Href)
         return
       }
 
