@@ -46,6 +46,20 @@
     "tailwind"
   ],
   "main": "./index.js",
+  "expo": {
+    "config": "app.config.ts"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "biome check --write"
+    ],
+    "*.{json,css}": [
+      "biome format --write"
+    ]
+  },
   "dependencies": {
     "@expo/react-native-action-sheet": "^4.1.1",
     "@gorhom/bottom-sheet": "^5.2.8",
