@@ -1,18 +1,23 @@
 import { ActivityIndicator, FlatList, Pressable, View } from 'react-native'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, Stack } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
-import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCSSVariable } from 'uniwind'
 
 import { NotificationCard, ScreenWrapper } from '@/components/general'
 import { BellIcon, ContractIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
-import { indexMyNotifications, useMarkAsReadMyNotification, useReadAllMyNotifications } from '@/lib/api/generated/restApi'
+import {
+  indexMyNotifications,
+  useMarkAsReadMyNotification,
+  useReadAllMyNotifications,
+} from '@/lib/api/generated/restApi'
+import { queryClient } from '@/lib/api/query-client'
 import { cn } from '@/lib/utils'
 
-const PAGE_SIZE = 50
+const PAGE_SIZE = 150
 
 export default function AppNotificationsScreen() {
   const {
@@ -24,10 +29,9 @@ export default function AppNotificationsScreen() {
   } = useInfiniteQuery({
     queryKey: ['indexMyNotifications', { limit: PAGE_SIZE }],
     queryFn: ({ pageParam, signal }) =>
-      indexMyNotifications({ limit: PAGE_SIZE, skip: pageParam }, signal),
+      indexMyNotifications({ limit: PAGE_SIZE, skip: pageParam, sortBy: 'createdAt', sortOrder: 'DESC' }, signal),
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.length < PAGE_SIZE ? undefined : allPages.length * PAGE_SIZE,
+    getNextPageParam: (lastPage, allPages) => (lastPage.length < PAGE_SIZE ? undefined : allPages.length * PAGE_SIZE),
   })
 
   const myNotifications = data?.pages.flat() ?? []
@@ -59,17 +63,18 @@ export default function AppNotificationsScreen() {
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
   const contentPrimary = useCSSVariable('--color-content-primary') as string
 
-  const notificationCount = myNotifications.filter((notification) => !notification.isSean).length
+  const notificationCount = myNotifications.filter((notification) => !notification.isSeen).length
 
   const handleMarkAllAsRead = () => {
     readAllMyNotificationsMutate()
+    void queryClient.invalidateQueries({ queryKey: ['indexMyNotifications'] })
   }
 
   const handleMarkAsRead = (notificationId: string) => {
     if (!notificationId) return
 
     markAsReadMyNotificationMutate({
-      data: { isSean: true },
+      data: { isSeen: true },
       params: { id: notificationId },
     })
   }
@@ -91,7 +96,7 @@ export default function AppNotificationsScreen() {
             {notificationCount > 0 && (
               <View className=" absolute top-0.5 left-3 size-2.5 bg-content-primary rounded-full flex items-center justify-center">
                 <Text variant="small" className="text-[6px] text-fill-primary font-bold">
-                  {notificationCount}
+                  {notificationCount < 100 ? notificationCount : '9+'}
                 </Text>
               </View>
             )}

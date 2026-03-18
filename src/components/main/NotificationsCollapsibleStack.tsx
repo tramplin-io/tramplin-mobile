@@ -1,6 +1,6 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { Pressable, View } from 'react-native'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import Toast from 'react-native-toast-message'
 
 import { NotificationCard, NotificationCardCover } from '@/components/general'
@@ -22,7 +22,15 @@ export function NotificationsCollapsibleStack({ className }: MainCollapsibleStac
   const [isOpen, setIsOpen] = useState(false)
   const { data: myNotifications = [], refetch: refetchMyNotifications } = useIndexMyNotifications({
     limit: 250,
+    sortBy: 'createdAt',
+    sortOrder: 'DESC',
   })
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchMyNotifications()
+    }, [refetchMyNotifications]),
+  )
 
   const { mutate: markAsReadMyNotificationMutate, isPending: isMarkingAsRead } = useMarkAsReadMyNotification({
     mutation: {
@@ -43,7 +51,7 @@ export function NotificationsCollapsibleStack({ className }: MainCollapsibleStac
 
   if (notifications.length === 0) return null
 
-  const notificationCount = notifications.filter((notification) => !notification.isSean).length
+  const notificationCount = myNotifications.filter((notification) => !notification.isSeen).length
 
   const handleOpenNotifications = () => {
     setIsOpen(false)
@@ -54,7 +62,7 @@ export function NotificationsCollapsibleStack({ className }: MainCollapsibleStac
     if (!notificationId) return
 
     markAsReadMyNotificationMutate({
-      data: { isSean: true },
+      data: { isSeen: true },
       params: { id: notificationId },
     })
   }
@@ -98,7 +106,7 @@ export function NotificationsCollapsibleStack({ className }: MainCollapsibleStac
             {notificationCount > 0 && (
               <View className=" absolute top-0.5 left-3 size-2.5 bg-content-primary rounded-full flex items-center justify-center">
                 <Text variant="small" className="text-[6px] text-fill-primary font-bold">
-                  {notificationCount}
+                  {notificationCount < 100 ? notificationCount : '9+'}
                 </Text>
               </View>
             )}

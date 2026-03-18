@@ -69,7 +69,7 @@ export const NotificationCardCover = memo(function NotificationCardCover({
         {notificationCount > 0 && (
           <View className=" absolute top-0.5 left-3 size-2.5 bg-content-primary rounded-full flex items-center justify-center">
             <Text variant="small" className="text-[6px] text-fill-primary font-bold">
-              {notificationCount}
+              {notificationCount < 100 ? notificationCount : '9+'}
             </Text>
           </View>
         )}
@@ -89,14 +89,14 @@ export const NotificationCard = memo(function NotificationCard({
   isLoading = false,
 }: NotificationCardBaseProps) {
   const showExternalIcon = notification.url !== undefined
-  const isSeen = Boolean(notification.isSean)
+  const isSeen = Boolean(notification.isSeen)
   const { mutate: markAsReadMyNotificationMutate } = useMarkAsReadMyNotification()
 
   return (
     <Pressable
       disabled={isLoading}
       onPress={() => {
-        if (!notification.id || notification.isSean) return
+        if (!notification.id || notification.isSeen) return
         onMarkAsRead?.(notification.id)
       }}
       // accessibilityRole="button"
@@ -111,7 +111,7 @@ export const NotificationCard = memo(function NotificationCard({
             onPress={() => {
               if (!isSeen && notification.id) {
                 markAsReadMyNotificationMutate({
-                  data: { isSean: true },
+                  data: { isSeen: true },
                   params: { id: notification.id },
                 })
               }
