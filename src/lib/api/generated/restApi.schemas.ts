@@ -102,14 +102,18 @@ export interface CreateNotificationInput {
   body: string
   category: NotificationCategory
   url?: string
-  template?: string
   targetType: NotificationTargetType
   targetWalletAddresses?: string[]
   targetFilter?: NotificationTargetFilter
+  scheduledAt?: string
+}
+
+export interface CreateNotificationOutput {
+  notificationsCount: number
 }
 
 export interface MarkAsReadMyNotificationInput {
-  isSean?: boolean
+  isSeen?: boolean
 }
 
 export interface Notification {
@@ -118,7 +122,7 @@ export interface Notification {
   title: string
   body: string
   metadata?: string
-  isSean?: boolean
+  isSeen?: boolean
   category?: NotificationCategory
   status: NotificationStatus
   error?: string
@@ -159,6 +163,14 @@ export const NotificationStatus = {
   error: 'error',
 } as const
 
+export type NotificationTargetFilter = (typeof NotificationTargetFilter)[keyof typeof NotificationTargetFilter]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const NotificationTargetFilter = {
+  has_stake: 'has_stake',
+  has_win: 'has_win',
+} as const
+
 export type NotificationTargetType = (typeof NotificationTargetType)[keyof typeof NotificationTargetType]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -166,14 +178,6 @@ export const NotificationTargetType = {
   all: 'all',
   wallets: 'wallets',
   filter: 'filter',
-} as const
-
-export type NotificationTargetFilter = (typeof NotificationTargetFilter)[keyof typeof NotificationTargetFilter]
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const NotificationTargetFilter = {
-  has_stake: 'has_stake',
-  has_win: 'has_win',
 } as const
 
 export interface ContactUsInput {
@@ -451,6 +455,8 @@ export interface Win {
   revealTransactionHash?: string
   /** Orao VRF fulfillment transaction; for Solscan/Explorer URL */
   vrfTransactionHash?: string
+  /** Transaction that claimed the win; for Solscan/Explorer URL */
+  claimTransactionHash?: string
   /** Secret from Reveal instruction (base58); for draw verification */
   revealSecret?: string
   /** SecretHash from Draw instruction (base58); for draw verification */
@@ -587,9 +593,9 @@ export type UpdateJobParams = {
 }
 
 export type IndexMyNotificationsParams = {
-  ids?: string
+  ids?: string[]
   type?: string
-  isSean?: string
+  isSeen?: string
   category?: string
   sortOrder?: IndexMyNotificationsSortOrder
   /**
@@ -616,7 +622,7 @@ export const IndexMyNotificationsSortOrder = {
 } as const
 
 export type IndexNotificationsParams = {
-  ids?: string
+  ids?: string[]
   profileId?: string
   type?: string
   category?: string
@@ -666,7 +672,7 @@ export type DeleteMyDeviceTokenParams = {
 }
 
 export type IndexProfilesParams = {
-  ids?: string
+  ids?: string[]
   walletAddress?: string
   search?: string
   sortOrder?: IndexProfilesSortOrder
@@ -706,7 +712,7 @@ export type UpdateMyProfileParams = {
 }
 
 export type IndexProtocolStatisticsParams = {
-  ids?: string
+  ids?: string[]
   sortOrder?: IndexProtocolStatisticsSortOrder
   /**
    * Field name to sort objects.
@@ -736,7 +742,7 @@ export type ReadProtocolStatisticParams = {
 }
 
 export type IndexServiceConfigsParams = {
-  ids?: string
+  ids?: string[]
   sortOrder?: IndexServiceConfigsSortOrder
   /**
    * Field name to sort objects.
@@ -770,7 +776,7 @@ export type UpdateServiceConfigParams = {
 }
 
 export type IndexTokensParams = {
-  ids?: string
+  ids?: string[]
   title?: string
   decimals?: string
   address?: string
@@ -877,7 +883,7 @@ export const IndexMyValidatorStakeAccountsSortOrder = {
 } as const
 
 export type IndexValidatorStakeAccountsParams = {
-  ids?: string
+  ids?: string[]
   walletAddress?: string
   activationEpoch?: string
   deactivationEpoch?: string

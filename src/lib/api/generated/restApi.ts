@@ -29,6 +29,7 @@ import type {
   CreateMyDeviceTokenInput,
   CreateMyDeviceTokenParams,
   CreateNotificationInput,
+  CreateNotificationOutput,
   DeleteMyDeviceTokenParams,
   DrawSync,
   EmailCredentials,
@@ -706,7 +707,7 @@ export const useUpdateJob = <TError = unknown, TContext = unknown>(
 }
 
 export const createNotification = (createNotificationInput: CreateNotificationInput, signal?: AbortSignal) => {
-  return customInstance<Notification>({
+  return customInstance<CreateNotificationOutput>({
     url: `/createNotification`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1011,7 +1012,7 @@ export const useMarkAsReadMyNotification = <TError = unknown, TContext = unknown
 }
 
 export const readAllMyNotifications = () => {
-  return customInstance<Notification>({ url: `/readAllMyNotifications`, method: 'PUT' })
+  return customInstance<void>({ url: `/readAllMyNotifications`, method: 'PUT' })
 }
 
 export const getReadAllMyNotificationsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
