@@ -4,7 +4,7 @@ import { router } from 'expo-router'
 import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
-import { ExpandIcon, LeaveIcon, SolanaIcon } from '@/components/icons/icons'
+import { ExpandIcon, LeaveIcon, SolanaIcon, TramplinCircleIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
 import { Card, Pagination } from '@/components/ui'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -126,7 +126,7 @@ function LeaderboardRow({
         </Text>
       </View>
       {showReward && (
-        <View className="flex-row items-center gap-1 min-w-[120px] justify-start">
+        <View className="flex-row items-center gap-0.5 min-w-[120px] justify-start">
           <Text variant="body" className={`${rewardStakeTextClass}`}>
             {reward ?? '—'}
           </Text>
@@ -135,7 +135,7 @@ function LeaderboardRow({
       )}
 
       <View
-        className={cn('flex-row items-center gap-1 min-w-[120px] justify-start', !isStakers && 'flex-1 min-w-[56px]')}
+        className={cn('flex-row items-center gap-0.5 min-w-[120px] justify-start', !isStakers && 'flex-1 min-w-[56px]')}
       >
         <Text variant="body" className={`${rewardStakeTextClass}`}>
           {formattedStake}
@@ -144,10 +144,11 @@ function LeaderboardRow({
       </View>
 
       {!showReward && (
-        <View className="flex-1 flex-row items-center gap-1 min-w-[56px] justify-start">
+        <View className="flex-1 flex-row items-center gap-0.5 min-w-[56px] justify-start">
           <Text variant="body" className={`${rewardStakeTextClass}`}>
             {formattedPoints}
           </Text>
+          <TramplinCircleIcon strokeWidth={0.75} size={20} />
         </View>
       )}
       <Pressable
