@@ -1,5 +1,7 @@
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
+
+import { TramplinCircleBgIcon } from '@/components/icons'
 import { Text } from '@/components/ui/text'
 
 const tramplinIcon02 = require('@/assets/videos/tramplin_icon_02.mp4')
@@ -28,7 +30,11 @@ export function Slide4({ width }: Slide4Props) {
         <View className="size-6 border border-content-primary rounded-full flex items-center justify-center">
           <Text variant="body">2</Text>
         </View>
-        <Text variant="h4">CollectTramplin points</Text>
+        <View className="flex-row items-center gap-0.5">
+          <Text variant="h4">Collect</Text>
+          <TramplinCircleBgIcon />
+          <Text variant="h4">Tramplin points</Text>
+        </View>
       </View>
 
       <View className="w-full items-center justify-center aspect-square rounded-md overflow-hidden">

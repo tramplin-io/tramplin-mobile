@@ -1,5 +1,6 @@
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
+
 import { Text } from '@/components/ui/text'
 
 const tramplinIcon03 = require('@/assets/videos/tramplin_icon_03.mp4')
@@ -36,17 +37,11 @@ export function Slide5({ width }: Slide5Props) {
       </View>
 
       <Text variant="body">
-        <Text variant="body" className="text-olive-dark">
-          Every 10 Min:
-        </Text>{' '}
-        Randomly selected participants get a share of small rewards.
+        <Text variant="body">Every 10 Min:</Text> Randomly selected participants get a share of small rewards.
       </Text>
 
       <Text variant="body">
-        <Text variant="body" className="text-olive-dark">
-          Every Month:
-        </Text>{' '}
-        One lucky staker grabs big pool
+        <Text variant="body">Every Month:</Text> One lucky staker grabs big pool
       </Text>
       {/* <Pressable className="flex-row items-center gap-1" onPress={() => Linking.openURL(MODE_OF_DISTRIBUTION_URL)}>
         <Text variant="small" className="text-olive-light uppercase underline">

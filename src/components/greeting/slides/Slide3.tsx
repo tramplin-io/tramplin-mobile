@@ -1,6 +1,8 @@
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 // import LottieView from 'lottie-react-native'
 import { useVideoPlayer, VideoView } from 'expo-video'
+
+import { SolanaCircleBgIcon } from '@/components/icons'
 import { Text } from '@/components/ui/text'
 
 const tramplinIcon01 = require('@/assets/videos/tramplin_icon_01.mp4')
@@ -29,7 +31,11 @@ export function Slide3({ width }: Slide3Props) {
         <View className="size-6 border border-content-primary rounded-full flex items-center justify-center">
           <Text variant="body">1</Text>
         </View>
-        <Text variant="h4">Stake your SOL</Text>
+        <View className="flex-row items-center gap-0.5">
+          <Text variant="h4">Stake as little as</Text>
+          <SolanaCircleBgIcon />
+          <Text variant="h4">1 SOL</Text>
+        </View>
       </View>
 
       <View className="w-full items-center justify-center aspect-square rounded-md overflow-hidden">

@@ -5,3 +5,4 @@ export { CopyIcon, LinkIcon, MinusIcon, PlusIcon, TelegramIcon, TwitterIcon } fr
 export { SendIcon } from './SendIcon'
 export { SolscanIcon } from './Solscan'
 export { ThreeDotsIcon } from './ThreeDotsIcon'
+export * from './IconsGradient'
