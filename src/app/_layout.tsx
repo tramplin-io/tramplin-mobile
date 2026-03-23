@@ -161,7 +161,7 @@ function RootLayout() {
     <AppProviders>
       <View style={styles.container} className="bg-fill-primary">
         {[
-          <StatusBar key="statusbar" style="dark" />,
+          <StatusBar key="statusbar" style={hideHeader ? 'light' : 'dark'} />,
           <AuthGuard key="auth">
             <Stack
               screenOptions={{
