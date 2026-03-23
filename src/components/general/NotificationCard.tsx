@@ -28,11 +28,11 @@ const NotificationIcon = memo(function NotificationIcon({ type }: NotificationIc
     case 'telegram':
       return <TelegramIcon size={24} />
     case 'tramplin':
-      return <TramplinCircleIcon size={24} />
+      return <TramplinCircleIcon size={20} />
     case 'success':
       return <RewardIcon size={24} />
     case 'solana':
-      return <SolanaCircleIcon size={24} />
+      return <SolanaCircleIcon size={24} strokeWidth={0.75} />
     case 'discord':
       return <DiscordIcon size={24} />
     default:
