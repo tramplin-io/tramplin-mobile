@@ -49,7 +49,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       // backgroundImage: './src/assets/images/splash.png',
       // backgroundColor: '#DABC58',
     },
-    versionCode: 2,
+    versionCode: 4,
     googleServicesFile: './src/config/google-services.json',
   },
   ios: {
@@ -59,7 +59,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     //   foregroundImage: './src/assets/images/icon.png',
     //   backgroundColor: '#8682F7',
     // },
-    buildNumber: '2',
+    buildNumber: '4',
   },
   web: {
     output: 'static' as const,
