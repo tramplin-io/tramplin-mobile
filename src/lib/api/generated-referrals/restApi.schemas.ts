@@ -326,6 +326,8 @@ export interface ReferralConfig {
   calculateFrequencyInEpoch?: number
   maxPartnerPercentage: number
   title: string
+  /** User ids (ADMIN) who receive payout request notifications */
+  payoutRequestReceiversUserIds?: string[]
   id?: string
   createdAt?: string
   updatedAt?: string
@@ -347,6 +349,7 @@ export interface UpdateReferralConfigInput {
    * @maximum 100
    */
   maxPartnerPercentage?: number
+  payoutRequestReceiversUserIds?: string[]
 }
 
 export interface IndexMyStakesOutput {
@@ -868,6 +871,10 @@ export const IndexProfilesSortOrder = {
   ASC: 'ASC',
   DESC: 'DESC',
 } as const
+
+export type ListReferralProfilesParams = {
+  referralToken: string
+}
 
 export type ReadMyProfileStatsParams = {
   /**

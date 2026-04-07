@@ -303,6 +303,8 @@ export interface WalletCredentials {
   signature: string
   /** Public key (wallet address) of the user wallet (base58 encoded Solana public key). */
   publicKey: string
+  /** Version of the client. */
+  clientVersion?: string
 }
 
 export interface DeviceToken {

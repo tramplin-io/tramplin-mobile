@@ -57,6 +57,7 @@ import type {
   IndexUsersParams,
   InviteUserInput,
   Job,
+  ListReferralProfilesParams,
   Partner,
   Payout,
   PayoutRequest,
@@ -2560,6 +2561,90 @@ export function useIndexProfiles<TData = Awaited<ReturnType<typeof indexProfiles
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getIndexProfilesQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const listReferralProfiles = (params: ListReferralProfilesParams, signal?: AbortSignal) => {
+  return referralsInstance<Profile[]>({ url: `/listReferralProfiles`, method: 'GET', params, signal })
+}
+
+export const getListReferralProfilesQueryKey = (params?: ListReferralProfilesParams) => {
+  return [`/listReferralProfiles`, ...(params ? [params] : [])] as const
+}
+
+export const getListReferralProfilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listReferralProfiles>>,
+  TError = unknown,
+>(
+  params: ListReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listReferralProfiles>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getListReferralProfilesQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listReferralProfiles>>> = ({ signal }) =>
+    listReferralProfiles(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listReferralProfiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListReferralProfilesQueryResult = NonNullable<Awaited<ReturnType<typeof listReferralProfiles>>>
+export type ListReferralProfilesQueryError = unknown
+
+export function useListReferralProfiles<TData = Awaited<ReturnType<typeof listReferralProfiles>>, TError = unknown>(
+  params: ListReferralProfilesParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listReferralProfiles>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listReferralProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof listReferralProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListReferralProfiles<TData = Awaited<ReturnType<typeof listReferralProfiles>>, TError = unknown>(
+  params: ListReferralProfilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listReferralProfiles>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listReferralProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof listReferralProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListReferralProfiles<TData = Awaited<ReturnType<typeof listReferralProfiles>>, TError = unknown>(
+  params: ListReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listReferralProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListReferralProfiles<TData = Awaited<ReturnType<typeof listReferralProfiles>>, TError = unknown>(
+  params: ListReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listReferralProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getListReferralProfilesQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>
