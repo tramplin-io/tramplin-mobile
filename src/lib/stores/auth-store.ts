@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+import { BUILD_NUMBER } from '@/constants/appConstants'
 import { createSessionByUserWallet, deleteMySession, readMySession } from '@/lib/api/generated/restApi'
 import type { Session, WalletCredentials } from '@/lib/api/generated/restApi.schemas'
 import { queryClient } from '@/lib/api/query-client'
@@ -78,7 +79,10 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ isLoading: true, error: null })
 
-          const response = await createSessionByUserWallet(walletCredentials)
+          const response = await createSessionByUserWallet({
+            ...walletCredentials,
+            clientVersion: BUILD_NUMBER.toString(),
+          })
 
           if (response?.token) {
             const { success } = await get().verifySession(response.token)
