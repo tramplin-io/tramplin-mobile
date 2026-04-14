@@ -10,6 +10,13 @@ const enableCharlesProxy =
   process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
 // const disableAndroidBackup = process.env.EAS_BUILD_PROFILE !== 'production'
 
+/* PROD VERSION LOG
+1.0.0 (3) - Initial release - 2026_03_13
+1.0.1 (4) - Update - 2026_04_14 - Added notifications
+
+
+*/
+
 /**
  * Expo app configuration (TypeScript).
  *
@@ -24,7 +31,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
   slug: 'tramplin-mobile',
   scheme: 'tramplin',
-  version: '1.0.1',
+  version: '1.0.2',
   orientation: 'portrait', //'default',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
