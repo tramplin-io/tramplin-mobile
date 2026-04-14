@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "637783264419",
-    "project_id": "tramplin-dev",
-    "storage_bucket": "tramplin-dev.firebasestorage.app"
+    "project_number": "1017048510566",
+    "project_id": "tramplin-2ad64",
+    "storage_bucket": "tramplin-2ad64.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:637783264419:android:52ca21095e4b2bc485c316",
+        "mobilesdk_app_id": "1:1017048510566:android:37806650d9a5bba3e07da7",
         "android_client_info": {
           "package_name": "io.tramplin.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBKt6qTpcmDcXAkFAaBoVGvtwIjcFEP11E"
+          "current_key": "AIzaSyBHs4p2gaRqo00HGvHGau4eehsz_Ks6kkg"
         }
       ],
       "services": {
