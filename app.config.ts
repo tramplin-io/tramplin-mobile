@@ -10,6 +10,16 @@ const enableCharlesProxy =
   process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
 // const disableAndroidBackup = process.env.EAS_BUILD_PROFILE !== 'production'
 
+const version: string = '1.0.1'
+const buildNumber: number = 5
+
+/* PROD VERSION LOG
+1.0.0 (3) - Initial release - 2026_03_13
+1.0.1 (4) - Update - 2026_04_14 - Added notifications
+1.0.1 (5) - Update - 2026_04_16 - Removed notifications
+
+*/
+
 /**
  * Expo app configuration (TypeScript).
  *
@@ -24,7 +34,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
   name: process.env.EXPO_PUBLIC_APP_NAME ?? 'Tramplin',
   slug: 'tramplin-mobile',
   scheme: 'tramplin',
-  version: '1.0.1',
+  version: version,
   orientation: 'portrait', //'default',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -49,7 +59,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       // backgroundImage: './src/assets/images/splash.png',
       // backgroundColor: '#DABC58',
     },
-    versionCode: 4,
+    versionCode: buildNumber,
     googleServicesFile: './src/config/google-services.json',
   },
   ios: {
@@ -59,7 +69,7 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     //   foregroundImage: './src/assets/images/icon.png',
     //   backgroundColor: '#8682F7',
     // },
-    buildNumber: '4',
+    buildNumber: buildNumber.toString(),
   },
   web: {
     output: 'static' as const,
@@ -71,19 +81,19 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
     withAndroidTelegramQueries,
     ...(enableCharlesProxy ? [[withCharlesProxy, { enabled: true }]] : []),
     'expo-router',
-    // [
-    //   'expo-splash-screen',
-    //   {
-    //     backgroundColor: '#8682F7',
-    //     image: './src/assets/images/splash.png',
-    //     imageWidth: 200, //'100%',
-    //     // imageHeight: '100%',
-    //     resizeMode: 'contain',
-    //     // dark: {
-    //     //   backgroundColor: '#9F9CF9',
-    //     // },
-    //   },
-    // ],
+    [
+      'expo-splash-screen',
+      {
+        image: './src/assets/images/adaptive-icon.png',
+        resizeMode: 'contain',
+        backgroundColor: '#B8B6FF',
+        imageWidth: 200, //'100%',
+        // imageHeight: '100%',
+        // dark: {
+        //   backgroundColor: '#9F9CF9',
+        // },
+      },
+    ],
     [
       'expo-font',
       {
