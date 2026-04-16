@@ -23,9 +23,10 @@ import {
   getReadMyStatsQueryOptions,
 } from '@/lib/api/generated/restApi'
 import { useNetworkStatus } from '@/lib/network'
-import { setNotificationHandler } from '@/lib/notifications'
+// import { setNotificationHandler } from '@/lib/notifications'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
-import { useLogStore } from '@/lib/stores/log-store'
+
+// import { useLogStore } from '@/lib/stores/log-store'
 
 import NoInternetScreen from './no-internet'
 
@@ -41,10 +42,10 @@ function ToastWithInsets() {
 }
 
 // Keep the splash screen visible while we load resources
-// SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync()
 
 // Configure how notifications are presented (required for foreground display on Android/iOS)
-setNotificationHandler()
+// setNotificationHandler()
 
 function RootLayout() {
   const [appReady, setAppReady] = useState(false)

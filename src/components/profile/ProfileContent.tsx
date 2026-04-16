@@ -267,7 +267,7 @@ export function ProfileContent({ isTab = false }: Readonly<ProfileContentProps>)
 
   const content = (
     <View className="gap-6 pt-2">
-      <Section title="GENERAL" items={generalItems} />
+      {/* <Section title="GENERAL" items={generalItems} /> */}
       <Section title="NEED HELP?" items={helpItems} />
       <Section title="LEGAL" items={legalItems} />
 

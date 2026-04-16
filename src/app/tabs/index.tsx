@@ -7,7 +7,7 @@ import { ScreenWrapper } from '@/components/general'
 import {
   CommunityStats,
   DashboardHeader,
-  NotificationsCollapsibleStack,
+  // NotificationsCollapsibleStack,
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
@@ -56,7 +56,7 @@ export default function HomeTab() {
         }
       >
         <DashboardHeader />
-        <NotificationsCollapsibleStack />
+        {/* <NotificationsCollapsibleStack /> */}
         <YourStake onUnstakePress={handleOpenUnstake} />
         <ReferralStats />
 
