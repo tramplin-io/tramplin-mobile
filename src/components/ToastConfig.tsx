@@ -1,7 +1,7 @@
+import { useEffect, type ReactNode } from 'react'
+import { View } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import { AlertCircle, CircleCheck } from 'lucide-react-native'
-import { type ReactNode, useEffect } from 'react'
-import { View } from 'react-native'
 import type { BaseToastProps } from 'react-native-toast-message'
 
 import { Text } from '@/components/ui/text'
@@ -19,9 +19,9 @@ function ToastWithHaptics({
   type: 'success' | 'warning' | 'error'
   children: ReactNode
 }>) {
-  useEffect(() => {
-    Haptics.notificationAsync(TOAST_HAPTICS[type])
-  }, [type])
+  // useEffect(() => {
+  //   Haptics.notificationAsync(TOAST_HAPTICS[type])
+  // }, [type])
   return <>{children}</>
 }
 
