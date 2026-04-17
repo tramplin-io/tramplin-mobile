@@ -17,6 +17,7 @@ const buildNumber: number = 5
 1.0.0 (3) - Initial release - 2026_03_13
 1.0.1 (4) - Update - 2026_04_14 - Added notifications
 1.0.1 (5) - Update - 2026_04_16 - Removed notifications
+1.0.1 (6) - Update - 2026_04_17 - 
 
 */
 
