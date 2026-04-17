@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, RefreshControl, View } from 'react-native'
+import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
+// import * as Clipboard from 'expo-clipboard'
+import { useFocusEffect } from 'expo-router'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
@@ -29,6 +31,31 @@ function RegularListSeparator() {
   return <View className="h-0.5" />
 }
 
+// function ClaimErrorCard({ winKey, message }: { winKey: string; message: string }) {
+//   const [copied, setCopied] = useState(false)
+
+//   const handleCopy = useCallback(async () => {
+//     const payload = `Claim Error\nTime: ${new Date().toISOString()}\nWin: ${winKey}\nError: ${message}`
+//     await Clipboard.setStringAsync(payload)
+//     setCopied(true)
+//     setTimeout(() => setCopied(false), 2000)
+//   }, [winKey, message])
+
+//   return (
+//     <View className="mt-1.5 flex-row items-center gap-2 rounded-xl border border-critical-secondary/40 bg-critical-secondary/10 px-3 py-2">
+//       <Text className="flex-1 text-xs text-critical-secondary" numberOfLines={2}>
+//         {message}
+//       </Text>
+//       <Pressable
+//         onPress={handleCopy}
+//         className="rounded-lg border border-critical-secondary/40 bg-critical-secondary/20 px-2.5 py-1.5 active:opacity-70"
+//       >
+//         <Text className="text-xs font-medium text-critical-secondary">{copied ? 'Copied!' : 'Copy'}</Text>
+//       </Pressable>
+//     </View>
+//   )
+// }
+
 function winToWinner(win: Win): Winner {
   return {
     stakeId: BigInt(win.stakeId),
@@ -48,6 +75,7 @@ function winToWinner(win: Win): Winner {
 export default function RewardsTab() {
   const [isRegularStackExpanded, setIsRegularStackExpanded] = useState(false)
   const [claimErrorCountdowns, setClaimErrorCountdowns] = useState<Record<string, number>>({})
+  // const [claimErrors, setClaimErrors] = useState<Record<string, string>>({})
   const countdownTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({})
 
   const colorBrandPrimary = useCSSVariable('--color-brand-primary') as string
@@ -55,12 +83,17 @@ export default function RewardsTab() {
   const {
     data: wins = [],
     isLoading,
-    refetch,
+    refetch: refetchWins,
   } = useIndexMyWins({
     isClaimed: 'false',
     limit: 250,
   })
 
+  useFocusEffect(
+    useCallback(() => {
+      refetchWins()
+    }, [refetchWins]),
+  )
   // const wins = IndexMyWinsMock
 
   const { claim, isClaiming } = useClaimPrize()
@@ -68,11 +101,13 @@ export default function RewardsTab() {
   const [refreshing, setRefreshing] = useState(false)
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
-    await refetch()
+    await refetchWins()
     setRefreshing(false)
-  }, [refetch])
+  }, [refetchWins])
 
   const startErrorCountdown = useCallback((winKey: string) => {
+    //, errorMsg: string
+    // setClaimErrors((prev) => ({ ...prev, [winKey]: errorMsg }))
     setClaimErrorCountdowns((prev) => ({ ...prev, [winKey]: CLAIM_ERROR_RETRY_SECONDS }))
 
     const timer = setInterval(() => {
@@ -103,15 +138,17 @@ export default function RewardsTab() {
       try {
         await claim(wins.map(winToWinner))
         Toast.show({ type: 'success', text1: 'Reward claimed!' })
+        await refetchWins()
       } catch {
+        // const errorMsg = error instanceof Error ? error.message : String(error)
         if (winKey) {
-          startErrorCountdown(winKey)
+          startErrorCountdown(winKey) //, errorMsg
         } else {
           Toast.show({ type: 'error', text1: 'Failed to claim', text2: 'Please try again' })
         }
       }
     },
-    [claim, startErrorCountdown],
+    [claim, startErrorCountdown, refetchWins],
   )
 
   const bigWins = wins.filter((w) => w.drawType === 'big')
@@ -152,10 +189,11 @@ export default function RewardsTab() {
             buttonText={buttonText}
             shouldPlayVideo={shouldPlayVideo}
           />
+          {/* {hasError && claimErrors[winKey] && <ClaimErrorCard winKey={winKey} message={claimErrors[winKey]} />} */}
         </View>
       )
     },
-    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayVideo], //,visibleRegularIndices
+    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayVideo], //,visibleRegularIndices, claimErrors
   )
 
   const regularListKeyExtractor = useCallback((win: Win) => win.id ?? `${win.winnerId}-${win.epochOrSlot}`, [])
@@ -178,16 +216,18 @@ export default function RewardsTab() {
               const hasError = retryIn !== undefined
               const buttonText = hasError ? `Error Claiming! Try again in ${retryIn}s…` : 'Claim Now'
               return (
-                <RewardCardBig
-                  key={winKey}
-                  win={win}
-                  reward={win.prizeSol}
-                  revealedAt={win.revealedAt}
-                  onClaim={() => handleClaim([win], winKey)}
-                  disabled={isClaiming || hasError}
-                  hasError={hasError}
-                  buttonText={buttonText}
-                />
+                <View key={winKey}>
+                  <RewardCardBig
+                    win={win}
+                    reward={win.prizeSol}
+                    revealedAt={win.revealedAt}
+                    onClaim={() => handleClaim([win], winKey)}
+                    disabled={isClaiming || hasError}
+                    hasError={hasError}
+                    buttonText={buttonText}
+                  />
+                  {/* {hasError && claimErrors[winKey] && <ClaimErrorCard winKey={winKey} message={claimErrors[winKey]} />} */}
+                </View>
               )
             })}
           </View>
@@ -208,19 +248,26 @@ export default function RewardsTab() {
                 </Pressable>
               </View>
               {(() => {
-                const summaryRetryIn = claimErrorCountdowns['regular-summary']
-                const hasSummaryError = summaryRetryIn != null
+                // const summaryRetryIn = claimErrorCountdowns['regular-summary']
+                // const hasSummaryError = summaryRetryIn !== undefined
                 return (
-                  <RewardCardRegular
-                    variant="summary"
-                    reward={regularRewardsTotal}
-                    onClaim={() => handleClaim(regularWins, 'regular-summary')}
-                    disabled={isClaiming || hasSummaryError}
-                    hasError={hasSummaryError}
-                    buttonText={hasSummaryError ? `Try again in ${summaryRetryIn}s…` : undefined}
-                    claimCount={regularWins.length}
-                    shouldPlayVideo={shouldPlayVideo}
-                  />
+                  <>
+                    <RewardCardStack count={regularWins.length} reward={regularRewardsTotal} />
+                    {/* TODO: Add summary claim card */}
+                    {/* <RewardCardRegular
+                      variant="summary"
+                      reward={regularRewardsTotal}
+                      onClaim={() => handleClaim(regularWins, 'regular-summary')}
+                      disabled={isClaiming || hasSummaryError}
+                      hasError={hasSummaryError}
+                      buttonText={hasSummaryError ? `Try again in ${summaryRetryIn}s…` : undefined}
+                      claimCount={regularWins.length}
+                      shouldPlayVideo={shouldPlayVideo}
+                    /> */}
+                    {/* {hasSummaryError && claimErrors['regular-summary'] && (
+                      <ClaimErrorCard winKey="regular-summary" message={claimErrors['regular-summary']} />
+                    )} */}
+                  </>
                 )
               })()}
             </>
@@ -253,13 +300,14 @@ export default function RewardsTab() {
       wins.length,
       bigWins,
       claimErrorCountdowns,
+      // claimErrors,
       isClaiming,
       handleClaim,
       isRegularStackExpanded,
       regularWins,
       regularRewardsTotal,
       useLazyRegularList,
-      shouldPlayVideo,
+      // shouldPlayVideo,
     ],
   )
 
