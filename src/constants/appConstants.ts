@@ -28,9 +28,12 @@ const API_URLS = {
   DEV_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://develop-referrals-api.tramplin.io/api',
 } as const
 
+const DEV_TOOLS_ENABLED: boolean = process.env.EXPO_PUBLIC_DEV_TOOLS_ENABLED === 'true'
+
 export {
   APP_VERSION,
   BUILD_NUMBER,
+  DEV_TOOLS_ENABLED,
   // PRIVACY_POLICY_URL,
   // TERMS_OF_USE_URL,
   // CONTACT_US_EMAIL,
