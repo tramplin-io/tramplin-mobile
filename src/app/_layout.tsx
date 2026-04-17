@@ -32,6 +32,45 @@ import NoInternetScreen from './no-internet'
 
 // import * as NavigationBar from 'expo-navigation-bar'
 
+// const safeStringify = (arg: unknown): string => {
+//   if (arg === null) return 'null'
+//   if (arg === undefined) return 'undefined'
+//   const t = typeof arg
+//   if (t === 'string' || t === 'number' || t === 'boolean' || t === 'bigint') return String(arg)
+//   try {
+//     return JSON.stringify(arg)
+//   } catch {
+//     return Object.prototype.toString.call(arg)
+//   }
+// }
+
+// // Guard against re-patching on Fast Refresh module re-evaluation
+// if (!(global as Record<string, unknown>).__consolePatched) {
+//   ;(global as Record<string, unknown>).__consolePatched = true
+
+//   const originalLog = console.log
+//   console.log = (...args) => {
+//     const combinedMessage = args.map(safeStringify).join(' ')
+//     if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+//       originalLog(...args)
+//       return
+//     }
+//     useLogStore.getState().addLog({ type: 'log', message: combinedMessage, timestamp: new Date().toISOString() })
+//     originalLog(...args)
+//   }
+
+//   const originalError = console.error
+//   console.error = (...args) => {
+//     const combinedMessage = args.map(safeStringify).join(' ')
+//     if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
+//       originalError(...args)
+//       return
+//     }
+//     useLogStore.getState().addLog({ type: 'error', message: combinedMessage, timestamp: new Date().toISOString() })
+//     originalError(...args)
+//   }
+// }
+
 function AppHeader() {
   return <Header variant="app" />
 }
@@ -58,50 +97,6 @@ function RootLayout() {
 
   // console.log('visibility', visibility)
   // console.log('color', color)
-
-  // For testing. DELETE THIS.
-  const safeStringify = (arg: unknown): string => {
-    if (arg === null) return 'null'
-    if (arg === undefined) return 'undefined'
-    const t = typeof arg
-    if (t === 'string' || t === 'number' || t === 'boolean' || t === 'bigint') return String(arg)
-    try {
-      return JSON.stringify(arg)
-    } catch {
-      return Object.prototype.toString.call(arg)
-    }
-  }
-
-  // const originalLog = console.log
-  // console.log = (...args) => {
-  //   const combinedMessage = args.map(safeStringify).join(' ')
-  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
-  //     originalLog(...args)
-  //     return
-  //   }
-
-  //   useLogStore.getState().addLog({
-  //     type: 'log',
-  //     message: combinedMessage,
-  //     timestamp: new Date().toISOString(),
-  //   })
-  //   originalLog(...args)
-  // }
-
-  // const originalError = console.error
-  // console.error = (...args) => {
-  //   const combinedMessage = args.map(safeStringify).join(' ')
-  //   if (combinedMessage.startsWith('Sentry') || combinedMessage.startsWith('[Purchases]')) {
-  //     originalError(...args)
-  //     return
-  //   }
-  //   useLogStore.getState().addLog({
-  //     type: 'error',
-  //     message: combinedMessage,
-  //     timestamp: new Date().toISOString(),
-  //   })
-  //   originalError(...args)
-  // }
 
   const pathname = usePathname()
   const hideHeader = pathname === '/greeting' || pathname === '/splash' || pathname === '/'
@@ -176,6 +171,7 @@ function RootLayout() {
               <Stack.Screen name="tabs" />
               <Stack.Screen name="profile/index" />
               <Stack.Screen name="screens/contact-us" />
+              <Stack.Screen name="screens/app-logs" />
               <Stack.Screen name="screens/notification-settings" />
               <Stack.Screen
                 name="screens/leaderboard-detail"
