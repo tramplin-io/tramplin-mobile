@@ -283,10 +283,6 @@ function QAItemComponent({
 export default function FAQTab() {
   const [openItem, setOpenItem] = useState<string | null>(null)
 
-  const handleSubscribe = () => {
-    router.push('/screens/subscription')
-  }
-
   return (
     <ScreenWrapper>
       <ScrollView contentContainerClassName="px-4 pb-40 py-8 flex-grow" showsVerticalScrollIndicator={false}>
@@ -317,9 +313,6 @@ export default function FAQTab() {
           <Text variant="small" className="uppercase tracking-wide">
             Learn More
           </Text>
-          <Pressable onPress={handleSubscribe} className="self-start border-b border-border-quaternary pb-1">
-            <Text variant="body">Subscribe</Text>
-          </Pressable>
           <ExternalLink href={FAQ_CONFIG.SOCIAL_BLOG_LINK}>Blog</ExternalLink>
           <ExternalLink href={FAQ_CONFIG.PARTNERS_LINK}>Partnership</ExternalLink>
           <ExternalLink href={FAQ_CONFIG.VALIDATOR_LINK}>Validator</ExternalLink>

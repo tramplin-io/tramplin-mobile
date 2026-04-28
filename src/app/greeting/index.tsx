@@ -79,6 +79,8 @@ export default function GreetingScreen() {
         return
       }
 
+      await updateUserProfile({})
+
       try {
         if (!hasSystemPushPermission && !isPushNotificationsOn) {
           const token = await registerForPushNotifications()

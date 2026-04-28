@@ -19,7 +19,7 @@ export function setNotificationHandler() {
 
 export async function checkNotificationPermissions() {
   const { status: existingStatus } = await Notifications.getPermissionsAsync()
-  console.log('existingStatus', existingStatus)
+  // console.log('existingStatus', existingStatus)
   return existingStatus === 'granted'
 }
 

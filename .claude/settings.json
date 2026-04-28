@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "Uniwind": {
+      "url": "https://docs.uniwind.dev/mcp",
+      "transport": "streamableHttp"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "Figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "headers": {}
+    },
+    "solanaMcp": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.solana.com/mcp"]
+    }
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
+  }
+}

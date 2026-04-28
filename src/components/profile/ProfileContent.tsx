@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
-import { APP_VERSION, BUILD_NUMBER } from '@/constants/appConstants'
+import { APP_VERSION, BUILD_NUMBER, DEV_TOOLS_ENABLED } from '@/constants/appConstants'
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/constants/profile'
 import { useDeleteMyProfile } from '@/lib/api/generated/restApi'
 import { useAuthStore } from '@/lib/stores/auth-store'
@@ -235,6 +235,10 @@ export function ProfileContent({ isTab = false }: Readonly<ProfileContentProps>)
   ]
 
   const handleVersionTap = useCallback(() => {
+    if (!DEV_TOOLS_ENABLED) {
+      return
+    }
+
     const currentTime = Date.now()
     const timeDiff = currentTime - lastTapTime
 
@@ -267,7 +271,7 @@ export function ProfileContent({ isTab = false }: Readonly<ProfileContentProps>)
 
   const content = (
     <View className="gap-6 pt-2">
-      <Section title="GENERAL" items={generalItems} />
+      {/* <Section title="GENERAL" items={generalItems} /> */}
       <Section title="NEED HELP?" items={helpItems} />
       <Section title="LEGAL" items={legalItems} />
 

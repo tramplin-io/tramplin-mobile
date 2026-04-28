@@ -14,6 +14,11 @@ type LogStore = {
 
 export const useLogStore = create<LogStore>()(set => ({
   logs: [],
-  addLog: entry => set(state => ({ logs: [...state.logs, entry].slice(-100) })),
+  addLog: entry =>
+    set(state => {
+      const last = state.logs[state.logs.length - 1]
+      if (last && last.type === entry.type && last.message === entry.message) return state
+      return { logs: [...state.logs, entry].slice(-100) }
+    }),
   clearLogs: () => set({ logs: [] }),
 }))

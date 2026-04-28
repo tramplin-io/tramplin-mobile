@@ -1,9 +1,13 @@
-import { useCallback } from 'react'
-import { Pressable, View } from 'react-native'
-import { router } from 'expo-router'
-import { useCSSVariable } from 'uniwind'
+// import { useCallback } from 'react'
+import {
+  // Pressable,
+  View,
+} from 'react-native'
 
-import { LinkIcon } from '@/components/icons/icons'
+// import { router } from 'expo-router'
+// import { useCSSVariable } from 'uniwind'
+
+// import { LinkIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 
@@ -23,15 +27,15 @@ export function DashboardHeader({
   onSubscribePress,
   className,
 }: Readonly<DashboardHeaderProps>) {
-  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
-  // onSubscribePress
-  const handleSubscribePress = useCallback(() => {
-    if (onSubscribePress) {
-      onSubscribePress()
-    } else {
-      router.push('/screens/subscription')
-    }
-  }, [onSubscribePress])
+  // const contentTertiary = useCSSVariable('--color-content-tertiary') as string
+  // // onSubscribePress
+  // const handleSubscribePress = useCallback(() => {
+  //   if (onSubscribePress) {
+  //     onSubscribePress()
+  //   } else {
+  //     router.push('/screens/subscription')
+  //   }
+  // }, [onSubscribePress])
 
   return (
     <View className={cn('flex-row items-center justify-between', className)}>
@@ -39,12 +43,12 @@ export function DashboardHeader({
         {title}
       </Text>
 
-      <Pressable onPress={handleSubscribePress} className="flex-row items-center gap-1 active:opacity-80" hitSlop={8}>
+      {/* <Pressable onPress={handleSubscribePress} className="flex-row items-center gap-1 active:opacity-80" hitSlop={8}>
         <Text variant="body" className="text-content-tertiary">
           {subscribeLabel}
         </Text>
         <LinkIcon size={16} color={contentTertiary} />
-      </Pressable>
+      </Pressable> */}
     </View>
   )
 }

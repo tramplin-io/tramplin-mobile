@@ -143,6 +143,7 @@ export const useProfileStore = create<ProfileState>()(
         try {
           set({ isLoading: true })
           const utcOffset = getUtcOffset()
+          set({ utcOffset })
           const payload: UpdateMyProfileInput = {
             ...profileData,
             utcOffset,
@@ -176,8 +177,7 @@ export const useProfileStore = create<ProfileState>()(
 
           const profileTokens = get().userProfile?.deviceTokens ?? []
           const tokenExists = profileTokens.some(
-            (dt) =>
-              dt.token === deviceTokens.expoDeviceToken || dt.token === deviceTokens.fcmDeviceToken,
+            (dt) => dt.token === deviceTokens.expoDeviceToken || dt.token === deviceTokens.fcmDeviceToken,
           )
           if (tokenExists) {
             return true

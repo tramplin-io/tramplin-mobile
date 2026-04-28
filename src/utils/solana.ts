@@ -1,8 +1,9 @@
+import { SYSTEM_PROGRAM_ADDRESS } from '@solana-program/system'
 import {
   AccountRole,
-  TRANSACTION_SIZE_LIMIT,
   address,
   appendTransactionMessageInstruction,
+  createDefaultRpcTransport,
   createSolanaRpcFromTransport,
   createTransactionMessage,
   devnet,
@@ -14,14 +15,14 @@ import {
   getProgramDerivedAddress,
   getStructCodec,
   getTransactionMessageSize,
+  getU8Codec,
   getU32Codec,
   getU64Codec,
-  getU8Codec,
   lamports,
   mainnet,
   pipe,
   setTransactionMessageFeePayerSigner,
-  createDefaultRpcTransport,
+  TRANSACTION_SIZE_LIMIT,
   type Address,
   type Epoch,
   type Instruction,
@@ -30,7 +31,6 @@ import {
   type TransactionMessageWithFeePayer,
   type TransactionSigner,
 } from '@solana/kit'
-import { SYSTEM_PROGRAM_ADDRESS } from '@solana-program/system'
 
 // ---------------------------------------------------------------------------
 // Assert
@@ -256,13 +256,19 @@ export function batchInstructions(instructions: Instruction[], signer: Transacti
   const batches: InstructionBatch[] = []
   let currentBatch: InstructionBatch = { instructions: [], indices: [] }
 
-  const createBaseMessage = (): TransactionMessage & TransactionMessageWithFeePayer =>
+  // This is used to properly calculate instruction size together with message info
+  const createBaseMessage = () =>
     pipe(createTransactionMessage({ version: 0 }), (msg) => setTransactionMessageFeePayerSigner(signer, msg))
 
   let testMessage: TransactionMessage & TransactionMessageWithFeePayer = createBaseMessage()
 
-  for (const [i, ix] of instructions.entries()) {
-    const testWithIx = appendTransactionMessageInstruction(ix, testMessage)
+  for (let i = 0; i < instructions.length; i++) {
+    const ix = instructions[i]!
+    const testWithIx: TransactionMessage & TransactionMessageWithFeePayer = appendTransactionMessageInstruction(
+      ix,
+      testMessage,
+    )
+
     const size = getTransactionMessageSize(testWithIx)
 
     if (size <= TRANSACTION_SIZE_LIMIT) {
