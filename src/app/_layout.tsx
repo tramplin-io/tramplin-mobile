@@ -23,7 +23,7 @@ import {
   getReadMyStatsQueryOptions,
 } from '@/lib/api/generated/restApi'
 import { useNetworkStatus } from '@/lib/network'
-// import { setNotificationHandler } from '@/lib/notifications'
+import { setNotificationHandler } from '@/lib/notifications'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 
 // import { useLogStore } from '@/lib/stores/log-store'
@@ -84,7 +84,7 @@ function ToastWithInsets() {
 SplashScreen.preventAutoHideAsync()
 
 // Configure how notifications are presented (required for foreground display on Android/iOS)
-// setNotificationHandler()
+setNotificationHandler()
 
 function RootLayout() {
   const [appReady, setAppReady] = useState(false)

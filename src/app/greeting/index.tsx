@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/Container'
 import { Text } from '@/components/ui/text'
 import { useWalletActions } from '@/hooks/useWalletActions'
-// import { useSystemPushPermission } from '@/lib/notifications/hooks'
+import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { useAuthStore } from '@/lib/stores/auth-store'
-// import { useProfileStore } from '@/lib/stores/profile-store'
+import { useProfileStore } from '@/lib/stores/profile-store'
 import { signatureToBase58 } from '@/utils/format'
 
 const SLIDE_COMPONENTS = [
@@ -43,8 +43,8 @@ export default function GreetingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [signingIn, setSigningIn] = useState(false)
 
-  // const { hasSystemPushPermission, registerForPushNotifications } = useSystemPushPermission()
-  // const { createDeviceToken, updateUserProfile, isPushNotificationsOn } = useProfileStore()
+  const { hasSystemPushPermission, registerForPushNotifications } = useSystemPushPermission()
+  const { createDeviceToken, updateUserProfile, isPushNotificationsOn } = useProfileStore()
 
   const flatListRef = useRef<FlatList>(null)
 
@@ -79,17 +79,19 @@ export default function GreetingScreen() {
         return
       }
 
-      // try {
-      //   if (!hasSystemPushPermission && !isPushNotificationsOn) {
-      //     const token = await registerForPushNotifications()
-      //     if (token) {
-      //       await createDeviceToken(token)
-      //       await updateUserProfile({ isPushNotificationsOn: true })
-      //     }
-      //   }
-      // } catch (error) {
-      //   console.error('Failed to register push notifications after login:', error)
-      // }
+      await updateUserProfile({})
+
+      try {
+        if (!hasSystemPushPermission && !isPushNotificationsOn) {
+          const token = await registerForPushNotifications()
+          if (token) {
+            await createDeviceToken(token)
+            await updateUserProfile({ isPushNotificationsOn: true })
+          }
+        }
+      } catch (error) {
+        console.error('Failed to register push notifications after login:', error)
+      }
     } catch (err) {
       Toast.show({
         type: 'error',
@@ -102,11 +104,11 @@ export default function GreetingScreen() {
     loginWithWallet,
     signLoginMessage,
     error,
-    // hasSystemPushPermission,
-    // isPushNotificationsOn,
-    // registerForPushNotifications,
-    // createDeviceToken,
-    // updateUserProfile,
+    hasSystemPushPermission,
+    isPushNotificationsOn,
+    registerForPushNotifications,
+    createDeviceToken,
+    updateUserProfile,
   ])
 
   const renderSlide = useCallback(

@@ -35,6 +35,7 @@ export default function HomeTab() {
       queryClient.invalidateQueries(),
       queryClient.invalidateQueries({ queryKey: ['indexMyWins'] }),
       queryClient.invalidateQueries({ queryKey: ['indexMyStake'] }),
+      queryClient.invalidateQueries({ queryKey: ['readMyStats'] }),
       queryClient.invalidateQueries({ queryKey: ['indexMyNotifications'] }),
       refreshStakeAccounts(),
     ])
