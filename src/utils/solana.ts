@@ -32,6 +32,8 @@ import {
   type TransactionSigner,
 } from '@solana/kit'
 
+import type { DrawType } from '@/lib/api/generated/restApi.schemas'
+
 // ---------------------------------------------------------------------------
 // Assert
 // ---------------------------------------------------------------------------
@@ -67,7 +69,7 @@ export const rpc = (() => {
 // Types
 // ---------------------------------------------------------------------------
 
-export type DrawKind = 'regular' | 'big'
+// export type DrawKind = 'regular' | 'big' | 'epoch'
 
 export interface DrawConfig {
   admin: Address
@@ -91,7 +93,7 @@ export type Winner = {
   epochOrSlot: bigint
   /** undefined means unclaimed */
   claimPda: Address | undefined
-  kind: DrawKind
+  kind: DrawType
   /** Slot when draw was revealed */
   revealedAt: bigint
   revealedAtDate?: Date
