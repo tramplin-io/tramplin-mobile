@@ -123,6 +123,9 @@ export interface Notification {
   body: string
   metadata?: string
   isSeen?: boolean
+  isProcessed?: boolean
+  isPriority?: boolean
+  processedAt?: string
   category?: NotificationCategory
   status: NotificationStatus
   error?: string
@@ -187,8 +190,9 @@ export interface ContactUsInput {
 }
 
 export interface CreateMyDeviceTokenInput {
-  expoDeviceToken: string
-  fcmDeviceToken: string
+  expoDeviceToken?: string
+  fcmDeviceToken?: string
+  webDeviceToken?: string
 }
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -251,6 +255,9 @@ export interface ServiceConfig {
   title: string
   latestBuildVersion?: number
   minSupportedBuildVersion?: number
+  dailyNotificationLimit?: number
+  quietHoursStart?: string
+  quietHoursEnd?: string
   updatedBy?: string
   id?: string
   createdAt?: string
@@ -260,6 +267,9 @@ export interface ServiceConfig {
 export interface UpdateServiceConfigInput {
   latestBuildVersion?: number
   minSupportedBuildVersion?: number
+  dailyNotificationLimit?: number
+  quietHoursStart?: string
+  quietHoursEnd?: string
 }
 
 export interface AttemptCredentials {
@@ -318,6 +328,7 @@ export type DeviceTokenType = (typeof DeviceTokenType)[keyof typeof DeviceTokenT
 export const DeviceTokenType = {
   expo: 'expo',
   fcm: 'fcm',
+  web: 'web',
 } as const
 
 export interface EpochPoints {
@@ -438,6 +449,7 @@ export type DrawType = (typeof DrawType)[keyof typeof DrawType]
 export const DrawType = {
   regular: 'regular',
   big: 'big',
+  epoch: 'epoch',
 } as const
 
 export interface Win {
@@ -445,9 +457,11 @@ export interface Win {
   stakeId: number
   winnerId: string
   stake: number
+  stakeForView?: number
+  stakeForViewSol?: number
   prizeLamports: string
   epochOrSlot: string
-  /** Epoch for both regular (derived from slot) and big draws */
+  /** Epoch for regular (derived from slot), big, and epoch draws */
   epochNumber?: number
   /** VRF seed from draw account (base58); one per draw */
   vrfSeed?: string

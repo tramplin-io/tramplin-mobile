@@ -4021,6 +4021,9 @@ export function useIndexWins<TData = Awaited<ReturnType<typeof indexWins>>, TErr
   return query
 }
 
+/**
+ * Latest wins for leaderboards: 1 big, 6 regular, 7 epoch (each bucket sorted separately).
+ */
 export const listPublicWinLeaders = (signal?: AbortSignal) => {
   return customInstance<Win[]>({ url: `/listPublicWinLeaders`, method: 'GET', signal })
 }
