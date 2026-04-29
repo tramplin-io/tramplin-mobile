@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { View } from 'react-native'
 
 import { Text, TextClassContext } from '@/components/ui/text'
@@ -85,7 +85,7 @@ export function Countdown({
     </>
   )
 
-  let content: React.ReactNode = null
+  let content: ReactNode = null
 
   switch (format) {
     case 'ms':
