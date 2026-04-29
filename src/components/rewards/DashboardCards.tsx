@@ -16,8 +16,6 @@ export function DashboardCards({
   className,
   refetchMyStats,
 }: Readonly<{ myStats?: MyStats | null; isLoading: boolean; className?: string; refetchMyStats: () => void }>) {
-  console.log('myStats', myStats)
-
   const bigDrawAverageUSDInCents = myStats?.bigDrawAverageUSDInCents ? myStats.bigDrawAverageUSDInCents / 100 : 0
   const regularDrawAverageUSDInCents = myStats?.regularDrawAverageUSDInCents
     ? myStats.regularDrawAverageUSDInCents / 100
