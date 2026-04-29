@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native'
+import { FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
 // import * as Clipboard from 'expo-clipboard'
 import { useFocusEffect } from 'expo-router'
@@ -74,6 +74,7 @@ function winToWinner(win: Win): Winner {
 
 export default function RewardsTab() {
   const [isRegularStackExpanded, setIsRegularStackExpanded] = useState(false)
+  const [isEpochStackExpanded, setIsEpochStackExpanded] = useState(false)
   const [claimErrorCountdowns, setClaimErrorCountdowns] = useState<Record<string, number>>({})
   // const [claimErrors, setClaimErrors] = useState<Record<string, string>>({})
   const countdownTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({})
@@ -153,14 +154,26 @@ export default function RewardsTab() {
 
   const bigWins = wins.filter((w) => w.drawType === 'big')
   const regularWins = wins.filter((w) => w.drawType === 'regular')
+  const epochWins = wins.filter((w) => w.drawType === 'epoch')
+
+  // Regular wins
   const regularRewardsTotalLamports = useMemo(
     () => regularWins.reduce((acc, r) => acc + Number(r.prizeLamports ?? 0), 0),
     [regularWins],
   )
   const regularRewardsTotal = regularRewardsTotalLamports / Number(LAMPORTS_PER_SOL)
-  const shouldPlayVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
+  const shouldPlayRegularWinsVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
 
   const useLazyRegularList = regularWins.length > 0
+
+  // Epoch wins
+  const epochRewardsTotalLamports = useMemo(
+    () => epochWins.reduce((acc, e) => acc + Number(e.prizeLamports ?? 0), 0),
+    [epochWins],
+  )
+  const epochRewardsTotal = epochRewardsTotalLamports / Number(LAMPORTS_PER_SOL)
+  const shouldPlayEpochWinsVideo = epochWins.length <= REWARD_CARD_VIDEO_LIMIT
+  const useLazyEpochList = epochWins.length > 0
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 40,
@@ -177,6 +190,8 @@ export default function RewardsTab() {
       const hasError = retryIn !== undefined
       const buttonText = hasError ? `Try again in ${retryIn}s…` : null
 
+      const shouldPlayVideo = win.drawType === 'regular' ? shouldPlayRegularWinsVideo : shouldPlayEpochWinsVideo
+
       return (
         <View className="px-4">
           <RewardCardRegular
@@ -188,28 +203,30 @@ export default function RewardsTab() {
             hasError={hasError}
             buttonText={buttonText}
             shouldPlayVideo={shouldPlayVideo}
+            drawType={win.drawType}
           />
           {/* {hasError && claimErrors[winKey] && <ClaimErrorCard winKey={winKey} message={claimErrors[winKey]} />} */}
         </View>
       )
     },
-    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayVideo], //,visibleRegularIndices, claimErrors
+    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayRegularWinsVideo, shouldPlayEpochWinsVideo], //,visibleRegularIndices, claimErrors
   )
 
   const regularListKeyExtractor = useCallback((win: Win) => win.id ?? `${win.winnerId}-${win.epochOrSlot}`, [])
 
   const regularListData = useLazyRegularList && isRegularStackExpanded ? regularWins : []
+  const epochListData = useLazyEpochList && isEpochStackExpanded ? epochWins : []
 
-  const listHeaderComponent = useCallback(
+  const headerComponent = useCallback(
     () => (
-      <View className="gap-3 px-4 pt-8 pb-0.5">
+      <View className="gap-3 px-4 pt-8 pb-0">
         <DashboardHeader title="Congratulations!" className="mb-6" />
         {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 
         {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />}
 
         {!isLoading && bigWins.length > 0 && (
-          <View className="gap-4 mb-4">
+          <View className="gap-4 mb-2">
             {bigWins.map((win) => {
               const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
               const retryIn = claimErrorCountdowns[winKey]
@@ -232,7 +249,74 @@ export default function RewardsTab() {
             })}
           </View>
         )}
+      </View>
+    ),
+    [isLoading, wins.length, bigWins, claimErrorCountdowns, isClaiming, handleClaim],
+  )
 
+  const epochListHeaderComponent = useCallback(
+    () => (
+      <View className="gap-3 px-4 pt-3 pb-0.5">
+        {!isLoading &&
+          useLazyEpochList &&
+          epochWins.length > 0 &&
+          (isEpochStackExpanded ? (
+            <>
+              <View className="flex-row justify-end pr-1">
+                <Pressable
+                  onPress={() => setIsEpochStackExpanded(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Collapse"
+                >
+                  <CrossIcon size={20} strokeWidth="1.5" />
+                </Pressable>
+              </View>
+              {(() => {
+                // const summaryRetryIn = claimErrorCountdowns['regular-summary']
+                // const hasSummaryError = summaryRetryIn !== undefined
+                return (
+                  <>
+                    <RewardCardStack
+                      count={epochWins.length}
+                      reward={epochRewardsTotal}
+                      drawType="epoch"
+                      shouldPlayVideo
+                    />
+                    {/* TODO: Add summary claim card */}
+                  </>
+                )
+              })()}
+            </>
+          ) : (
+            (() => {
+              return (
+                <CollapsibleStack
+                  collapsedCount={PREVIEW_COLLAPSED_COUNT}
+                  gap={PREVIEW_COLLAPSED_GAP}
+                  expandedGap={PREVIEW_EXPANDED_GAP}
+                  itemHeight={PREVIEW_ITEM_HEIGHT}
+                  expandedContentHeight={PREVIEW_EXPANDED_CONTENT_HEIGHT}
+                  open={false}
+                  onOpenChange={(open) => {
+                    if (open) setIsEpochStackExpanded(true)
+                  }}
+                  cover={<RewardCardStack count={epochWins.length} reward={epochRewardsTotal} drawType="epoch" />}
+                >
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                </CollapsibleStack>
+              )
+            })()
+          ))}
+      </View>
+    ),
+    [isLoading, useLazyEpochList, isEpochStackExpanded, epochWins, epochRewardsTotal],
+  )
+
+  const regularListHeaderComponent = useCallback(
+    () => (
+      <View className="gap-3 px-4 pt-3 pb-0.5">
         {!isLoading &&
           useLazyRegularList &&
           regularWins.length > 0 &&
@@ -252,7 +336,7 @@ export default function RewardsTab() {
                 // const hasSummaryError = summaryRetryIn !== undefined
                 return (
                   <>
-                    <RewardCardStack count={regularWins.length} reward={regularRewardsTotal} />
+                    <RewardCardStack count={regularWins.length} reward={regularRewardsTotal} shouldPlayVideo />
                     {/* TODO: Add summary claim card */}
                     {/* <RewardCardRegular
                       variant="summary"
@@ -295,41 +379,15 @@ export default function RewardsTab() {
           ))}
       </View>
     ),
-    [
-      isLoading,
-      wins.length,
-      bigWins,
-      claimErrorCountdowns,
-      // claimErrors,
-      isClaiming,
-      handleClaim,
-      isRegularStackExpanded,
-      regularWins,
-      regularRewardsTotal,
-      useLazyRegularList,
-      // shouldPlayVideo,
-    ],
+    [isLoading, isRegularStackExpanded, regularWins, regularRewardsTotal, useLazyRegularList],
   )
 
   const listFooterComponent = useCallback(() => <View className="h-40" />, [])
 
   return (
     <ScreenWrapper>
-      <FlatList
-        data={regularListData}
-        keyExtractor={regularListKeyExtractor}
-        renderItem={renderRegularClaimCard}
-        ListHeaderComponent={listHeaderComponent}
-        ListFooterComponent={listFooterComponent}
-        ItemSeparatorComponent={RegularListSeparator}
-        // onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
-        initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        removeClippedSubviews={true}
-        // contentContainerClassName="pb-40"
-        showsVerticalScrollIndicator={false}
+      <ScrollView
+        // className="gap-0"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -338,7 +396,44 @@ export default function RewardsTab() {
             colors={[colorBrandPrimary]}
           />
         }
-      />
+      >
+        {headerComponent()}
+        {/* Epoch wins */}
+        <FlatList
+          data={epochListData}
+          keyExtractor={regularListKeyExtractor}
+          renderItem={renderRegularClaimCard}
+          ListHeaderComponent={epochListHeaderComponent}
+          // ListFooterComponent={listFooterComponent}
+          ItemSeparatorComponent={RegularListSeparator}
+          // onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+          // contentContainerClassName="pb-40"
+          showsVerticalScrollIndicator={false}
+        />
+        {/* Regular wins */}
+        <FlatList
+          data={regularListData}
+          keyExtractor={regularListKeyExtractor}
+          renderItem={renderRegularClaimCard}
+          ListHeaderComponent={regularListHeaderComponent}
+          // ListFooterComponent={listFooterComponent}
+          ItemSeparatorComponent={RegularListSeparator}
+          // onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+          // contentContainerClassName="pb-40"
+          showsVerticalScrollIndicator={false}
+        />
+        {listFooterComponent()}
+      </ScrollView>
     </ScreenWrapper>
   )
 }
