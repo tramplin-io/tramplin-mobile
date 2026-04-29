@@ -5,6 +5,22 @@
  * REST API
  * OpenAPI spec version: 3.0.0
  */
+export interface DrawForecast {
+  title: string
+  nextRegularDrawAt: string
+  nextEpochDrawAt: string
+  nextBigDrawAt: string
+  regularDrawAveragePrizeLamports: number
+  epochDrawAveragePrizeLamports: number
+  bigDrawAveragePrizeLamports: number
+  regularDrawAverageUSDInCents: number
+  epochDrawAverageUSDInCents: number
+  bigDrawAverageUSDInCents: number
+  id?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface DrawSync {
   drawType: DrawType
   epochOrSlot: string
@@ -235,6 +251,67 @@ export interface UpdateMyProfileInput {
   discordId?: string
 }
 
+export interface CreatePromoInput {
+  showStartsAt: string
+  showEndsAt: string
+  startsAt: string
+  endsAt: string
+  title: string
+  type: string
+  howItWorks: string
+  prize: string
+  winnersAmount: string
+  targetAmount: number
+  targetType: PromoTargetType
+  minStakeAmountInLamports: number
+  winnerWalletAddresses?: string[]
+}
+
+export interface Promo {
+  showStartsAt: string
+  showEndsAt: string
+  startsAt?: string
+  endsAt?: string
+  title: string
+  type: string
+  howItWorks: string
+  prize: string
+  winnersAmount: string
+  targetAmount: number
+  targetType: PromoTargetType
+  minStakeAmountInLamports: number
+  winnerWalletAddresses?: string[]
+  currentAmount?: number
+  isTargetReached?: boolean
+  participatedStakedAmountSol?: number
+  id?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export type PromoTargetType = (typeof PromoTargetType)[keyof typeof PromoTargetType]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const PromoTargetType = {
+  stakers: 'stakers',
+  sol: 'sol',
+} as const
+
+export interface UpdatePromoInput {
+  showStartsAt?: string
+  showEndsAt?: string
+  startsAt?: string
+  endsAt?: string
+  type?: string
+  howItWorks?: string
+  prize?: string
+  winnersAmount?: string
+  targetAmount?: number
+  targetType?: PromoTargetType
+  minStakeAmountInLamports?: number
+  winnerWalletAddresses?: string[]
+}
+
 export interface ProtocolStatistic {
   startsAt?: string
   endsAt?: string
@@ -413,7 +490,20 @@ export interface MyStats {
   totalWinSol?: number
   multiplier?: number
   isAttendingRegularDraw?: boolean
+  isAttendingEpochDraw?: boolean
   isAttendingBigDraw?: boolean
+  nextRegularDrawAt?: string
+  nextEpochDrawAt?: string
+  nextBigDrawAt?: string
+  regularDrawAveragePrizeLamports?: number
+  regularDrawAverageUSDInCents?: number
+  epochDrawAveragePrizeLamports?: number
+  epochDrawAverageUSDInCents?: number
+  bigDrawAveragePrizeLamports?: number
+  bigDrawAverageUSDInCents?: number
+  regularDrawWinnersAmount?: number
+  epochDrawWinnersAmount?: number
+  bigDrawWinnersAmount?: number
 }
 
 export interface ValidatorStakeAccount {
@@ -507,6 +597,36 @@ export interface Win {
   id?: string
   createdAt?: string
   updatedAt?: string
+}
+
+export type IndexDrawForecastsParams = {
+  ids?: string[]
+  title?: string
+  sortOrder?: IndexDrawForecastsSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexDrawForecastsSortOrder = (typeof IndexDrawForecastsSortOrder)[keyof typeof IndexDrawForecastsSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexDrawForecastsSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type ReadDrawForecastParams = {
+  id: string
 }
 
 export type IndexDrawSyncsParams = {
@@ -724,6 +844,78 @@ export type ReadProfileParams = {
 }
 
 export type UpdateMyProfileParams = {
+  search?: string
+}
+
+export type CreatePromoParams = {
+  search?: string
+}
+
+export type DeletePromoParams = {
+  id: string
+  search?: string
+}
+
+export type IndexMyPromosParams = {
+  sortOrder?: IndexMyPromosSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexMyPromosSortOrder = (typeof IndexMyPromosSortOrder)[keyof typeof IndexMyPromosSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexMyPromosSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type IndexPromosParams = {
+  ids?: string
+  title?: string
+  type?: string
+  targetType?: string
+  search?: string
+  sortOrder?: IndexPromosSortOrder
+  /**
+   * Field name to sort objects.
+   */
+  sortBy?: string
+  /**
+   * Should be used together with limit to implement pagination.
+   */
+  skip?: number
+  /**
+   * Should be used together with skip to implement pagination.
+   */
+  limit?: number
+}
+
+export type IndexPromosSortOrder = (typeof IndexPromosSortOrder)[keyof typeof IndexPromosSortOrder]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const IndexPromosSortOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+} as const
+
+export type ReadPromoParams = {
+  id: string
+  search?: string
+}
+
+export type UpdatePromoParams = {
+  id: string
   search?: string
 }
 
