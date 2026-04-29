@@ -28,6 +28,7 @@ type MyStatsData = {
   multiplier?: number
   isAttendingRegularDraw?: boolean
   isAttendingBigDraw?: boolean
+  isAttendingEpochDraw?: boolean
 }
 
 function getStatsDisplay(
@@ -47,6 +48,7 @@ function getStatsDisplay(
       multiplier: data.multiplier,
       isAttendingRegularDraw: data.isAttendingRegularDraw,
       isAttendingBigDraw: data.isAttendingBigDraw,
+      isAttendingEpochDraw: data.isAttendingEpochDraw,
     },
     showStaked,
     showEarned,
@@ -176,6 +178,7 @@ function EarnedCard({
   apr,
   isAttendingBigDraw,
   isAttendingRegularDraw,
+  isAttendingEpochDraw,
   hasActiveStake,
   onInfoPress,
 }: Readonly<{
@@ -184,6 +187,7 @@ function EarnedCard({
   apr?: number
   isAttendingBigDraw?: boolean
   isAttendingRegularDraw?: boolean
+  isAttendingEpochDraw?: boolean
   hasActiveStake?: boolean | null
   onInfoPress?: () => void
 }>) {
@@ -192,19 +196,31 @@ function EarnedCard({
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
 
   const hasSolEarnings = totalWinSol != null && totalWinSol > 0
-  const hasParticipation = isAttendingBigDraw || isAttendingRegularDraw
+  const hasParticipation = isAttendingBigDraw || isAttendingRegularDraw || isAttendingEpochDraw
+
+  const isFullyParticipating = isAttendingEpochDraw && isAttendingRegularDraw && isAttendingBigDraw
 
   const participatingFooter = hasParticipation ? (
-    <View className="flex-row items-center gap-1 px-0.5">
-      <Text variant="small" className="text-content-tertiary uppercase">
+    <View className="h-5 flex-row items-center gap-1 px-0.5">
+      <Text variant="small" className="text-content-tertiary uppercase tracking-[-0.15px]">
         PARTICIPATING IN
       </Text>
-      {isAttendingRegularDraw && (
+      {isFullyParticipating && (
+        <Text variant="small" className="text-content-tertiary uppercase font-bold tracking-[-0.15px]">
+          3 draws
+        </Text>
+      )}
+      {isAttendingRegularDraw && !isFullyParticipating && (
         <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
           <SmallCupIcon size={16} color={contentTertiary} />
         </View>
       )}
-      {isAttendingBigDraw && (
+      {isAttendingBigDraw && !isFullyParticipating && (
+        <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
+          <BigCupIcon size={16} color={contentTertiary} />
+        </View>
+      )}
+      {isAttendingEpochDraw && !isFullyParticipating && (
         <View className="size-5 rounded-full bg-fill-secondary items-center justify-center">
           <BigCupIcon size={16} color={contentTertiary} />
         </View>
@@ -380,6 +396,7 @@ export function YourStake({
             apr={data.apr}
             isAttendingBigDraw={data.isAttendingBigDraw}
             isAttendingRegularDraw={data.isAttendingRegularDraw}
+            isAttendingEpochDraw={data.isAttendingEpochDraw}
             hasActiveStake={hasActiveStake}
             onInfoPress={onEarnedInfoPress}
           />
