@@ -26,6 +26,11 @@
   --text-small-nav--letter-spacing: 0.5px; /* 5% */
   --text-small-nav--font-weight: 500; /* M Regular */
 
+  --text-small-regular: 0.875rem; /* 14px */
+  --text-small-regular--line-height: 1.25rem; /* 20px */
+  --text-small-regular--letter-spacing: 0; /* 0px */
+  --text-small-regular--font-weight: 400; /* M Regular */
+
   --text-small-bold: 0.875rem; /* 14px */
   --text-small-bold--line-height: 1.125rem; /* 18px */
   --text-small-bold--letter-spacing: 0; /* 0px */
