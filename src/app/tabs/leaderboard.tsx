@@ -22,8 +22,18 @@ const PAGE_SIZE = 5
 
 type TabId = 'winners' | 'stakers'
 
-const drawTypeTextClass = (drawType?: DrawType) =>
-  drawType === 'big' ? 'text-reward-large-secondary' : 'text-content-primary'
+const drawTypeTextClass = (drawType?: DrawType) => {
+  switch (drawType) {
+    case 'big':
+      return 'text-reward-large-secondary'
+    case 'epoch':
+      return 'text-content-primary'
+    case 'regular':
+      return 'text-content-primary'
+    default:
+      return 'text-content-primary'
+  }
+}
 
 function TokenRewardIcon({ drawType }: Readonly<{ drawType?: DrawType }>) {
   const rewardLargeColor = useCSSVariable('--color-reward-large-secondary') as string | undefined
@@ -242,7 +252,7 @@ function LeaderboardTable({
                 key={win.id ?? `${win.walletAddress}-${win.winnerId}`}
                 walletAddress={win.walletAddress}
                 reward={rewardSol}
-                stake={win.stake}
+                stake={win.stakeForViewSol ?? win.stake}
                 showReward
                 drawType={win.drawType}
                 epochOrSlot={win.epochOrSlot}
