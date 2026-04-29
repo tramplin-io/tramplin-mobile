@@ -83,11 +83,11 @@ export function RewardCardRegular({
       {variant === 'empty' && (
         <View className="flex-col justify-center items-center gap-2 mx-auto py-1">
           <Text variant="body" className="text-reward-small-primary ">
-            No unclaimed rewards.
+            No rewards to claim yet
           </Text>
-          <Text variant="body" className="text-reward-small-primary ">
+          {/* <Text variant="body" className="text-reward-small-primary ">
             Your rewards will appear here.
-          </Text>
+          </Text> */}
         </View>
       )}
       {variant === 'loading' ? (
