@@ -29,7 +29,6 @@ export function QRCode({ data, size = 140, className }: QRCodeProps) {
         logoMargin={5}
         ecl="H"
         quietZone={0}
-        // @ts-expect-error library types don't include LocalSvg asset (number)
         logoSVG={Logo}
       />
     </View>
