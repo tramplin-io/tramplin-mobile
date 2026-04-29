@@ -4,12 +4,13 @@ import { useRouter } from 'expo-router'
 import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
-import { ForwardIcon, ImportantIcon } from '@/components/icons/icons'
+import { InfoIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 
+import { Skeleton } from '../ui/skeleton'
 import { Countdown } from './Countdown'
 
 const regularMobileMp4 = require('@/assets/videos/rewards/tramplin_card_regular_dark_5x6(mobile).mp4')
@@ -24,6 +25,8 @@ type DashboardCardProps = Readonly<{
   countdownFormat: 'ms' | 'dhms'
   tooltip?: ReactNode
   prefixText?: string
+  youAreIn?: boolean
+  isLoading?: boolean
   onExpire?: () => void
   className?: string
 }>
@@ -55,6 +58,8 @@ export function DashboardCard({
   tooltip,
   countdownFormat,
   prefixText,
+  youAreIn,
+  isLoading,
   onExpire,
   className,
 }: DashboardCardProps) {
@@ -63,7 +68,7 @@ export function DashboardCard({
   const prizeDisplay = prize ? (prefixText ? `${prefixText} ${prize}` : prize) : '...'
 
   return (
-    <View style={styles.card} className={className}>
+    <View className={cn('h-[264px] w-full', className)}>
       <View
         style={styles.peekBg}
         className={cn('rounded-[10px] overflow-hidden border border-fill-secondary', peekBg[type])}
@@ -73,49 +78,59 @@ export function DashboardCard({
 
       <View className="absolute top-2.5 left-3 right-3 flex-row items-center gap-1.5">
         <Text className="opacity-60 text-border-quaternary">Next in:</Text>
-        <Countdown
-          date={countdownDate}
-          format={countdownFormat}
-          showPrefix={false}
-          className="text-border-quaternary"
-          digitsClassName="text-body font-bold"
-          unitsClassName="text-body font-bold"
-          onExpire={onExpire}
-        />
+        {isLoading ? (
+          <Skeleton className="w-20 h-5" />
+        ) : (
+          <Countdown
+            date={countdownDate}
+            format={countdownFormat}
+            showPrefix={false}
+            className="text-border-quaternary"
+            digitsClassName="text-body font-bold"
+            unitsClassName="text-body font-bold"
+            onExpire={onExpire}
+          />
+        )}
       </View>
 
       <View
-        style={styles.innerPanel}
-        className="bg-fill-secondary border border-border-quaternary rounded-[10px] justify-between py-5"
+        // style={styles.innerPanel}
+        className={cn(
+          'absolute top-11 inset-x-0 bottom-0',
+          'bg-fill-secondary border border-border-quaternary rounded-[10px] justify-between py-2',
+        )}
       >
         <View className="flex-col gap-2.5">
           <View className="flex-row items-end gap-2 px-3.5">
-            <Text variant="h3" className="text-content-primary">
+            <Text variant="h4" className="text-content-primary">
               {titles[type]}
             </Text>
             {tooltip ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Pressable>
-                    <ImportantIcon size={26} color={contentTertiary} />
+                    <InfoIcon size={26} color={contentTertiary} />
                   </Pressable>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">{tooltip}</TooltipContent>
+                <TooltipContent side="bottom" className="mx-10">
+                  {tooltip}
+                </TooltipContent>
               </Tooltip>
             ) : null}
-          </View>
-          <View className="px-3.5">
-            <Text className="text-content-primary opacity-40 text-body">{subtitle}</Text>
           </View>
         </View>
 
         <View className="px-3.5">
-          <Text variant="h4Digits" className="text-content-primary">
-            {prizeDisplay}
-          </Text>
+          {isLoading ? (
+            <Skeleton className="w-full h-15 rounded-lg" />
+          ) : (
+            <Text variant="h2Digits" className="text-content-primary text-[3.75rem] leading-17">
+              {prizeDisplay}
+            </Text>
+          )}
         </View>
 
-        <Pressable
+        {/* <Pressable
           className="flex-row items-center gap-0.5 px-3.5"
           onPress={() => router.push('/tabs/faq')}
           accessibilityRole="link"
@@ -123,7 +138,26 @@ export function DashboardCard({
         >
           <Text className="text-body text-content-tertiary">About</Text>
           <ForwardIcon size={24} color={contentTertiary} />
-        </Pressable>
+        </Pressable> */}
+        <View className="flex-row items-center gap-0.5 justify-between">
+          <View className="px-3.5">
+            {isLoading ? (
+              <Skeleton className="w-20 h-5" />
+            ) : (
+              <Text variant="body" className="text-content-primary opacity-40">
+                {subtitle}
+              </Text>
+            )}
+          </View>
+
+          {youAreIn && (
+            <View className="px-3.5">
+              <Text variant="body" className="text-content-primary opacity-40">
+                You’re in!
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   )
@@ -136,22 +170,30 @@ function DashboardCardVideo({ source }: Readonly<{ source: number }>) {
     p.play()
   })
 
-  return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} pointerEvents="none" />
+  return (
+    <VideoView
+      player={player}
+      style={StyleSheet.absoluteFillObject}
+      contentFit="fill"
+      nativeControls={false}
+      pointerEvents="none"
+    />
+  )
 }
 
 const styles = StyleSheet.create({
-  card: {
-    width: 220,
-    height: 263,
-  },
+  // card: {
+  //   // width: 220,
+  //   height: 263,
+  // },
   peekBg: {
     ...StyleSheet.absoluteFillObject,
   },
-  innerPanel: {
-    position: 'absolute',
-    top: 44,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
+  // innerPanel: {
+  //   position: 'absolute',
+  //   top: 44,
+  //   left: 0,
+  //   right: 0,
+  //   bottom: 0,
+  // },
 })

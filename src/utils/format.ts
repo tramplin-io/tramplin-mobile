@@ -254,3 +254,22 @@ export function formatStopwatchTime(toDate: Date): [string, string, string, stri
     seconds.toString().padStart(2, '0'),
   ]
 }
+
+/** Format large numbers with K/M/B/T suffix, spaces for thousands separator below minAmount */
+export function formatCompact(num: number, minAmount = 10_000): string {
+  const decimals = 2
+  if (num < minAmount) {
+    const truncated = Math.floor(num * Math.pow(10, decimals)) / Math.pow(10, decimals)
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: decimals,
+    })
+      .format(truncated)
+      .replace(/,/g, ' ')
+  }
+  const units = ['', 'K', 'M', 'B', 'T']
+  const order = Math.min(Math.floor(Math.log10(Math.abs(num)) / 3), units.length - 1)
+  const scaled = num / Math.pow(10, order * 3)
+  const truncated = Math.floor(scaled * Math.pow(10, decimals)) / Math.pow(10, decimals)
+  return truncated.toString() + units[order]
+}

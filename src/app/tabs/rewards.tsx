@@ -13,7 +13,7 @@ import { DashboardCards, RewardCardBig, RewardCardRegular, RewardCardStack } fro
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
 import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
-import { useIndexMyWins } from '@/lib/api/generated/restApi'
+import { useIndexMyWins, useReadMyStats } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
 // import { IndexMyWinsMock } from '@/mock/rawards'
 import type { Winner } from '@/utils/solana'
@@ -90,10 +90,13 @@ export default function RewardsTab() {
     limit: 250,
   })
 
+  const { data: myStats, isLoading: isLoadingMyStats, refetch: refetchMyStats } = useReadMyStats()
+
   useFocusEffect(
     useCallback(() => {
       refetchWins()
-    }, [refetchWins]),
+      refetchMyStats()
+    }, [refetchWins, refetchMyStats]),
   )
   // const wins = IndexMyWinsMock
 
@@ -103,8 +106,9 @@ export default function RewardsTab() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     await refetchWins()
+    await refetchMyStats()
     setRefreshing(false)
-  }, [refetchWins])
+  }, [refetchWins, refetchMyStats])
 
   const startErrorCountdown = useCallback((winKey: string) => {
     //, errorMsg: string
@@ -398,6 +402,7 @@ export default function RewardsTab() {
         }
       >
         {headerComponent()}
+
         {/* Epoch wins */}
         <FlatList
           data={epochListData}
@@ -432,7 +437,7 @@ export default function RewardsTab() {
           // contentContainerClassName="pb-40"
           showsVerticalScrollIndicator={false}
         />
-        <DashboardCards />
+        <DashboardCards myStats={myStats} isLoading={isLoadingMyStats} refetchMyStats={refetchMyStats} />
         {listFooterComponent()}
       </ScrollView>
     </ScreenWrapper>
