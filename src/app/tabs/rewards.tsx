@@ -9,7 +9,7 @@ import { useCSSVariable } from 'uniwind'
 import { ScreenWrapper } from '@/components/general'
 import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
-import { RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
+import { DashboardCards, RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
 import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
@@ -432,6 +432,7 @@ export default function RewardsTab() {
           // contentContainerClassName="pb-40"
           showsVerticalScrollIndicator={false}
         />
+        <DashboardCards />
         {listFooterComponent()}
       </ScrollView>
     </ScreenWrapper>

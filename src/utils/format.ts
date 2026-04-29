@@ -234,3 +234,23 @@ export function formatAbbreviatedNumber(value: number | null | undefined): strin
 
   return formatWithSuffix(abs, 1_000_000, 'M')
 }
+
+export function diffDate(toDate: Date, fromDate = new Date()) {
+  return Math.max(0, toDate.getTime() - fromDate.getTime())
+}
+
+export function formatStopwatchTime(toDate: Date): [string, string, string, string] {
+  const diff = diffDate(toDate)
+
+  const days = Math.floor(diff / (3600000 * 24))
+  const hours = Math.floor((diff % (3600000 * 24)) / 3600000)
+  const minutes = Math.floor((diff % 3600000) / 60000)
+  const seconds = Math.floor((diff % 60000) / 1000)
+
+  return [
+    days.toString().padStart(2, '0'),
+    hours.toString().padStart(2, '0'),
+    minutes.toString().padStart(2, '0'),
+    seconds.toString().padStart(2, '0'),
+  ]
+}
