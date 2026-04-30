@@ -1,59 +1,96 @@
-import { StyleSheet, View } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { useEffect, useMemo, useState } from 'react'
+import { Pressable, View } from 'react-native'
 
 import { Countdown } from '@/components/rewards'
 import { Text } from '@/components/ui/text'
 import type { Promo } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
+import { formatPrizeSol } from '@/utils/format'
 
-import { videoSources } from './utils'
+// import { GradientProgressBar } from '../../general/GradientProgressBar'
+import { PromoCardHeader } from './PromoCardHeader'
+import { PromoHowItWorksModal } from './PromoHowItWorksModal'
+import { LAMPORTS_PER_SOL } from './utils'
 
 export interface PromoCardUpcomingProps {
   promo: Promo
   className?: string
+  onStakePress?: () => void
   onStarted?: () => void
 }
 
-function PromoCardVideo() {
-  const player = useVideoPlayer(videoSources.upcoming, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
+const ONE_DAY_MS = 24 * 60 * 60 * 1000
+
+export function PromoCardUpcoming({ promo, className, onStakePress, onStarted }: Readonly<PromoCardUpcomingProps>) {
+  const { type, prize, title, startsAt, minStakeAmountInLamports, howItWorks } = promo
+
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false)
+
+  const startsAtDate = useMemo(() => (startsAt ? new Date(startsAt) : null), [startsAt])
+  const minStakeSol = minStakeAmountInLamports / LAMPORTS_PER_SOL
+
+  const [countdownFormat, setCountdownFormat] = useState<'dhm' | 'hms'>(() => {
+    const ms = startsAtDate ? startsAtDate.getTime() - Date.now() : 0
+    return ms >= ONE_DAY_MS ? 'dhm' : 'hms'
   })
 
-  return (
-    <VideoView
-      player={player}
-      style={StyleSheet.absoluteFillObject}
-      contentFit="fill"
-      nativeControls={false}
-      pointerEvents="none"
-    />
-  )
-}
-
-export function PromoCardUpcoming({ promo, className, onStarted }: Readonly<PromoCardUpcomingProps>) {
-  const { title, startsAt } = promo
-  const startsAtDate = startsAt ? new Date(startsAt) : null
+  // Switch from 'dhm' to 'hms' exactly when < 24h remain
+  useEffect(() => {
+    if (!startsAtDate || countdownFormat === 'hms') return
+    const msUntilSwitch = startsAtDate.getTime() - Date.now() - ONE_DAY_MS
+    if (msUntilSwitch <= 0) {
+      setCountdownFormat('hms')
+      return
+    }
+    const timer = setTimeout(() => setCountdownFormat('hms'), msUntilSwitch)
+    return () => clearTimeout(timer)
+  }, [startsAtDate, countdownFormat])
 
   return (
-    <View className={cn('rounded-lg overflow-hidden border border-border-quaternary', className)}>
-      <View style={StyleSheet.absoluteFillObject} className="bg-white">
-        <PromoCardVideo />
+    <>
+      <View className={cn(className)}>
+        <PromoCardHeader type={type} prize={prize} variant="active" onHowItWorksPress={() => setHowItWorksOpen(true)} />
+
+        <View className="bg-fill-secondary px-4 pt-5 pb-4 gap-4 rounded-lg border border-border-quaternary -mt-52">
+          <View className="flex-row items-end gap-0 my-4.5">
+            <Text variant="h4" className="text-content-primary mb-2">
+              in
+            </Text>
+            <Countdown
+              date={startsAtDate}
+              format={countdownFormat}
+              showPrefix={false}
+              digitsClassName="text-h2 font-family-digits min-w-15 text-center text-brand-primary"
+              unitsClassName="text-h2 font-family-digits text-brand-primary"
+              onExpire={onStarted}
+            />
+          </View>
+
+          {/* <GradientProgressBar progress={progress} brandColor={brandPrimary} goldColor={rewardLargePrimary} /> */}
+
+          <Text variant="smallRegular" className="text-content-tertiary">
+            {`${title} is starting soon!`}
+          </Text>
+
+          <View className="bg-fill-primary rounded-lg px-3 py-2.5 flex-row items-center gap-1 flex-wrap">
+            <Pressable onPress={onStakePress} hitSlop={8} className="active:opacity-70">
+              <Text variant="smallRegular" className="text-content-tertiary">
+                {`Min stake is ${formatPrizeSol(minStakeSol)} SOL. `}
+                <Text variant="smallRegular" className="text-brand-primary">
+                  Stake SOL to enter →
+                </Text>
+              </Text>
+            </Pressable>
+          </View>
+        </View>
       </View>
-      <View className="px-4 py-6 gap-3 items-center justify-center min-h-40">
-        <Text variant="h4" className="text-content-primary text-center ">
-          {title}
-        </Text>
-        <Countdown
-          date={startsAtDate}
-          format="dhms"
-          className="text-content-primary"
-          digitsClassName="text-h3 font-family-digits tracking-0 min-w-10 text-center"
-          unitsClassName="text-h4 font-family-digits"
-          onExpire={onStarted}
-        />
-      </View>
-    </View>
+
+      <PromoHowItWorksModal
+        open={howItWorksOpen}
+        onClose={() => setHowItWorksOpen(false)}
+        title={title}
+        content={howItWorks}
+      />
+    </>
   )
 }

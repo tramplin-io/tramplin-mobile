@@ -2,7 +2,6 @@ import { useCallback, useReducer, useState } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 
 import { useIndexMyPromos } from '@/lib/api/generated/restApi'
-import type { Promo } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 
 import { StakeModal } from '../../stake'
@@ -28,7 +27,7 @@ export function PromoCard({ className }: Readonly<PromoCardProps>) {
   // const promo = {
   //   showStartsAt: '2026-04-25T20:41:00.000Z',
   //   showEndsAt: '2026-05-10T20:41:00.000Z',
-  //   startsAt: '2026-04-29T20:41:00.000Z',
+  //   startsAt: '2026-04-31T20:41:00.000Z',
   //   endsAt: '2026-05-06T20:41:00.000Z',
   //   title: 'Tramplin x Seeker Promo',
   //   type: 'Promo',
@@ -40,7 +39,7 @@ export function PromoCard({ className }: Readonly<PromoCardProps>) {
   //   targetType: 'stakers',
   //   minStakeAmountInLamports: 10000000000,
   //   winnerWalletAddresses: [],
-  //   currentAmount: 50,
+  //   currentAmount: 999,
   //   isTargetReached: false,
   //   participatedStakedAmountSol: 0,
   //   id: '69f11baafbdb8a571a48657a',
@@ -70,7 +69,12 @@ export function PromoCard({ className }: Readonly<PromoCardProps>) {
   if (!promo) return null
 
   if (promo.startsAt && new Date() < new Date(promo.startsAt)) {
-    return <PromoCardUpcoming promo={promo} className={className} onStarted={forceUpdate} />
+    return (
+      <>
+        <PromoCardUpcoming promo={promo} className={className} onStakePress={handleOpenStake} onStarted={forceUpdate} />
+        <StakeModal open={stakeModalOpen} onOpenChange={setStakeModalOpen} />
+      </>
+    )
   }
 
   if (promo.isTargetReached) {
