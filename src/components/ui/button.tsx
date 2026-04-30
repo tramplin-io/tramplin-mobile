@@ -72,7 +72,7 @@ const buttonVariants = cva(
           Platform.select({ web: 'hover:bg-content-tertiary/90' }),
         ),
         outline: cn(
-          'border-border bg-background active:bg-accent dark:bg-input/30 dark:border-input dark:active:bg-input/50 border shadow-sm shadow-black/5',
+          'border-border bg-background active:bg-accent dark:bg-input/30 dark:border-input dark:active:bg-input/50 border shadow-sm shadow-black/5 active:opacity-70',
           Platform.select({
             web: 'hover:bg-accent dark:hover:bg-input/50',
           }),
