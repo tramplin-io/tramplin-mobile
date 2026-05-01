@@ -9,11 +9,12 @@ import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
 import { formatAbbreviatedNumber, formatTruncated } from '@/utils/format'
 
+import { EmptyStateCard } from '../general'
 import { LogoSmall } from '../icons'
 
+// import { StakeModal } from '../stake'
+
 export interface YourStakeProps {
-  /** Shown when no stats data (loading failed or empty) */
-  message?: string
   onUnstakePress?: () => void
   onEarnedInfoPress?: () => void
   className?: string
@@ -305,40 +306,38 @@ function EarnedCard({
   )
 }
 
-type PlaceholderCardProps = {
-  staked: boolean
-  className?: string
-}
+// type PlaceholderCardProps = {
+//   staked: boolean
+//   className?: string
+// }
 
-function PlaceholderCard({ staked, className }: Readonly<PlaceholderCardProps>) {
-  const messageStaked = 'Your stake will appear here'
-  const messageEarned = 'Your points will appear here'
+// function PlaceholderCard({ staked, className }: Readonly<PlaceholderCardProps>) {
+//   const messageStaked = 'Your stake will appear here'
+//   const messageEarned = 'Your points will appear here'
 
-  const message = staked ? messageStaked : messageEarned
+//   const message = staked ? messageStaked : messageEarned
 
-  return (
-    <View
-      className={cn(
-        'h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
-        className,
-      )}
-    >
-      <Text variant="body" className="text-content-tertiary text-center">
-        {message}
-      </Text>
-    </View>
-  )
-}
+//   return (
+//     <View
+//       className={cn(
+//         'h-[170px] flex-1 rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
+//         className,
+//       )}
+//     >
+//       <Text variant="body" className="text-content-tertiary text-center">
+//         {message}
+//       </Text>
+//     </View>
+//   )
+// }
 
 /**
  * Fetches readMyStats: shows placeholder when no data, otherwise Staked + Earned cards and participating status.
  */
-export function YourStake({
-  message = 'Your stake will appear here',
-  onUnstakePress,
-  onEarnedInfoPress,
-  className,
-}: Readonly<YourStakeProps>) {
+export function YourStake({ onUnstakePress, onEarnedInfoPress, className }: Readonly<YourStakeProps>) {
+  // const [stakeModalOpen, setStakeModalOpen] = useState(false)
+  // const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
+
   const { data: apiData, isLoading, isError } = useReadMyStats()
   const { data: activeStake } = useUserActiveStake()
 
@@ -361,24 +360,50 @@ export function YourStake({
 
   if (!stats || isError) {
     return (
-      <View
-        className={cn(
-          'min-h-[170px] rounded-lg border border-border-quaternary bg-fill-secondary items-center justify-center',
-          className,
-        )}
-      >
-        <Text variant="body" className="text-content-tertiary text-center">
-          {message}
-        </Text>
-      </View>
+      <>
+        <EmptyStateCard>
+          <View className="flex-col items-center justify-center gap-1">
+            <Text variant="body" className="text-content-tertiary text-center">
+              Stake to at least 1 SOL enter main pools
+            </Text>
+            {/* <Pressable onPress={handleOpenStake} className="active:opacity-70">
+              <Text variant="body" className="text-content-primary">
+                Stake SOL to enter →
+              </Text>
+            </Pressable> */}
+          </View>
+        </EmptyStateCard>
+        {/* <StakeModal open={stakeModalOpen} onOpenChange={setStakeModalOpen} /> */}
+      </>
     )
   }
 
-  const { data, showStaked, showEarned } = stats
+  const {
+    data,
+    // showStaked, showEarned
+  } = stats
   return (
     <View className={cn('gap-2', className)}>
       <View className="flex-row gap-3">
-        {showStaked ? (
+        <StakedCard
+          value={data.totalStakeAmount}
+          multiplier={data.multiplier}
+          effectiveStake={data.effectiveStake}
+          hasActiveStake={hasActiveStake}
+          onUnstakePress={onUnstakePress}
+        />
+        <EarnedCard
+          totalPoints={data.totalPoints}
+          totalWinSol={data.totalWinSol}
+          apr={data.apr}
+          isAttendingBigDraw={data.isAttendingBigDraw}
+          isAttendingRegularDraw={data.isAttendingRegularDraw}
+          isAttendingEpochDraw={data.isAttendingEpochDraw}
+          hasActiveStake={hasActiveStake}
+          onInfoPress={onEarnedInfoPress}
+        />
+
+        {/* {showStaked ? (
           <StakedCard
             value={data.totalStakeAmount}
             multiplier={data.multiplier}
@@ -402,7 +427,7 @@ export function YourStake({
           />
         ) : (
           <PlaceholderCard staked={false} className={className} />
-        )}
+        )} */}
       </View>
       {!hasActiveStake && (
         <Text variant="small" className="text-content-tertiary uppercase mt-1">
