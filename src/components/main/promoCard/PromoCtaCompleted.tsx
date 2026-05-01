@@ -41,7 +41,7 @@ export function PromoCtaCompleted({ isFullyParticipating, winners, endsAt }: Rea
         <Tooltip>
           <TooltipTrigger asChild>
             <Pressable hitSlop={8} className="active:opacity-70">
-              <Text variant="smallRegular" className="text-brand-primary font-bold">
+              <Text variant="smallRegular" className="text-reward-large-secondary font-bold">
                 {`${winners.length} winners →`}
               </Text>
             </Pressable>

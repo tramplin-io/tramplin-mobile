@@ -22,6 +22,7 @@ export function PromoCardCompleted({ promo, className }: Readonly<PromoCardCompl
   const {
     type,
     title,
+    cardHeaderTitle,
     prize,
     targetAmount,
     targetType,
@@ -55,8 +56,8 @@ export function PromoCardCompleted({ promo, className }: Readonly<PromoCardCompl
       <View className={cn(className)}>
         <PromoCardHeader
           type={type}
-          prize={prize}
           variant="completed"
+          cardHeaderTitle={cardHeaderTitle}
           onHowItWorksPress={() => setHowItWorksOpen(true)}
         />
 
@@ -72,7 +73,7 @@ export function PromoCardCompleted({ promo, className }: Readonly<PromoCardCompl
 
           <GradientProgressBar progress={100} brandColor={brandPrimary} goldColor={rewardLargePrimary} />
 
-          <Text variant="smallRegular" className="text-content-primary">
+          <Text variant="smallRegular" className="text-content-tertiary">
             {statusText}
           </Text>
 

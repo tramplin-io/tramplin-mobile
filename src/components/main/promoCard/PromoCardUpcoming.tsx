@@ -22,7 +22,7 @@ export interface PromoCardUpcomingProps {
 const ONE_DAY_MS = 24 * 60 * 60 * 1000
 
 export function PromoCardUpcoming({ promo, className, onStakePress, onStarted }: Readonly<PromoCardUpcomingProps>) {
-  const { type, prize, title, startsAt, minStakeAmountInLamports, howItWorks } = promo
+  const { type, title, cardHeaderTitle, startsAt, minStakeAmountInLamports, howItWorks } = promo
 
   const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
@@ -49,7 +49,13 @@ export function PromoCardUpcoming({ promo, className, onStakePress, onStarted }:
   return (
     <>
       <View className={cn(className)}>
-        <PromoCardHeader type={type} prize={prize} variant="active" onHowItWorksPress={() => setHowItWorksOpen(true)} />
+        <PromoCardHeader
+          type={type}
+          cardHeaderTitle={cardHeaderTitle}
+          // variant="active"
+          variant="completed"
+          onHowItWorksPress={() => setHowItWorksOpen(true)}
+        />
 
         <View className="bg-fill-secondary px-4 pt-5 pb-4 gap-4 rounded-lg border border-border-quaternary -mt-52">
           <View className="flex-row items-end gap-0 my-4.5">
@@ -60,8 +66,8 @@ export function PromoCardUpcoming({ promo, className, onStakePress, onStarted }:
               date={startsAtDate}
               format={countdownFormat}
               showPrefix={false}
-              digitsClassName="text-h2 font-family-digits min-w-15 text-center text-brand-primary"
-              unitsClassName="text-h2 font-family-digits text-brand-primary"
+              digitsClassName="text-h2 font-family-digits min-w-15 text-center text-reward-large-secondary"
+              unitsClassName="text-h2 font-family-digits text-reward-large-secondary"
               onExpire={onStarted}
             />
           </View>
@@ -76,7 +82,7 @@ export function PromoCardUpcoming({ promo, className, onStakePress, onStarted }:
             <Pressable onPress={onStakePress} hitSlop={8} className="active:opacity-70">
               <Text variant="smallRegular" className="text-content-tertiary">
                 {`Min stake is ${formatPrizeSol(minStakeSol)} SOL. `}
-                <Text variant="smallRegular" className="text-brand-primary">
+                <Text variant="smallRegular" className="text-reward-large-secondary">
                   Stake SOL to enter →
                 </Text>
               </Text>

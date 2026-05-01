@@ -26,7 +26,6 @@ export function PromoHowItWorksModal({ open, onClose, title, content }: Readonly
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const insets = useSafeAreaInsets()
   const fillTertiary = useCSSVariable('--color-fill-tertiary') as string
-  // const brandPrimary = useCSSVariable('--color-brand-primary') as string
   const handleIndicatorColor = useCSSVariable('--color-content-tertiary') as string
 
   const bottomInset = TAB_BAR_HEIGHT + insets.bottom
@@ -63,7 +62,10 @@ export function PromoHowItWorksModal({ open, onClose, title, content }: Readonly
       ref={bottomSheetRef}
       onDismiss={handleDismiss}
       bottomInset={bottomInset}
-      snapPoints={['65%']}
+      snapPoints={['70%']}
+      // contentHeight={500}
+      enableDynamicSizing={false}
+      // maxDynamicContentSize={500}
       handleIndicatorStyle={{ backgroundColor: handleIndicatorColor, marginTop: insets.top + 8 }}
       enableDismissOnClose
       backdropComponent={renderBackdrop}
@@ -76,28 +78,12 @@ export function PromoHowItWorksModal({ open, onClose, title, content }: Readonly
         marginTop: insets.top + 8,
       }}
     >
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingTop: 8,
-          gap: 12,
-          paddingBottom: 8,
-          height: '100%',
-        }}
-      >
+      <View className="flex-1 gap-3 pt-2 px-4 pb-2">
         <Text variant="h4" className="text-content-primary">
           {title}
         </Text>
-        <BottomSheetScrollView
-          // contentContainerStyle={{
-          //   paddingHorizontal: 20,
-          //   paddingTop: 8,
-          //   gap: 16,
-          //   paddingBottom: insets.bottom,
-          // }}
-          showsVerticalScrollIndicator={false}
-        >
-          <RichInputMarkdown className="flex-1" markdown={content} />
+        <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+          <RichInputMarkdown markdown={content} />
         </BottomSheetScrollView>
 
         <Button

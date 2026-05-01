@@ -41,7 +41,7 @@ export function PromoCtaActive({
         <Pressable onPress={onStakePress} hitSlop={8} className="active:opacity-70">
           <Text variant="smallRegular" className="text-content-tertiary">
             {`Min stake is ${formatPrizeSol(minStakeSol)} SOL. `}
-            <Text variant="smallRegular" className="text-brand-primary">
+            <Text variant="smallRegular" className="text-reward-large-secondary">
               {`Add ${formatPrizeSol(neededSol)} SOL to participate →`}
             </Text>
           </Text>
@@ -55,7 +55,7 @@ export function PromoCtaActive({
       <Pressable onPress={onStakePress} hitSlop={8} className="active:opacity-70">
         <Text variant="smallRegular" className="text-content-tertiary">
           {`Min stake is ${formatPrizeSol(minStakeSol)} SOL. `}
-          <Text variant="smallRegular" className="text-brand-primary">
+          <Text variant="smallRegular" className="text-reward-large-secondary">
             Stake SOL to enter →
           </Text>
         </Text>

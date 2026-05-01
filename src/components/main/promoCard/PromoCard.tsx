@@ -2,6 +2,7 @@ import { useCallback, useReducer, useState } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 
 import { useIndexMyPromos } from '@/lib/api/generated/restApi'
+// import { Promo } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 
 import { StakeModal } from '../../stake'
@@ -27,10 +28,10 @@ export function PromoCard({ className }: Readonly<PromoCardProps>) {
   // const promo = {
   //   showStartsAt: '2026-04-25T20:41:00.000Z',
   //   showEndsAt: '2026-05-10T20:41:00.000Z',
-  //   startsAt: '2026-04-31T20:41:00.000Z',
+  //   startsAt: '2026-05-01T20:41:00.000Z',
   //   endsAt: '2026-05-06T20:41:00.000Z',
   //   title: 'Tramplin x Seeker Promo',
-  //   type: 'Promo',
+  //   type: 'Stake to get $50K',
   //   howItWorks:
   //     'Join our draw by simply holding **10 SOL** in your wallet.\n\n- Total prize pool: **$50,000**\n- How it works: We’re aiming for **10,000** participants, each with at least **10 SOL**\n- Who can join: Any wallet holding **10 SOL** or more is automatically entered\n- Timeline: The campaign runs for 3 months initially — if the target isn’t reached, we’ll reassess and continue until we hit 10,000 users\n\nOnce the pool reaches **$50,000,** we’ll run the draw and pick the winners.\n---\nJoin our draw by simply holding **10 SOL** in your wallet.\n\n- Total prize pool: **$50,000**\n- How it works: We’re aiming for **10,000** participants, each with at least **10 SOL**\n- Who can join: Any wallet holding **10 SOL** or more is automatically entered\n- Timeline: The campaign runs for 3 months initially — if the target isn’t reached, we’ll reassess and continue until we hit 10,000 users\n\nOnce the pool reaches **$50,000,** we’ll run the draw and pick the winners.\n---\nJoin our draw by simply holding **10 SOL** in your wallet.\n\n- Total prize pool: **$50,000**\n- How it works: We’re aiming for **10,000** participants, each with at least **10 SOL**\n- Who can join: Any wallet holding **10 SOL** or more is automatically entered\n- Timeline: The campaign runs for 3 months initially — if the target isn’t reached, we’ll reassess and continue until we hit 10,000 users\n\nOnce the pool reaches **$50,000,** we’ll run the draw and pick the winners.',
   //   prize: '$50K',
@@ -38,10 +39,13 @@ export function PromoCard({ className }: Readonly<PromoCardProps>) {
   //   targetAmount: 10000,
   //   targetType: 'stakers',
   //   minStakeAmountInLamports: 10000000000,
-  //   winnerWalletAddresses: [],
-  //   currentAmount: 999,
-  //   isTargetReached: false,
-  //   participatedStakedAmountSol: 0,
+  //   winnerWalletAddresses: [
+  //     'AxHSotRMCu9pJZgBydM9wLXPmj848CPQairW2kD5V5q5',
+  //     'CgwWw8QABBDyvBtQpodybpHea3fhWynzm9mymhVeCG4j',
+  //   ],
+  //   currentAmount: 11999,
+  //   isTargetReached: true,
+  //   participatedStakedAmountSol: 10,
   //   id: '69f11baafbdb8a571a48657a',
   //   createdAt: '2026-04-28T20:42:18.456Z',
   //   updatedAt: '2026-04-30T09:27:52.345Z',

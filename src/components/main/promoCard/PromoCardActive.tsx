@@ -22,6 +22,7 @@ export function PromoCardActive({ promo, className, onStakePress }: Readonly<Pro
   const {
     type,
     title,
+    cardHeaderTitle,
     prize,
     winnersAmount,
     targetAmount,
@@ -49,11 +50,21 @@ export function PromoCardActive({ promo, className, onStakePress }: Readonly<Pro
   return (
     <>
       <View className={cn(className)}>
-        <PromoCardHeader type={type} prize={prize} variant="active" onHowItWorksPress={() => setHowItWorksOpen(true)} />
+        <PromoCardHeader
+          type={type}
+          cardHeaderTitle={cardHeaderTitle}
+          // variant="active"
+          variant="completed"
+          onHowItWorksPress={() => setHowItWorksOpen(true)}
+        />
 
         <View className="bg-fill-secondary px-4 pt-5 pb-4 gap-4 rounded-lg border border-border-quaternary -mt-52">
           <View className="flex-row items-baseline gap-1 flex-wrap">
-            <Text variant="h2Digits" className="text-[3.75rem] leading-17 text-brand-primary tracking-[-3px]">
+            <Text
+              variant="h2Digits"
+              className="text-[3.75rem] leading-17 text-reward-large-secondary tracking-[-3px]"
+              //text-brand-primary
+            >
               {formatWithCommas(currentAmount)}
             </Text>
             <Text variant="h4" className="text-content-primary ">
