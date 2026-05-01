@@ -257,6 +257,7 @@ export interface CreatePromoInput {
   startsAt: string
   endsAt: string
   title: string
+  cardHeaderTitle?: string
   type: string
   howItWorks: string
   prize: string
@@ -273,6 +274,7 @@ export interface Promo {
   startsAt?: string
   endsAt?: string
   title: string
+  cardHeaderTitle?: string
   type: string
   howItWorks: string
   prize: string
@@ -302,6 +304,7 @@ export interface UpdatePromoInput {
   showEndsAt?: string
   startsAt?: string
   endsAt?: string
+  cardHeaderTitle?: string
   type?: string
   howItWorks?: string
   prize?: string
