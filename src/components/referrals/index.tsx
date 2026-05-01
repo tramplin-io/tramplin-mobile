@@ -230,7 +230,7 @@ export function ReferralStatsInline({ className, text }: Readonly<{ className?: 
   return (
     <View className={className}>
       <Pressable onPress={handlePress} disabled={signingIn} hitSlop={8} className="active:opacity-70">
-        <Text variant="smallRegular" className="text-brand-primary">
+        <Text variant="smallRegular" className="text-reward-large-secondary">
           {signingIn ? 'Signing in…' : isAuthenticated ? text : 'Create referral link to fill it faster'}
         </Text>
       </Pressable>
