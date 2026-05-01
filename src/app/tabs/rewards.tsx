@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
+import { FlatList, Pressable, RefreshControl, ScrollView, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
 // import * as Clipboard from 'expo-clipboard'
 import { useFocusEffect } from 'expo-router'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
-import { ScreenWrapper } from '@/components/general'
+import { EmptyStateCard, ScreenWrapper } from '@/components/general'
 import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
 import { DashboardCards, RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
+import { Text } from '@/components/ui/text'
 import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
 import { useIndexMyWins, useReadMyStats } from '@/lib/api/generated/restApi'
@@ -224,10 +225,18 @@ export default function RewardsTab() {
   const headerComponent = useCallback(
     () => (
       <View className="gap-3 px-4 pt-8 pb-0">
-        <DashboardHeader title="Congratulations!" className="mb-6" />
+        <DashboardHeader title="Rewards" className="mb-6" />
         {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 
-        {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />}
+        {/* {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />} */}
+
+        {!isLoading && wins.length === 0 && (
+          <EmptyStateCard className="h-[100px]">
+            <Text variant="body" className="text-content-tertiary text-center">
+              No rewards to claim yet
+            </Text>
+          </EmptyStateCard>
+        )}
 
         {!isLoading && bigWins.length > 0 && (
           <View className="gap-4 mb-2">
