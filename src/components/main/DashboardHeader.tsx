@@ -22,7 +22,7 @@ export interface DashboardHeaderProps {
  * Dashboard top header: title on the left, Subscribe link with icon on the right.
  */
 export function DashboardHeader({
-  title = 'Welcome to Tramplin',
+  title = 'Welcome to Tramplin!',
   subscribeLabel = 'Subscribe',
   onSubscribePress,
   className,
