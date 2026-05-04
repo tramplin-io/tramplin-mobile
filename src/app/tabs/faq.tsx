@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Linking, Pressable, RefreshControl, ScrollView, View } from 'react-native'
-import { router } from 'expo-router'
+import { Linking, Pressable, ScrollView, View } from 'react-native'
 
 import { ScreenWrapper } from '@/components/general'
 import { MinusIcon, PlusIcon } from '@/components/icons'
@@ -74,7 +73,65 @@ const sections: Section[] = [
     ],
   },
   {
-    title: 'Rewards & Mechanics',
+    title: 'Reward Types',
+    items: [
+      {
+        q: 'What is the Regular Draw?',
+        a: (
+          <Text variant="body">
+            The Regular Draw happens approximately every 20 minutes - that{"'"}s around 144 draws per epoch. Each draw
+            has one winner, and every staker has an equal chance of winning regardless of how much SOL they stake. 30%
+            of the reward pool is allocated to Regular Draws each epoch, split evenly across all draws.
+          </Text>
+        ),
+      },
+      {
+        q: 'What is the Big Draw?',
+        a: (
+          <Text variant="body">
+            The Big Draw happens once every 15 epochs. Each epoch, 20% of the reward pool is set aside and accumulated
+            into a single growing pot. When the draw hits, one winner takes the entire accumulated prize. Your chance of
+            winning is weighted by the square root of your stake, so larger stakers have an edge, but it{"'"}s
+            compressed. A 5,000 SOL staker has roughly 70x the chance of a 1 SOL staker, not 5,000x.
+          </Text>
+        ),
+      },
+      {
+        q: 'What is the Epoch Draw?',
+        a: (
+          <View className="gap-4">
+            <Text variant="body">
+              The Epoch Draw happens every epoch and selects 7 unique winners. It distributes 50% of the reward pool,
+              with prizes split by rank:
+            </Text>
+            <View className="gap-2">
+              <Text variant="body" className="ml-4">
+                • 1st place gets 61.5%
+              </Text>
+              <Text variant="body" className="ml-4">
+                • 2nd gets 18.5%
+              </Text>
+              <Text variant="body" className="ml-4">
+                • 3rd and 4th get 6.2% each
+              </Text>
+              <Text variant="body" className="ml-4">
+                • 5th and 6th get 3.1% each
+              </Text>
+              <Text variant="body" className="ml-4">
+                • 7th gets 1.5%
+              </Text>
+            </View>
+            <Text variant="body">
+              Your chance of winning is linear - 1 staked SOL = 1 chance - but since 7 winners are picked each time,
+              more people get a shot every epoch.
+            </Text>
+          </View>
+        ),
+      },
+    ],
+  },
+  {
+    title: 'Mechanics',
     items: [
       {
         q: 'How is the reward pool funded?',
@@ -237,6 +294,28 @@ const sections: Section[] = [
           </Text>
         ),
       },
+      {
+        q: 'Can participants be excluded from rewards?',
+        a: (
+          <Text variant="body">
+            In certain cases, yes. To help protect the fairness and integrity, Tramplin may review participation and,
+            where Tramplin reasonably believes the rules may have been misused or circumvented, exclude, disregard,
+            adjust, or aggregate certain wallets, accounts, balances, stake, referrals, transactions, or other activity.
+            For more information, please see our Terms of Use.
+          </Text>
+        ),
+      },
+      {
+        q: 'What kind of activity is not allowed?',
+        a: (
+          <Text variant="body">
+            This may include, for example, splitting stake across multiple wallets under common control, using multiple
+            or non-genuine accounts, self-referrals, coordinated referral activity, temporary deposits or staking
+            primarily intended to affect a snapshot, use of bots or scripts, or taking advantage of bugs or technical
+            issues to gain an unfair advantage. For more information, please see Tramplin Terms of Use.
+          </Text>
+        ),
+      },
     ],
   },
   {
@@ -254,6 +333,10 @@ const sections: Section[] = [
             <Text variant="body">
               You can also buy SOL directly inside most Solana wallets using built-in on-ramps like MoonPay or Ramp.
               Once you have at least 1 SOL is in your wallet, you{"'"}re ready to stake with Tramplin.
+            </Text>
+            <Text variant="body">
+              Or you can get SOL on our <Link href={FAQ_CONFIG.DISCORD_LINK}>Discord server</Link> by contributing and
+              support.
             </Text>
           </View>
         ),
