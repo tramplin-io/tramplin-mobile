@@ -181,18 +181,29 @@ export const useAuthStore = create<AuthState>()(
         const deleteDeviceToken = useProfileStore.getState().deleteDeviceToken
 
         const deviceTokens = await getExpoPushToken()
+        const profileDeviceTokens = useProfileStore.getState().userProfile?.deviceTokens ?? []
         try {
+          try {
+            if (
+              deviceTokens?.expoDeviceToken &&
+              profileDeviceTokens.some((dt) => dt.token === deviceTokens.expoDeviceToken)
+            ) {
+              await deleteDeviceToken(deviceTokens.expoDeviceToken)
+            }
+            if (
+              deviceTokens?.fcmDeviceToken &&
+              profileDeviceTokens.some((dt) => dt.token === deviceTokens.fcmDeviceToken)
+            ) {
+              await deleteDeviceToken(deviceTokens.fcmDeviceToken)
+            }
+          } catch (deleteError) {
+            console.error('Device token removal failed, continuing with logout', deleteError)
+          }
+
           try {
             await deleteMySession()
           } catch (apiError) {
             console.error('deleteMySession failed, continuing with logout', apiError)
-          }
-
-          try {
-            if (deviceTokens?.expoDeviceToken) await deleteDeviceToken(deviceTokens.expoDeviceToken)
-            if (deviceTokens?.fcmDeviceToken) await deleteDeviceToken(deviceTokens.fcmDeviceToken)
-          } catch (deleteError) {
-            console.error('Device token removal failed, continuing with logout', deleteError)
           }
 
           useUserStore.getState().reset()
