@@ -115,7 +115,11 @@ function RewardCardBackgroundVideo({ sourceVideo }: Readonly<{ sourceVideo: numb
     p.play()
   })
 
-  return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+  return (
+    <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+    </View>
+  )
 }
 
 function RewardCardStaticBackground({ sourceImage }: Readonly<{ sourceImage: number }>) {
