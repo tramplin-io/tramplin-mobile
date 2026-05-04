@@ -32,7 +32,7 @@ export const LogDisplay = () => {
       // className="mb-10"
       >
         {logs.map((log, idx) => (
-          <Text key={log.timestamp} className="border-b border-border-tertiary p-2">
+          <Text key={`${log.timestamp}-${idx}`} className="border-b border-border-tertiary p-2">
             {/* [{log.timestamp}]  */}
             {log.message}
           </Text>
