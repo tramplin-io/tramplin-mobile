@@ -10,8 +10,8 @@ const enableCharlesProxy =
   process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
 // const disableAndroidBackup = process.env.EAS_BUILD_PROFILE !== 'production'
 
-const version: string = '1.0.2'
-const buildNumber: number = 9
+const version: string = '1.0.3'
+const buildNumber: number = 11
 
 /* PROD VERSION LOG
 1.0.0 (3) - Initial release - 2026_03_13
@@ -21,6 +21,8 @@ const buildNumber: number = 9
 1.0.1 (7) - Update - 2026_04_17 - 
 1.0.1 (8) - Update - 2026_04_20 - Activate SystemPushPermission
 1.0.2 (9) - Update - 2026_05_01 - Added promo cards
+1.0.3 (10) - Update - 2026_05_04 - Update FAQ
+1.0.3 (11) - Update - 2026_05_04 - Update rewards card video
 */
 
 /**
