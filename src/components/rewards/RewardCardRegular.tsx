@@ -4,6 +4,7 @@ import { useVideoPlayer, VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { SolanaCircleIcon } from '@/components/icons/icons'
+import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
 
@@ -12,6 +13,9 @@ import { Text } from '../ui/text'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
 const rewardSilverSmallImage = require('@/assets/images/rewards/tramplin_reward_silver_7x1.png')
+
+const rewardGreenSmallVideo = require('@/assets/videos/rewards/tramplin_reward_green_7x1.mp4')
+const rewardGreenSmallImage = require('@/assets/images/rewards/tramplin_reward_green_7x1.png')
 
 type RewardCardRegularProps = Readonly<{
   reward?: number
@@ -23,6 +27,7 @@ type RewardCardRegularProps = Readonly<{
   hasError?: boolean
   buttonText?: string | null
   shouldPlayVideo?: boolean
+  drawType?: DrawType
 }>
 
 export function RewardCardRegular({
@@ -35,6 +40,7 @@ export function RewardCardRegular({
   hasError = false,
   buttonText,
   shouldPlayVideo = false,
+  drawType = 'regular',
 }: RewardCardRegularProps) {
   const amountSol = reward ? formatPrizeSol(reward) : '0'
   const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
@@ -42,6 +48,14 @@ export function RewardCardRegular({
   const solColor = useCSSVariable('--color-reward-small-primary') as string
   const criticalSecondary = useCSSVariable('--color-critical-secondary') as string
   const contentPrimary = useCSSVariable('--color-content-primary') as string
+
+  let sourceVideo: number = rewardSilverSmallVideo
+  let sourceImage: number = rewardSilverSmallImage
+
+  if (drawType === 'epoch') {
+    sourceVideo = rewardGreenSmallVideo
+    sourceImage = rewardGreenSmallImage
+  }
 
   return (
     <View
@@ -53,7 +67,11 @@ export function RewardCardRegular({
         disabled && 'opacity-95',
       )}
     >
-      {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground />}
+      {shouldPlayVideo ? (
+        <RewardCardBackgroundVideo sourceVideo={sourceVideo} />
+      ) : (
+        <RewardCardStaticBackground sourceImage={sourceImage} />
+      )}
 
       {hasError && (
         <LinearGradient
@@ -65,11 +83,11 @@ export function RewardCardRegular({
       {variant === 'empty' && (
         <View className="flex-col justify-center items-center gap-2 mx-auto py-1">
           <Text variant="body" className="text-reward-small-primary ">
-            No unclaimed rewards.
+            No rewards to claim yet
           </Text>
-          <Text variant="body" className="text-reward-small-primary ">
+          {/* <Text variant="body" className="text-reward-small-primary ">
             Your rewards will appear here.
-          </Text>
+          </Text> */}
         </View>
       )}
       {variant === 'loading' ? (
@@ -144,8 +162,8 @@ export function RewardCardRegular({
   )
 }
 
-function RewardCardBackgroundVideo() {
-  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
+function RewardCardBackgroundVideo({ sourceVideo }: Readonly<{ sourceVideo: number }>) {
+  const player = useVideoPlayer(sourceVideo, (p) => {
     p.loop = true
     p.muted = true
     p.play()
@@ -154,10 +172,10 @@ function RewardCardBackgroundVideo() {
   return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
 }
 
-function RewardCardStaticBackground() {
+function RewardCardStaticBackground({ sourceImage }: Readonly<{ sourceImage: number }>) {
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
-      <ImageBackground source={rewardSilverSmallImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+      <ImageBackground source={sourceImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
     </View>
   )
 }

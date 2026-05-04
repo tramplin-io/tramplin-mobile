@@ -14,7 +14,7 @@ import { ErrorBoundary } from '@/components/error-boundary'
 
 import { StakeForm } from './StakeForm'
 
-const TAB_BAR_HEIGHT = 70
+const TAB_BAR_HEIGHT = 64
 
 type Props = Readonly<{
   open: boolean

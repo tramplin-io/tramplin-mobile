@@ -30,18 +30,25 @@ import type {
   CreateMyDeviceTokenParams,
   CreateNotificationInput,
   CreateNotificationOutput,
+  CreatePromoInput,
+  CreatePromoParams,
   DeleteMyDeviceTokenParams,
+  DeletePromoParams,
+  DrawForecast,
   DrawSync,
   EmailCredentials,
   Epoch,
+  IndexDrawForecastsParams,
   IndexDrawSyncsParams,
   IndexEpochsParams,
   IndexJobsParams,
   IndexMyNotificationsParams,
+  IndexMyPromosParams,
   IndexMyValidatorStakeAccountsParams,
   IndexMyWinsParams,
   IndexNotificationsParams,
   IndexProfilesParams,
+  IndexPromosParams,
   IndexProtocolStatisticsParams,
   IndexPublicWinsParams,
   IndexServiceConfigsParams,
@@ -57,7 +64,9 @@ import type {
   MyStats,
   Notification,
   Profile,
+  Promo,
   ProtocolStatistic,
+  ReadDrawForecastParams,
   ReadDrawSyncParams,
   ReadEpochParams,
   ReadJobParams,
@@ -66,6 +75,7 @@ import type {
   ReadMyWinParams,
   ReadNotificationParams,
   ReadProfileParams,
+  ReadPromoParams,
   ReadProtocolStatisticParams,
   ReadPublicStatsParams,
   ReadPublicWinParams,
@@ -86,6 +96,8 @@ import type {
   UpdateJobParams,
   UpdateMyProfileInput,
   UpdateMyProfileParams,
+  UpdatePromoInput,
+  UpdatePromoParams,
   UpdateServiceConfigInput,
   UpdateServiceConfigParams,
   User,
@@ -94,6 +106,171 @@ import type {
   WalletCredentials,
   Win,
 } from './restApi.schemas'
+
+export const indexDrawForecasts = (params?: IndexDrawForecastsParams, signal?: AbortSignal) => {
+  return customInstance<DrawForecast[]>({ url: `/indexDrawForecasts`, method: 'GET', params, signal })
+}
+
+export const getIndexDrawForecastsQueryKey = (params?: IndexDrawForecastsParams) => {
+  return [`/indexDrawForecasts`, ...(params ? [params] : [])] as const
+}
+
+export const getIndexDrawForecastsQueryOptions = <
+  TData = Awaited<ReturnType<typeof indexDrawForecasts>>,
+  TError = unknown,
+>(
+  params?: IndexDrawForecastsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexDrawForecasts>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexDrawForecastsQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexDrawForecasts>>> = ({ signal }) =>
+    indexDrawForecasts(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexDrawForecasts>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexDrawForecastsQueryResult = NonNullable<Awaited<ReturnType<typeof indexDrawForecasts>>>
+export type IndexDrawForecastsQueryError = unknown
+
+export function useIndexDrawForecasts<TData = Awaited<ReturnType<typeof indexDrawForecasts>>, TError = unknown>(
+  params: undefined | IndexDrawForecastsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexDrawForecasts>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexDrawForecasts>>,
+          TError,
+          Awaited<ReturnType<typeof indexDrawForecasts>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexDrawForecasts<TData = Awaited<ReturnType<typeof indexDrawForecasts>>, TError = unknown>(
+  params?: IndexDrawForecastsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexDrawForecasts>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexDrawForecasts>>,
+          TError,
+          Awaited<ReturnType<typeof indexDrawForecasts>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexDrawForecasts<TData = Awaited<ReturnType<typeof indexDrawForecasts>>, TError = unknown>(
+  params?: IndexDrawForecastsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexDrawForecasts>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexDrawForecasts<TData = Awaited<ReturnType<typeof indexDrawForecasts>>, TError = unknown>(
+  params?: IndexDrawForecastsParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexDrawForecasts>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexDrawForecastsQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const readDrawForecast = (params: ReadDrawForecastParams, signal?: AbortSignal) => {
+  return customInstance<DrawForecast>({ url: `/readDrawForecast`, method: 'GET', params, signal })
+}
+
+export const getReadDrawForecastQueryKey = (params?: ReadDrawForecastParams) => {
+  return [`/readDrawForecast`, ...(params ? [params] : [])] as const
+}
+
+export const getReadDrawForecastQueryOptions = <TData = Awaited<ReturnType<typeof readDrawForecast>>, TError = unknown>(
+  params: ReadDrawForecastParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readDrawForecast>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getReadDrawForecastQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof readDrawForecast>>> = ({ signal }) =>
+    readDrawForecast(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof readDrawForecast>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ReadDrawForecastQueryResult = NonNullable<Awaited<ReturnType<typeof readDrawForecast>>>
+export type ReadDrawForecastQueryError = unknown
+
+export function useReadDrawForecast<TData = Awaited<ReturnType<typeof readDrawForecast>>, TError = unknown>(
+  params: ReadDrawForecastParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof readDrawForecast>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readDrawForecast>>,
+          TError,
+          Awaited<ReturnType<typeof readDrawForecast>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadDrawForecast<TData = Awaited<ReturnType<typeof readDrawForecast>>, TError = unknown>(
+  params: ReadDrawForecastParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readDrawForecast>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readDrawForecast>>,
+          TError,
+          Awaited<ReturnType<typeof readDrawForecast>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadDrawForecast<TData = Awaited<ReturnType<typeof readDrawForecast>>, TError = unknown>(
+  params: ReadDrawForecastParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readDrawForecast>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useReadDrawForecast<TData = Awaited<ReturnType<typeof readDrawForecast>>, TError = unknown>(
+  params: ReadDrawForecastParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readDrawForecast>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getReadDrawForecastQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
 
 export const indexDrawSyncs = (params?: IndexDrawSyncsParams, signal?: AbortSignal) => {
   return customInstance<DrawSync[]>({ url: `/indexDrawSyncs`, method: 'GET', params, signal })
@@ -1437,6 +1614,85 @@ export const useDeleteMyProfile = <TError = unknown, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 
+export const indexMobileProfiles = (signal?: AbortSignal) => {
+  return customInstance<Profile[]>({ url: `/indexMobileProfiles`, method: 'GET', signal })
+}
+
+export const getIndexMobileProfilesQueryKey = () => {
+  return [`/indexMobileProfiles`] as const
+}
+
+export const getIndexMobileProfilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof indexMobileProfiles>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMobileProfiles>>, TError, TData>>
+}) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexMobileProfilesQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexMobileProfiles>>> = ({ signal }) =>
+    indexMobileProfiles(signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexMobileProfiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexMobileProfilesQueryResult = NonNullable<Awaited<ReturnType<typeof indexMobileProfiles>>>
+export type IndexMobileProfilesQueryError = unknown
+
+export function useIndexMobileProfiles<TData = Awaited<ReturnType<typeof indexMobileProfiles>>, TError = unknown>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMobileProfiles>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMobileProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof indexMobileProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMobileProfiles<TData = Awaited<ReturnType<typeof indexMobileProfiles>>, TError = unknown>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMobileProfiles>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMobileProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof indexMobileProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMobileProfiles<TData = Awaited<ReturnType<typeof indexMobileProfiles>>, TError = unknown>(
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMobileProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexMobileProfiles<TData = Awaited<ReturnType<typeof indexMobileProfiles>>, TError = unknown>(
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMobileProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexMobileProfilesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
 export const indexProfiles = (params?: IndexProfilesParams, signal?: AbortSignal) => {
   return customInstance<Profile[]>({ url: `/indexProfiles`, method: 'GET', params, signal })
 }
@@ -1742,6 +1998,428 @@ export const useUpdateMyProfile = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getUpdateMyProfileMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const createPromo = (createPromoInput: CreatePromoInput, params?: CreatePromoParams, signal?: AbortSignal) => {
+  return customInstance<Promo>({
+    url: `/createPromo`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: createPromoInput,
+    params,
+    signal,
+  })
+}
+
+export const getCreatePromoMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createPromo>>,
+    TError,
+    { data: CreatePromoInput; params?: CreatePromoParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createPromo>>,
+  TError,
+  { data: CreatePromoInput; params?: CreatePromoParams },
+  TContext
+> => {
+  const mutationKey = ['createPromo']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createPromo>>,
+    { data: CreatePromoInput; params?: CreatePromoParams }
+  > = (props) => {
+    const { data, params } = props ?? {}
+
+    return createPromo(data, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type CreatePromoMutationResult = NonNullable<Awaited<ReturnType<typeof createPromo>>>
+export type CreatePromoMutationBody = CreatePromoInput
+export type CreatePromoMutationError = unknown
+
+export const useCreatePromo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createPromo>>,
+      TError,
+      { data: CreatePromoInput; params?: CreatePromoParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createPromo>>,
+  TError,
+  { data: CreatePromoInput; params?: CreatePromoParams },
+  TContext
+> => {
+  const mutationOptions = getCreatePromoMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const deletePromo = (params: DeletePromoParams) => {
+  return customInstance<void>({ url: `/deletePromo`, method: 'DELETE', params })
+}
+
+export const getDeletePromoMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deletePromo>>,
+    TError,
+    { params: DeletePromoParams },
+    TContext
+  >
+}): UseMutationOptions<Awaited<ReturnType<typeof deletePromo>>, TError, { params: DeletePromoParams }, TContext> => {
+  const mutationKey = ['deletePromo']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePromo>>, { params: DeletePromoParams }> = (
+    props,
+  ) => {
+    const { params } = props ?? {}
+
+    return deletePromo(params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeletePromoMutationResult = NonNullable<Awaited<ReturnType<typeof deletePromo>>>
+
+export type DeletePromoMutationError = unknown
+
+export const useDeletePromo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deletePromo>>,
+      TError,
+      { params: DeletePromoParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof deletePromo>>, TError, { params: DeletePromoParams }, TContext> => {
+  const mutationOptions = getDeletePromoMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const indexMyPromos = (params?: IndexMyPromosParams, signal?: AbortSignal) => {
+  return customInstance<Promo[]>({ url: `/indexMyPromos`, method: 'GET', params, signal })
+}
+
+export const getIndexMyPromosQueryKey = (params?: IndexMyPromosParams) => {
+  return [`/indexMyPromos`, ...(params ? [params] : [])] as const
+}
+
+export const getIndexMyPromosQueryOptions = <TData = Awaited<ReturnType<typeof indexMyPromos>>, TError = unknown>(
+  params?: IndexMyPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPromos>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexMyPromosQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexMyPromos>>> = ({ signal }) =>
+    indexMyPromos(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexMyPromos>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexMyPromosQueryResult = NonNullable<Awaited<ReturnType<typeof indexMyPromos>>>
+export type IndexMyPromosQueryError = unknown
+
+export function useIndexMyPromos<TData = Awaited<ReturnType<typeof indexMyPromos>>, TError = unknown>(
+  params: undefined | IndexMyPromosParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPromos>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMyPromos>>,
+          TError,
+          Awaited<ReturnType<typeof indexMyPromos>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMyPromos<TData = Awaited<ReturnType<typeof indexMyPromos>>, TError = unknown>(
+  params?: IndexMyPromosParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPromos>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexMyPromos>>,
+          TError,
+          Awaited<ReturnType<typeof indexMyPromos>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexMyPromos<TData = Awaited<ReturnType<typeof indexMyPromos>>, TError = unknown>(
+  params?: IndexMyPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPromos>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexMyPromos<TData = Awaited<ReturnType<typeof indexMyPromos>>, TError = unknown>(
+  params?: IndexMyPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexMyPromos>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexMyPromosQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const indexPromos = (params?: IndexPromosParams, signal?: AbortSignal) => {
+  return customInstance<Promo[]>({ url: `/indexPromos`, method: 'GET', params, signal })
+}
+
+export const getIndexPromosQueryKey = (params?: IndexPromosParams) => {
+  return [`/indexPromos`, ...(params ? [params] : [])] as const
+}
+
+export const getIndexPromosQueryOptions = <TData = Awaited<ReturnType<typeof indexPromos>>, TError = unknown>(
+  params?: IndexPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPromos>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getIndexPromosQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof indexPromos>>> = ({ signal }) => indexPromos(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof indexPromos>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type IndexPromosQueryResult = NonNullable<Awaited<ReturnType<typeof indexPromos>>>
+export type IndexPromosQueryError = unknown
+
+export function useIndexPromos<TData = Awaited<ReturnType<typeof indexPromos>>, TError = unknown>(
+  params: undefined | IndexPromosParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPromos>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexPromos>>,
+          TError,
+          Awaited<ReturnType<typeof indexPromos>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexPromos<TData = Awaited<ReturnType<typeof indexPromos>>, TError = unknown>(
+  params?: IndexPromosParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPromos>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof indexPromos>>,
+          TError,
+          Awaited<ReturnType<typeof indexPromos>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useIndexPromos<TData = Awaited<ReturnType<typeof indexPromos>>, TError = unknown>(
+  params?: IndexPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPromos>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useIndexPromos<TData = Awaited<ReturnType<typeof indexPromos>>, TError = unknown>(
+  params?: IndexPromosParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof indexPromos>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getIndexPromosQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const readPromo = (params: ReadPromoParams, signal?: AbortSignal) => {
+  return customInstance<Promo>({ url: `/readPromo`, method: 'GET', params, signal })
+}
+
+export const getReadPromoQueryKey = (params?: ReadPromoParams) => {
+  return [`/readPromo`, ...(params ? [params] : [])] as const
+}
+
+export const getReadPromoQueryOptions = <TData = Awaited<ReturnType<typeof readPromo>>, TError = unknown>(
+  params: ReadPromoParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPromo>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getReadPromoQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof readPromo>>> = ({ signal }) => readPromo(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof readPromo>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ReadPromoQueryResult = NonNullable<Awaited<ReturnType<typeof readPromo>>>
+export type ReadPromoQueryError = unknown
+
+export function useReadPromo<TData = Awaited<ReturnType<typeof readPromo>>, TError = unknown>(
+  params: ReadPromoParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPromo>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<Awaited<ReturnType<typeof readPromo>>, TError, Awaited<ReturnType<typeof readPromo>>>,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPromo<TData = Awaited<ReturnType<typeof readPromo>>, TError = unknown>(
+  params: ReadPromoParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPromo>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof readPromo>>,
+          TError,
+          Awaited<ReturnType<typeof readPromo>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReadPromo<TData = Awaited<ReturnType<typeof readPromo>>, TError = unknown>(
+  params: ReadPromoParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPromo>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useReadPromo<TData = Awaited<ReturnType<typeof readPromo>>, TError = unknown>(
+  params: ReadPromoParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof readPromo>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getReadPromoQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const updatePromo = (updatePromoInput: UpdatePromoInput, params: UpdatePromoParams) => {
+  return customInstance<Promo>({
+    url: `/updatePromo`,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    data: updatePromoInput,
+    params,
+  })
+}
+
+export const getUpdatePromoMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePromo>>,
+    TError,
+    { data: UpdatePromoInput; params: UpdatePromoParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePromo>>,
+  TError,
+  { data: UpdatePromoInput; params: UpdatePromoParams },
+  TContext
+> => {
+  const mutationKey = ['updatePromo']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePromo>>,
+    { data: UpdatePromoInput; params: UpdatePromoParams }
+  > = (props) => {
+    const { data, params } = props ?? {}
+
+    return updatePromo(data, params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpdatePromoMutationResult = NonNullable<Awaited<ReturnType<typeof updatePromo>>>
+export type UpdatePromoMutationBody = UpdatePromoInput
+export type UpdatePromoMutationError = unknown
+
+export const useUpdatePromo = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updatePromo>>,
+      TError,
+      { data: UpdatePromoInput; params: UpdatePromoParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof updatePromo>>,
+  TError,
+  { data: UpdatePromoInput; params: UpdatePromoParams },
+  TContext
+> => {
+  const mutationOptions = getUpdatePromoMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
@@ -4021,6 +4699,9 @@ export function useIndexWins<TData = Awaited<ReturnType<typeof indexWins>>, TErr
   return query
 }
 
+/**
+ * Latest wins for leaderboards: 1 big, 6 regular, 7 epoch (each bucket sorted separately).
+ */
 export const listPublicWinLeaders = (signal?: AbortSignal) => {
   return customInstance<Win[]>({ url: `/listPublicWinLeaders`, method: 'GET', signal })
 }

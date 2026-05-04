@@ -10,7 +10,7 @@ import { extendTailwindMerge } from 'tailwind-merge'
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ['small', 'small-bold', 'body', 'h4', 'h3', 'h2', 'h1'],
+      text: ['small', 'small-regular', 'small-bold', 'body', 'h4', 'h3', 'h2', 'h1'],
       color: [
         'content-primary',
         'content-secondary',

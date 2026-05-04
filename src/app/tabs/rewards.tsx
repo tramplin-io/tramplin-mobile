@@ -1,26 +1,27 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native'
+import { Pressable, RefreshControl, SectionList, View } from 'react-native'
 import { address, lamports } from '@solana/kit'
 // import * as Clipboard from 'expo-clipboard'
 import { useFocusEffect } from 'expo-router'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
-import { ScreenWrapper } from '@/components/general'
+import { EmptyStateCard, ScreenWrapper } from '@/components/general'
 import { CrossIcon } from '@/components/icons/icons'
 import { DashboardHeader } from '@/components/main'
-import { RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
+import { DashboardCards, RewardCardBig, RewardCardRegular, RewardCardStack } from '@/components/rewards'
 import { CollapsibleStack } from '@/components/ui/collapsible-stack'
+import { Text } from '@/components/ui/text'
 import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
-import { useIndexMyWins } from '@/lib/api/generated/restApi'
+import { useIndexMyWins, useReadMyStats } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
 // import { IndexMyWinsMock } from '@/mock/rawards'
 import type { Winner } from '@/utils/solana'
 
 const CLAIM_ERROR_RETRY_SECONDS = 3
 const REWARDS_NOTIFICATIONS_LIMIT = 4
-const REWARD_CARD_VIDEO_LIMIT = 5
+const REWARD_CARD_VIDEO_LIMIT = 0
 const PREVIEW_COLLAPSED_COUNT = 3
 const PREVIEW_ITEM_HEIGHT = 68
 const PREVIEW_EXPANDED_CONTENT_HEIGHT = 80
@@ -74,6 +75,7 @@ function winToWinner(win: Win): Winner {
 
 export default function RewardsTab() {
   const [isRegularStackExpanded, setIsRegularStackExpanded] = useState(false)
+  const [isEpochStackExpanded, setIsEpochStackExpanded] = useState(false)
   const [claimErrorCountdowns, setClaimErrorCountdowns] = useState<Record<string, number>>({})
   // const [claimErrors, setClaimErrors] = useState<Record<string, string>>({})
   const countdownTimers = useRef<Record<string, ReturnType<typeof setInterval>>>({})
@@ -89,10 +91,13 @@ export default function RewardsTab() {
     limit: 250,
   })
 
+  const { data: myStats, isLoading: isLoadingMyStats, refetch: refetchMyStats } = useReadMyStats()
+
   useFocusEffect(
     useCallback(() => {
       refetchWins()
-    }, [refetchWins]),
+      refetchMyStats()
+    }, [refetchWins, refetchMyStats]),
   )
   // const wins = IndexMyWinsMock
 
@@ -102,8 +107,9 @@ export default function RewardsTab() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
     await refetchWins()
+    await refetchMyStats()
     setRefreshing(false)
-  }, [refetchWins])
+  }, [refetchWins, refetchMyStats])
 
   const startErrorCountdown = useCallback((winKey: string) => {
     //, errorMsg: string
@@ -153,14 +159,26 @@ export default function RewardsTab() {
 
   const bigWins = wins.filter((w) => w.drawType === 'big')
   const regularWins = wins.filter((w) => w.drawType === 'regular')
+  const epochWins = wins.filter((w) => w.drawType === 'epoch')
+
+  // Regular wins
   const regularRewardsTotalLamports = useMemo(
     () => regularWins.reduce((acc, r) => acc + Number(r.prizeLamports ?? 0), 0),
     [regularWins],
   )
   const regularRewardsTotal = regularRewardsTotalLamports / Number(LAMPORTS_PER_SOL)
-  const shouldPlayVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
+  const shouldPlayRegularWinsVideo = regularWins.length <= REWARD_CARD_VIDEO_LIMIT
 
   const useLazyRegularList = regularWins.length > 0
+
+  // Epoch wins
+  const epochRewardsTotalLamports = useMemo(
+    () => epochWins.reduce((acc, e) => acc + Number(e.prizeLamports ?? 0), 0),
+    [epochWins],
+  )
+  const epochRewardsTotal = epochRewardsTotalLamports / Number(LAMPORTS_PER_SOL)
+  const shouldPlayEpochWinsVideo = epochWins.length <= REWARD_CARD_VIDEO_LIMIT
+  const useLazyEpochList = epochWins.length > 0
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 40,
@@ -177,6 +195,8 @@ export default function RewardsTab() {
       const hasError = retryIn !== undefined
       const buttonText = hasError ? `Try again in ${retryIn}s…` : null
 
+      const shouldPlayVideo = win.drawType === 'regular' ? shouldPlayRegularWinsVideo : shouldPlayEpochWinsVideo
+
       return (
         <View className="px-4">
           <RewardCardRegular
@@ -188,28 +208,44 @@ export default function RewardsTab() {
             hasError={hasError}
             buttonText={buttonText}
             shouldPlayVideo={shouldPlayVideo}
+            drawType={win.drawType}
           />
           {/* {hasError && claimErrors[winKey] && <ClaimErrorCard winKey={winKey} message={claimErrors[winKey]} />} */}
         </View>
       )
     },
-    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayVideo], //,visibleRegularIndices, claimErrors
+    [claimErrorCountdowns, isClaiming, handleClaimSingle, shouldPlayRegularWinsVideo, shouldPlayEpochWinsVideo], //,visibleRegularIndices, claimErrors
   )
 
   const regularListKeyExtractor = useCallback((win: Win) => win.id ?? `${win.winnerId}-${win.epochOrSlot}`, [])
 
-  const regularListData = useLazyRegularList && isRegularStackExpanded ? regularWins : []
+  const regularListData = useMemo(
+    () => (useLazyRegularList && isRegularStackExpanded ? regularWins : []),
+    [useLazyRegularList, isRegularStackExpanded, regularWins],
+  )
+  const epochListData = useMemo(
+    () => (useLazyEpochList && isEpochStackExpanded ? epochWins : []),
+    [useLazyEpochList, isEpochStackExpanded, epochWins],
+  )
 
-  const listHeaderComponent = useCallback(
+  const headerComponent = useCallback(
     () => (
-      <View className="gap-3 px-4 pt-8 pb-0.5">
-        <DashboardHeader title="Congratulations!" className="mb-6" />
+      <View className="gap-3 px-4 pt-8 pb-0">
+        <DashboardHeader title="Rewards" className="mb-6" />
         {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 
-        {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />}
+        {/* {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />} */}
+
+        {!isLoading && wins.length === 0 && (
+          <EmptyStateCard className="h-[100px]">
+            <Text variant="body" className="text-content-tertiary text-center">
+              No rewards to claim yet
+            </Text>
+          </EmptyStateCard>
+        )}
 
         {!isLoading && bigWins.length > 0 && (
-          <View className="gap-4 mb-4">
+          <View className="gap-4 mb-2">
             {bigWins.map((win) => {
               const winKey = win.id ?? `${win.winnerId}-${win.epochOrSlot}`
               const retryIn = claimErrorCountdowns[winKey]
@@ -232,7 +268,81 @@ export default function RewardsTab() {
             })}
           </View>
         )}
+      </View>
+    ),
+    [isLoading, wins.length, bigWins, claimErrorCountdowns, isClaiming, handleClaim],
+  )
 
+  const epochListHeaderComponent = useCallback(
+    () => (
+      <View className="gap-3 px-4 pt-3 pb-0.5">
+        {!isLoading &&
+          useLazyEpochList &&
+          epochWins.length > 0 &&
+          (isEpochStackExpanded ? (
+            <>
+              <View className="flex-row justify-end pr-1">
+                <Pressable
+                  onPress={() => setIsEpochStackExpanded(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Collapse"
+                >
+                  <CrossIcon size={20} strokeWidth="1.5" />
+                </Pressable>
+              </View>
+              {(() => {
+                // const summaryRetryIn = claimErrorCountdowns['regular-summary']
+                // const hasSummaryError = summaryRetryIn !== undefined
+                return (
+                  <>
+                    <RewardCardStack
+                      count={epochWins.length}
+                      reward={epochRewardsTotal}
+                      drawType="epoch"
+                      shouldPlayVideo={bigWins.length === 0}
+                    />
+                    {/* TODO: Add summary claim card */}
+                  </>
+                )
+              })()}
+            </>
+          ) : (
+            (() => {
+              return (
+                <CollapsibleStack
+                  collapsedCount={PREVIEW_COLLAPSED_COUNT}
+                  gap={PREVIEW_COLLAPSED_GAP}
+                  expandedGap={PREVIEW_EXPANDED_GAP}
+                  itemHeight={PREVIEW_ITEM_HEIGHT}
+                  expandedContentHeight={PREVIEW_EXPANDED_CONTENT_HEIGHT}
+                  open={false}
+                  onOpenChange={(open) => {
+                    if (open) setIsEpochStackExpanded(true)
+                  }}
+                  cover={
+                    <RewardCardStack
+                      count={epochWins.length}
+                      reward={epochRewardsTotal}
+                      drawType="epoch"
+                      shouldPlayVideo={bigWins.length === 0}
+                    />
+                  }
+                >
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                  <RewardCardStack count={epochWins.length} drawType="epoch" />
+                </CollapsibleStack>
+              )
+            })()
+          ))}
+      </View>
+    ),
+    [isLoading, useLazyEpochList, isEpochStackExpanded, epochWins, epochRewardsTotal, bigWins.length],
+  )
+
+  const regularListHeaderComponent = useCallback(
+    () => (
+      <View className="gap-3 px-4 pt-3 pb-0.5">
         {!isLoading &&
           useLazyRegularList &&
           regularWins.length > 0 &&
@@ -252,7 +362,11 @@ export default function RewardsTab() {
                 // const hasSummaryError = summaryRetryIn !== undefined
                 return (
                   <>
-                    <RewardCardStack count={regularWins.length} reward={regularRewardsTotal} />
+                    <RewardCardStack
+                      count={regularWins.length}
+                      reward={regularRewardsTotal}
+                      shouldPlayVideo={bigWins.length === 0}
+                    />
                     {/* TODO: Add summary claim card */}
                     {/* <RewardCardRegular
                       variant="summary"
@@ -284,7 +398,13 @@ export default function RewardsTab() {
                   onOpenChange={(open) => {
                     if (open) setIsRegularStackExpanded(true)
                   }}
-                  cover={<RewardCardStack count={regularWins.length} reward={regularRewardsTotal} />}
+                  cover={
+                    <RewardCardStack
+                      count={regularWins.length}
+                      reward={regularRewardsTotal}
+                      shouldPlayVideo={bigWins.length === 0}
+                    />
+                  }
                 >
                   <RewardCardStack count={regularWins.length} />
                   <RewardCardStack count={regularWins.length} />
@@ -295,40 +415,52 @@ export default function RewardsTab() {
           ))}
       </View>
     ),
-    [
-      isLoading,
-      wins.length,
-      bigWins,
-      claimErrorCountdowns,
-      // claimErrors,
-      isClaiming,
-      handleClaim,
-      isRegularStackExpanded,
-      regularWins,
-      regularRewardsTotal,
-      useLazyRegularList,
-      // shouldPlayVideo,
-    ],
+    [isLoading, isRegularStackExpanded, regularWins, regularRewardsTotal, useLazyRegularList, bigWins.length],
   )
 
-  const listFooterComponent = useCallback(() => <View className="h-40" />, [])
+  const listFooterComponent = useCallback(
+    () => (
+      <>
+        <DashboardCards myStats={myStats} isLoading={isLoadingMyStats} refetchMyStats={refetchMyStats} />
+        <View className="h-40" />
+      </>
+    ),
+    [myStats, isLoadingMyStats, refetchMyStats],
+  )
+
+  type WinSection = { key: 'epoch' | 'regular'; data: Win[] }
+  const sections = useMemo<WinSection[]>(
+    () => [
+      { key: 'epoch', data: epochListData },
+      { key: 'regular', data: regularListData },
+    ],
+    [epochListData, regularListData],
+  )
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: WinSection }) => {
+      if (section.key === 'epoch') return epochListHeaderComponent()
+      return regularListHeaderComponent()
+    },
+    [epochListHeaderComponent, regularListHeaderComponent],
+  )
 
   return (
     <ScreenWrapper>
-      <FlatList
-        data={regularListData}
+      <SectionList
+        sections={sections}
         keyExtractor={regularListKeyExtractor}
         renderItem={renderRegularClaimCard}
-        ListHeaderComponent={listHeaderComponent}
+        renderSectionHeader={renderSectionHeader}
+        ListHeaderComponent={headerComponent}
         ListFooterComponent={listFooterComponent}
         ItemSeparatorComponent={RegularListSeparator}
-        // onViewableItemsChanged={onViewableItemsChanged}
+        stickySectionHeadersEnabled={false}
         viewabilityConfig={viewabilityConfig}
         initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
         maxToRenderPerBatch={10}
         windowSize={5}
         removeClippedSubviews={true}
-        // contentContainerClassName="pb-40"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

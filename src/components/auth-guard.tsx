@@ -32,7 +32,7 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
   useEffect(() => {
     const handlePushNotificationsPermissionsUpdate = async () => {
       const token = await registerForPushNotifications()
-      console.log('token', token)
+      // console.log('token', token)
       if (token) {
         await createDeviceToken(token)
       }

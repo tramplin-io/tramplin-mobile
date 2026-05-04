@@ -1,7 +1,7 @@
 {
   "name": "tramplin-mobile",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tramplin-io/tramplin-mobile.git"
@@ -30,6 +30,10 @@
     "lint:check": "expo lint",
     "start": "expo start",
     "ts:check": "tsc --noEmit",
+    "typecheck": "tsc -b --noEmit",
+    "typecheck:verbose": "tsc -b --verbose --force",
+    "typecheck:files": "tsc -p tsconfig.json --noEmit --listFiles | grep -v node_modules",
+    "typecheck:stats": "tsc -p tsconfig.json --noEmit --diagnostics",
     "web": "expo start --web",
     "generate-api": "orval",
     "postinstall": "test -f .env || cp .env.example .env"
@@ -121,6 +125,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "^2.28.0",
+    "react-native-markdown-display": "^7.0.2",
     "react-native-qrcode-svg": "^6.3.21",
     "react-native-quick-crypto": "^1.0.7",
     "react-native-reanimated": "^4.1.6",

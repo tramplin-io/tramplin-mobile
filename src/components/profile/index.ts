@@ -1,4 +1,5 @@
 export { DeveloperPanel } from './DeveloperPanel'
+export { DeviceInfo } from './DeviceInfo'
 export { LogDisplay } from './LogDisplay'
 export { ProfileContent } from './ProfileContent'
 export type { MenuSectionItem } from './ProfileContent'

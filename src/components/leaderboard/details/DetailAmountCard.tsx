@@ -8,8 +8,9 @@ import type { Win } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatPrizeSol, formatPrizeUSD } from '@/utils/format'
 
-const rewardGoldVideo = require('@/assets/videos/rewards/tramplin_reward_gold_2x1.mp4')
-const rewardSilverVideo = require('@/assets/videos/rewards/tramplin_reward_silver_2x1.mp4')
+const rewardGoldVideo = require('@/assets/videos/rewards/tramplin_reward_gold_2x1.mp4') // big
+const rewardGreenVideo = require('@/assets/videos/rewards/tramplin_reward_green_2x1.mp4') // epoch
+const rewardSilverVideo = require('@/assets/videos/rewards/tramplin_reward_silver_2x1.mp4') // regular
 
 function formatRevealedDate(dateStr?: string): { date: string; timeMain: string; timeSeconds: string } {
   if (!dateStr) return { date: '—', timeMain: '—', timeSeconds: '' }
@@ -27,8 +28,50 @@ function formatRevealedDate(dateStr?: string): { date: string; timeMain: string;
 type DetailAmountCardProps = Readonly<{ win: Win }>
 
 export function DetailAmountCard({ win }: DetailAmountCardProps) {
-  const isGold = win.drawType === 'big'
-  const source = isGold ? rewardGoldVideo : rewardSilverVideo
+  // const isGold = win.drawType === 'big'
+  // const isRegular = win.drawType === 'regular'
+  // const isEpoch = win.drawType === 'epoch'
+
+  const { date, timeMain, timeSeconds } = formatRevealedDate(win.revealedAt)
+  const amountSol = formatPrizeSol(win.prizeSol)
+  const amountUsd = win.prizeUSDInCents == null ? null : `$${formatPrizeUSD(win.prizeUSDInCents)}`
+
+  const rewardLargePrimary = useCSSVariable('--color-reward-large-primary') as string
+  const rewardSmallPrimary = useCSSVariable('--color-reward-small-primary') as string
+
+  let source = rewardSilverVideo
+  let primaryColor: string
+  let labelColor: string
+  let iconColor: string
+  let borderColor: string
+  let separatorColor: string
+
+  switch (win.drawType) {
+    case 'big':
+      source = rewardGoldVideo
+      primaryColor = 'text-reward-large-primary'
+      labelColor = 'text-reward-large-primary'
+      iconColor = rewardLargePrimary
+      borderColor = 'border-reward-large-primary'
+      separatorColor = 'bg-reward-large-primary'
+      break
+    case 'epoch':
+      source = rewardGreenVideo
+      primaryColor = 'text-reward-small-primary'
+      labelColor = 'text-reward-small-primary'
+      iconColor = rewardSmallPrimary
+      borderColor = 'border-reward-small-primary'
+      separatorColor = 'bg-border-tertiary'
+      break
+    default: // regular
+      source = rewardSilverVideo
+      primaryColor = 'text-reward-small-primary'
+      labelColor = 'text-reward-small-primary'
+      iconColor = rewardSmallPrimary
+      borderColor = 'border-reward-small-primary'
+      separatorColor = 'bg-border-tertiary'
+      break
+  }
 
   const player = useVideoPlayer(source, (p) => {
     p.loop = true
@@ -36,23 +79,10 @@ export function DetailAmountCard({ win }: DetailAmountCardProps) {
     p.play()
   })
 
-  const { date, timeMain, timeSeconds } = formatRevealedDate(win.revealedAt)
-  const amountSol = formatPrizeSol(win.prizeSol)
-  const amountUsd = win.prizeUSDInCents == null ? null : `$${formatPrizeUSD(win.prizeUSDInCents)}`
-  const primaryColor = isGold ? 'text-reward-large-primary' : 'text-reward-small-primary'
-  const labelColor = isGold ? 'text-reward-large-primary' : 'text-reward-small-primary'
-
-  const rewardLargePrimary = useCSSVariable('--color-reward-large-primary') as string
-  const rewardSmallPrimary = useCSSVariable('--color-reward-small-primary') as string
-  const iconColor = isGold ? rewardLargePrimary : rewardSmallPrimary
-
   return (
     <View
       // style={[styles.cardWrap]}
-      className={cn(
-        'rounded-md overflow-hidden mb-6 w-full border',
-        isGold ? 'border-reward-large-primary' : 'border-reward-small-primary',
-      )}
+      className={cn('rounded-md overflow-hidden mb-6 w-full border', borderColor)}
     >
       <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
       <View className="flex-1 p-5 justify-between">
@@ -77,7 +107,7 @@ export function DetailAmountCard({ win }: DetailAmountCardProps) {
           )}
         </View>
 
-        <View className={cn('my-5 h-px w-full', isGold ? 'bg-reward-large-primary' : 'bg-border-tertiary')} />
+        <View className={cn('my-5 h-px w-full', separatorColor)} />
 
         {/* Bottom: DATE left, TIME right with clock + time (seconds smaller) */}
         <View className="flex-row justify-between">

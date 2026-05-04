@@ -19,7 +19,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<typeof View> & R
     }),
     [sv],
   )
-  return <Animated.View style={style} className={cn('bg-content-tertiary  rounded-md', className)} {...props} />
+  return <Animated.View style={style} className={cn('bg-border-quinary rounded-md', className)} {...props} />
 }
 
 export { Skeleton }

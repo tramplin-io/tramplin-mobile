@@ -278,6 +278,12 @@ export interface CreateProfileByReferralInput {
   referralToken: string
 }
 
+export type PartnerWithReferralProfilesAllOf = {
+  referralProfiles?: Profile[]
+}
+
+export type PartnerWithReferralProfiles = Partner & PartnerWithReferralProfilesAllOf
+
 export interface Profile {
   walletAddress: string
   invitedByWalletAddress?: string
@@ -387,6 +393,11 @@ export interface ReferralStake {
   id?: string
   createdAt?: string
   updatedAt?: string
+}
+
+export interface ValidateReferralStakeOutput {
+  isReferralStake: boolean
+  invitedByWalletAddress: string
 }
 
 export interface AttemptCredentials {
@@ -872,6 +883,11 @@ export const IndexProfilesSortOrder = {
   DESC: 'DESC',
 } as const
 
+export type ListAgencyReferralProfilesParams = {
+  agencyId?: string
+  email?: string
+}
+
 export type ListReferralProfilesParams = {
   referralToken: string
 }
@@ -1018,6 +1034,10 @@ export const IndexReferralStakesSortOrder = {
 
 export type ReadReferralStakeParams = {
   id: string
+}
+
+export type ValidateReferralStakeParams = {
+  walletAddress: string
 }
 
 export type IndexTransactionsParams = {

@@ -1,8 +1,9 @@
-import { cn } from '@/lib/utils'
-import * as Slot from '@rn-primitives/slot'
-import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 import { Platform, Text as RNText, type Role } from 'react-native'
+import * as Slot from '@rn-primitives/slot'
+import { cva, type VariantProps } from 'class-variance-authority'
+
+import { cn } from '@/lib/utils'
 
 const textVariants = cva(
   cn(
@@ -27,6 +28,7 @@ const textVariants = cva(
         h5Digits: cn('text-h5 font-family-digits'),
         body: cn('text-body font-family-regular-medium'),
         small: cn('text-small font-family-regular-medium'),
+        smallRegular: cn('text-small-regular font-family-regular-medium'),
         smallBold: cn('text-small-bold font-family-bold-light'),
         p: 'mt-3 leading-7 sm:mt-6',
         blockquote: 'mt-4 border-l-2 pl-3 italic sm:mt-6 sm:pl-6',

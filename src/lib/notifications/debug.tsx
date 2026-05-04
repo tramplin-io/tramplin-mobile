@@ -15,7 +15,7 @@ export function useDebugPushNotification() {
 
   const registerForPushNotifications = useCallback(async () => {
     const deviceTokens = await registerForPushNotificationsAsync()
-    if (deviceTokens) setExpoPushToken(deviceTokens.expoDeviceToken)
+    if (deviceTokens?.expoDeviceToken) setExpoPushToken(deviceTokens.expoDeviceToken)
   }, [])
 
   const getExpoPushTokenHandler = useCallback(async () => {

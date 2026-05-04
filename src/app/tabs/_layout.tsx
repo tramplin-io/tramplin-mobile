@@ -5,81 +5,100 @@ import { Tabs, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
-import { BigCupIcon, BundleIcon, FilterIcon, PlusIcon, SearchIcon } from '@/components/icons/icons'
-import { LogoSmall } from '@/components/icons/Logo'
+import {
+  // BigCupIcon,
+  // BundleIcon,
+  // FilterIcon,
+  HomeFillIcon,
+  HomeIcon,
+  InsertChartFillIcon,
+  InsertChartIcon,
+  MessageQuestionFillIcon,
+  MessageQuestionIcon,
+  PlusIcon,
+  // SearchIcon,
+  SettingsFillIcon,
+  SettingsIcon,
+  WheelchairPickupFillIcon,
+  WheelchairPickupIcon,
+} from '@/components/icons/icons'
+// import { LogoSmall } from '@/components/icons/Logo'
 import { StakeModal } from '@/components/stake'
 import { Button } from '@/components/ui'
 import { Text } from '@/components/ui/text'
 import { cn } from '@/lib/utils'
 
-function LeaderTabIcon({ color }: { readonly color: string }) {
-  return <BundleIcon size={30} color={color} />
+function StakeTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
+  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
+  return focused ? (
+    <HomeFillIcon width={24} height={24} color={primaryColor} />
+  ) : (
+    <HomeIcon width={24} height={24} color={primaryColor} />
+  )
 }
 
-function StakeTabIcon({ color }: { readonly color: string }) {
-  return <LogoSmall width={30} height={24} color={color} />
+function LeaderTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
+  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
+  return focused ? (
+    <InsertChartFillIcon width={24} height={24} color={primaryColor} />
+  ) : (
+    <InsertChartIcon width={24} height={24} color={primaryColor} />
+  )
 }
 
-function RewardsTabIcon({ color }: { readonly color: string }) {
-  return <BigCupIcon size={30} color={color} />
+function RewardsTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
+  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
+  return focused ? (
+    <WheelchairPickupFillIcon width={24} height={24} color={primaryColor} />
+  ) : (
+    <WheelchairPickupIcon width={24} height={24} color={primaryColor} />
+  )
 }
 
-function FAQTabIcon({ color }: { readonly color: string }) {
-  return <SearchIcon size={30} color={color} />
+function FAQTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
+  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
+  return focused ? (
+    <MessageQuestionFillIcon width={24} height={24} color={primaryColor} />
+  ) : (
+    <MessageQuestionIcon width={24} height={24} color={primaryColor} />
+  )
 }
 
-function SettingsTabIcon({ color }: { readonly color: string }) {
-  return <FilterIcon size={30} color={color} />
+function SettingsTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
+  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
+  return focused ? (
+    <SettingsFillIcon width={24} height={24} color={primaryColor} />
+  ) : (
+    <SettingsIcon width={24} height={24} color={primaryColor} />
+  )
 }
-
-// function DevTabIcon({ color }: { readonly color: string }) {
-//   return <FilterIcon size={30} color={color} />
-// }
-
-// const TAB_BUTTON_WIDTH = 65
-// const TAB_BUTTON_HEIGHT = 55
-// const TAB_BUTTON_PADDING = 4
-// const TAB_BUTTON_RADIUS = 8
-// const TAB_BAR_SHADOW = {
-//   shadowColor: '#000',
-//   shadowOffset: { width: 0, height: 0 },
-//   shadowOpacity: 0.15,
-//   shadowRadius: 30,
-//   elevation: 4,
-// }
 
 type TabBarButtonProps = PressableProps & {
   focused?: boolean
+  title?: string
   children: React.ReactNode
 }
 
-function TabBarButton({ focused, children, style, ...rest }: TabBarButtonProps) {
-  // const fillTertiary = useCSSVariable('--color-fill-tertiary')
-  // const fillSecondary = useCSSVariable('--color-fill-secondary')
-
+function TabBarButton({ focused, children, accessibilityLargeContentTitle, style, ...rest }: TabBarButtonProps) {
   return (
     <Pressable
       {...rest}
       className={cn(
-        'w-14 h-14 p-1 flex-col justify-center items-center rounded-lg bg-fill-tertiary shadow-xl/20',
-        focused ? 'bg-fill-tertiary' : 'bg-fill-secondary',
+        'w-[76px]  h-16 p-1 flex-col justify-center items-center gap-1 py-1.5', //rounded-lg
+        // focused ? 'bg-brand-quaternary' : 'bg-fill-secondary',
       )}
-      // style={[
-      //   {
-      //     width: TAB_BUTTON_WIDTH,
-      //     height: TAB_BUTTON_HEIGHT,
-      //     padding: TAB_BUTTON_PADDING,
-      //     flexDirection: 'column',
-      //     justifyContent: 'space-between',
-      //     alignItems: 'center',
-      //     borderRadius: TAB_BUTTON_RADIUS,
-      //     backgroundColor: (focused ? fillTertiary : fillSecondary) as string,
-      //     ...TAB_BAR_SHADOW,
-      //   },
-      //   style as object,
-      // ]}
     >
-      {children}
+      <View
+        className={cn(
+          'w-14 h-8 p-1 flex-col justify-center items-center ',
+          focused && 'bg-brand-quaternary rounded-full', //: 'bg-fill-secondary',
+        )}
+      >
+        {children}
+      </View>
+      <Text className="text-content-primary text-small-nav font-family-bold-medium">
+        {accessibilityLargeContentTitle}
+      </Text>
     </Pressable>
   )
 }
@@ -109,7 +128,7 @@ export default function TabsLayout() {
   const pathname = usePathname()
   const activeTint = useCSSVariable('--color-brand-primary')
   const inactiveTint = useCSSVariable('--color-content-tertiary')
-  const backgroundColor = useCSSVariable('--color-fill-primary')
+  const backgroundColor = useCSSVariable('--color-fill-tertiary')
   const [stakeModalOpen, setStakeModalOpen] = useState(false)
   const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
   const isStakeHide = pathname === '/tabs/settings' || pathname.startsWith('/tabs/settings/')
@@ -121,13 +140,13 @@ export default function TabsLayout() {
   return (
     <View className="flex-1">
       {/* Blur and Gradient Shadow View */}
-      <View
+      {/* <View
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           bottom: 59 + insets.bottom,
-          height: 80,
+          height: 64,
           zIndex: 1,
           pointerEvents: 'none',
           // opacity: 0.2,
@@ -140,27 +159,27 @@ export default function TabsLayout() {
             ...StyleSheet.absoluteFillObject,
           }}
         />
-      </View>
+      </View> */}
 
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
             paddingBottom: insets.bottom,
-            height: 60 + insets.bottom,
+            height: 64 + insets.bottom,
             backgroundColor: backgroundColor as string,
             // borderTopWidth: 1,
             // borderTopColor: borderTopColor,
             marginRight: 0,
             marginLeft: 0,
-            paddingRight: 30,
-            paddingLeft: 30,
+            paddingRight: 8,
+            paddingLeft: 8,
           },
           tabBarLabelStyle: {
             display: 'none', // hide label text
-            // fontSize: 10,
-            // letterSpacing: 0,
-            // marginBottom: 6,
+            // fontSize: 12,
+            // letterSpacing: 0.5,
+            // marginBottom: 2,
             // textTransform: 'uppercase',
           },
           tabBarActiveTintColor: activeTint == null ? undefined : String(activeTint),
@@ -178,7 +197,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="leaderboard"
           options={{
-            title: 'Leaderboard',
+            title: 'Stats',
             tabBarIcon: LeaderTabIcon,
           }}
         />

@@ -1,0 +1,12 @@
+{
+  "replaceAttrValues": {
+    "#000000": "{props.fill}",
+    "#000": "{props.fill}",
+    "black": "{props.fill}"
+  },
+  "svgProps": {
+    "width": "{props.width}",
+    "height": "{props.height}"
+  },
+  "expandProps": true
+} 

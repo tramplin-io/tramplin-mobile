@@ -3,14 +3,17 @@ import { Alert, ScrollView, TouchableOpacity, View } from 'react-native'
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
+  BottomSheetScrollView,
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import { router } from 'expo-router'
+import { ChevronDown } from 'lucide-react-native'
 
 import { Button } from '@/components/ui/button'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
@@ -24,6 +27,7 @@ import { useAuthStore } from '@/lib/stores/auth-store'
 import { useDeveloperStore } from '@/lib/stores/developer-store'
 
 import { ThemeSwitcher } from '../ui/ThemeSwitcher'
+import { DeviceInfo } from './DeviceInfo'
 import { LogDisplay } from './LogDisplay'
 
 export type ApiSource = 'Production' | 'Development' | 'Custom'
@@ -104,6 +108,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
   const [showLogoutWarning, setShowLogoutWarning] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [deviceInfoOpen, setDeviceInfoOpen] = useState(false)
   const bottomSheetRef = useRef<BottomSheetModal>(null)
 
   const androidPackage = Constants.expoConfig?.android?.package
@@ -233,15 +238,14 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
       backdropComponent={renderBackdrop}
       snapPoints={['80%']}
     >
-      <BottomSheetView>
-        <ScrollView className="px-4 pb-60" showsVerticalScrollIndicator={false}>
-          <Text variant="h3" className="text-center mb-2 mt-2">
-            🔧 Developer Tools
-          </Text>
-          <Text variant="body" className="text-center text-textSecondary mb-6">
-            Development and debugging tools
-          </Text>
-
+      <View className="flex-1">
+        <Text variant="h3" className="text-center mb-2 mt-2">
+          🔧 Developer Tools
+        </Text>
+        <Text variant="body" className="text-center text-textSecondary mb-6">
+          Development and debugging tools
+        </Text>
+        <BottomSheetScrollView className="px-4 pb-60" showsVerticalScrollIndicator={false}>
           <View className="gap-4">
             <View className="gap-2">
               <Text variant="h4" className="text-secondaryPink">
@@ -309,7 +313,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 </Button>
               </View>
               {/* <LogDisplay /> */}
-              {/* <View className="mt-4">
+              <View className="mt-4">
                 <Button
                   size="sm"
                   onPress={() => {
@@ -318,7 +322,7 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
                 >
                   <Text>App Logs</Text>
                 </Button>
-              </View> */}
+              </View>
             </View>
 
             {/* <View className="gap-2">
@@ -405,6 +409,26 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
               </View>
             )}
 
+            <Collapsible open={deviceInfoOpen} onOpenChange={setDeviceInfoOpen}>
+              <CollapsibleTrigger asChild>
+                <TouchableOpacity className="flex-row items-center justify-between">
+                  <Text variant="h4" className="text-secondaryPink">
+                    Device Info
+                  </Text>
+                  <ChevronDown
+                    size={16}
+                    color="#E91E8C"
+                    style={{ transform: [{ rotate: deviceInfoOpen ? '180deg' : '0deg' }] }}
+                  />
+                </TouchableOpacity>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <View className="mt-2 p-3 bg-background-cards rounded-lg">
+                  <DeviceInfo />
+                </View>
+              </CollapsibleContent>
+            </Collapsible>
+
             <View className="gap-2">
               <Text variant="h4" className="text-secondaryPink">
                 Current Configuration
@@ -446,8 +470,8 @@ export const DeveloperPanel = ({ open, onOpenChange }: Props) => {
           <Button variant="secondary" onPress={handleDismiss} className="mt-6 mb-14">
             <Text>Close</Text>
           </Button>
-        </ScrollView>
-      </BottomSheetView>
+        </BottomSheetScrollView>
+      </View>
     </BottomSheetModal>
   )
 }

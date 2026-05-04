@@ -3,4 +3,5 @@ export const FAQ_CONFIG = {
   VALIDATOR_LINK: 'https://solanabeach.io/validator/TRAMp1Z9EXyWQQNwNjjoNvVksMUHKioVU7ky61yNsEq',
   AUDIT_LINK: 'https://github.com/mixbytes/audits_public/tree/master/Tramplin/Tramplin',
   PARTNERS_LINK: 'https://form.typeform.com/to/aaBR41zR',
+  DISCORD_LINK: 'https://discord.gg/tramplin',
 }

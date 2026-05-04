@@ -5,20 +5,31 @@ import { useCSSVariable } from 'uniwind'
 
 import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
+import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatPrizeSol } from '@/utils/format'
 
 const rewardSilverSmallVideo = require('@/assets/videos/rewards/tramplin_reward_silver_7x1.mp4')
 const rewardSilverSmallImage = require('@/assets/images/rewards/tramplin_reward_silver_7x1.png')
 
+const rewardGreenSmallVideo = require('@/assets/videos/rewards/tramplin_reward_green_7x1.mp4')
+const rewardGreenSmallImage = require('@/assets/images/rewards/tramplin_reward_green_7x1.png')
+
 type RewardCardStackProps = Readonly<{
   reward?: number
   count: number
+  drawType?: DrawType
   shouldPlayVideo?: boolean
   onPress?: () => void
 }>
 
-export function RewardCardStack({ reward = 0, count, shouldPlayVideo = false, onPress }: RewardCardStackProps) {
+export function RewardCardStack({
+  reward = 0,
+  count,
+  drawType = 'regular',
+  shouldPlayVideo = false,
+  onPress,
+}: RewardCardStackProps) {
   const solColor = useCSSVariable('--color-reward-small-primary') as string
   const smallCupColor = useCSSVariable('--color-reward-small-primary') as string
 
@@ -27,6 +38,14 @@ export function RewardCardStack({ reward = 0, count, shouldPlayVideo = false, on
 
   const amountSol = formatPrizeSol(reward)
   // const awardedText = revealedAt ? formatAwardedAgo(revealedAt) : null
+
+  let sourceVideo: number = rewardSilverSmallVideo
+  let sourceImage: number = rewardSilverSmallImage
+
+  if (drawType === 'epoch') {
+    sourceVideo = rewardGreenSmallVideo
+    sourceImage = rewardGreenSmallImage
+  }
 
   return (
     <View className="relative">
@@ -44,7 +63,11 @@ export function RewardCardStack({ reward = 0, count, shouldPlayVideo = false, on
           style={StyleSheet.absoluteFillObject}
           pointerEvents="none"
         />
-        {shouldPlayVideo ? <RewardCardBackgroundVideo /> : <RewardCardStaticBackground />}
+        {shouldPlayVideo ? (
+          <RewardCardBackgroundVideo sourceVideo={sourceVideo} />
+        ) : (
+          <RewardCardStaticBackground sourceImage={sourceImage} />
+        )}
         <View className="flex-1" pointerEvents="none">
           <View className="flex-row items-center py-1">
             <Text variant="h4Digits" className="text-reward-small-primary">
@@ -85,20 +108,24 @@ export function RewardCardStack({ reward = 0, count, shouldPlayVideo = false, on
   )
 }
 
-function RewardCardBackgroundVideo() {
-  const player = useVideoPlayer(rewardSilverSmallVideo, (p) => {
+function RewardCardBackgroundVideo({ sourceVideo }: Readonly<{ sourceVideo: number }>) {
+  const player = useVideoPlayer(sourceVideo, (p) => {
     p.loop = true
     p.muted = true
     p.play()
   })
 
-  return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
-}
-
-function RewardCardStaticBackground() {
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
-      <ImageBackground source={rewardSilverSmallImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+    </View>
+  )
+}
+
+function RewardCardStaticBackground({ sourceImage }: Readonly<{ sourceImage: number }>) {
+  return (
+    <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+      <ImageBackground source={sourceImage} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
     </View>
   )
 }

@@ -57,8 +57,10 @@ import type {
   IndexUsersParams,
   InviteUserInput,
   Job,
+  ListAgencyReferralProfilesParams,
   ListReferralProfilesParams,
   Partner,
+  PartnerWithReferralProfiles,
   Payout,
   PayoutRequest,
   ProcessPayoutInput,
@@ -102,6 +104,8 @@ import type {
   UpdateReferralConfigParams,
   UpgradeToPartnerInput,
   User,
+  ValidateReferralStakeOutput,
+  ValidateReferralStakeParams,
   VerifyBulkCreatePartnersOutput,
   VerifyEmailParams,
   WalletCredentials,
@@ -2571,6 +2575,107 @@ export function useIndexProfiles<TData = Awaited<ReturnType<typeof indexProfiles
   return query
 }
 
+export const listAgencyReferralProfiles = (params?: ListAgencyReferralProfilesParams, signal?: AbortSignal) => {
+  return referralsInstance<PartnerWithReferralProfiles[]>({
+    url: `/listAgencyReferralProfiles`,
+    method: 'GET',
+    params,
+    signal,
+  })
+}
+
+export const getListAgencyReferralProfilesQueryKey = (params?: ListAgencyReferralProfilesParams) => {
+  return [`/listAgencyReferralProfiles`, ...(params ? [params] : [])] as const
+}
+
+export const getListAgencyReferralProfilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+  TError = unknown,
+>(
+  params?: ListAgencyReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listAgencyReferralProfiles>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getListAgencyReferralProfilesQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listAgencyReferralProfiles>>> = ({ signal }) =>
+    listAgencyReferralProfiles(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAgencyReferralProfilesQueryResult = NonNullable<Awaited<ReturnType<typeof listAgencyReferralProfiles>>>
+export type ListAgencyReferralProfilesQueryError = unknown
+
+export function useListAgencyReferralProfiles<
+  TData = Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+  TError = unknown,
+>(
+  params: undefined | ListAgencyReferralProfilesParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listAgencyReferralProfiles>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof listAgencyReferralProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAgencyReferralProfiles<
+  TData = Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+  TError = unknown,
+>(
+  params?: ListAgencyReferralProfilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listAgencyReferralProfiles>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+          TError,
+          Awaited<ReturnType<typeof listAgencyReferralProfiles>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAgencyReferralProfiles<
+  TData = Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+  TError = unknown,
+>(
+  params?: ListAgencyReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listAgencyReferralProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListAgencyReferralProfiles<
+  TData = Awaited<ReturnType<typeof listAgencyReferralProfiles>>,
+  TError = unknown,
+>(
+  params?: ListAgencyReferralProfilesParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listAgencyReferralProfiles>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getListAgencyReferralProfilesQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
 export const listReferralProfiles = (params: ListReferralProfilesParams, signal?: AbortSignal) => {
   return referralsInstance<Profile[]>({ url: `/listReferralProfiles`, method: 'GET', params, signal })
 }
@@ -3594,6 +3699,95 @@ export function useReadReferralStake<TData = Awaited<ReturnType<typeof readRefer
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getReadReferralStakeQueryOptions(params, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const validateReferralStake = (params: ValidateReferralStakeParams, signal?: AbortSignal) => {
+  return referralsInstance<ValidateReferralStakeOutput>({
+    url: `/validateReferralStake`,
+    method: 'GET',
+    params,
+    signal,
+  })
+}
+
+export const getValidateReferralStakeQueryKey = (params?: ValidateReferralStakeParams) => {
+  return [`/validateReferralStake`, ...(params ? [params] : [])] as const
+}
+
+export const getValidateReferralStakeQueryOptions = <
+  TData = Awaited<ReturnType<typeof validateReferralStake>>,
+  TError = unknown,
+>(
+  params: ValidateReferralStakeParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof validateReferralStake>>, TError, TData>> },
+) => {
+  const { query: queryOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getValidateReferralStakeQueryKey(params)
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof validateReferralStake>>> = ({ signal }) =>
+    validateReferralStake(params, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof validateReferralStake>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ValidateReferralStakeQueryResult = NonNullable<Awaited<ReturnType<typeof validateReferralStake>>>
+export type ValidateReferralStakeQueryError = unknown
+
+export function useValidateReferralStake<TData = Awaited<ReturnType<typeof validateReferralStake>>, TError = unknown>(
+  params: ValidateReferralStakeParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof validateReferralStake>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof validateReferralStake>>,
+          TError,
+          Awaited<ReturnType<typeof validateReferralStake>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useValidateReferralStake<TData = Awaited<ReturnType<typeof validateReferralStake>>, TError = unknown>(
+  params: ValidateReferralStakeParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof validateReferralStake>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof validateReferralStake>>,
+          TError,
+          Awaited<ReturnType<typeof validateReferralStake>>
+        >,
+        'initialData'
+      >
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useValidateReferralStake<TData = Awaited<ReturnType<typeof validateReferralStake>>, TError = unknown>(
+  params: ValidateReferralStakeParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof validateReferralStake>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useValidateReferralStake<TData = Awaited<ReturnType<typeof validateReferralStake>>, TError = unknown>(
+  params: ValidateReferralStakeParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof validateReferralStake>>, TError, TData>> },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getValidateReferralStakeQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>
