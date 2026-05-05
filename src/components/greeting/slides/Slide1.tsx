@@ -1,8 +1,10 @@
-import { View, StyleSheet } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
-import { Text } from '@/components/ui/text'
+import { StyleSheet, View } from 'react-native'
+import { VideoView } from 'expo-video'
+
 import { Logo } from '@/components/icons'
 import { CommunityStats } from '@/components/main'
+import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 
 const tramplinHeroMobileColored = require('@/assets/videos/tramplin_hero_mobile_colored.mp4')
 
@@ -15,15 +17,13 @@ interface Slide1Props {
  * Slide 1: Greeting hero. Video background (full-bleed), logo and copy from design.
  */
 export function Slide1({ width, isActive: _isActive = true }: Slide1Props) {
-  const player = useVideoPlayer(tramplinHeroMobileColored, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(tramplinHeroMobileColored)
 
   return (
     <View style={[styles.slide, { width }]}>
-      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      {isFocused && (
+        <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      )}
 
       <View className="flex-1 px-5 pt-0 justify-center-safe pb-8">
         <View className="items-center gap-5">

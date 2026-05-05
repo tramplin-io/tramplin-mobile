@@ -1,4 +1,5 @@
 export { useThemeStore } from './useThemeStore'
+export { useVideoPlayerWithLifecycle } from './useVideoPlayerWithLifecycle'
 export { useWalletBalance } from './useWalletBalance'
 export { useWalletActions } from './useWalletActions'
 export { useCopyToClipboard } from './useCopyToClipboard'

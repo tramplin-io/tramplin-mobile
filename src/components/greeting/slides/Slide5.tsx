@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 
 import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 
 const tramplinIcon03 = require('@/assets/videos/tramplin_icon_03.mp4')
 
@@ -13,11 +14,7 @@ interface Slide5Props {
  * Slide 5: Participate in redistribution. Background: bg-fill-primary.
  */
 export function Slide5({ width }: Slide5Props) {
-  const player = useVideoPlayer(tramplinIcon03, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(tramplinIcon03)
 
   return (
     <View style={{ width }} className="flex-1 bg-silver-light px-5 pt-18 gap-5">
@@ -33,7 +30,14 @@ export function Slide5({ width }: Slide5Props) {
       </View>
 
       <View className="w-full items-center justify-center aspect-square rounded-md overflow-hidden">
-        <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="contain" nativeControls={false} />
+        {isFocused && (
+          <VideoView
+            player={player}
+            style={StyleSheet.absoluteFillObject}
+            contentFit="contain"
+            nativeControls={false}
+          />
+        )}
       </View>
 
       <Text variant="body">
