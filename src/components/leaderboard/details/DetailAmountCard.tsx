@@ -1,9 +1,10 @@
 import { StyleSheet, View } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { ClockIcon, SolanaBigIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatPrizeSol, formatPrizeUSD } from '@/utils/format'
@@ -73,18 +74,16 @@ export function DetailAmountCard({ win }: DetailAmountCardProps) {
       break
   }
 
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(source)
 
   return (
     <View
       // style={[styles.cardWrap]}
       className={cn('rounded-md overflow-hidden mb-6 w-full border', borderColor)}
     >
-      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      {isFocused && (
+        <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      )}
       <View className="flex-1 p-5 justify-between">
         {/* Top: AMOUNT label, amount + Solana icon + USD, separator */}
         <View className="flex-row items-end justify-between">

@@ -1,6 +1,7 @@
 import { View } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import { cn } from '@/lib/utils'
 
 const emptyStateCardMobileMp4 = require('@/assets/videos/empty/tramplin_empty state_white_2x1(mobile).mp4')
@@ -12,11 +13,7 @@ export function EmptyStateCard({
 
   children,
 }: Readonly<{ className?: string; children?: React.ReactNode }>) {
-  const player = useVideoPlayer(emptyStateCardMobileMp4, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(emptyStateCardMobileMp4)
   return (
     <View
       className={cn(
@@ -24,13 +21,15 @@ export function EmptyStateCard({
         className,
       )}
     >
-      <VideoView
-        player={player}
-        style={{ position: 'absolute', top: '-5%', left: 0, right: 0, height: '110%' }}
-        contentFit="fill"
-        nativeControls={false}
-        pointerEvents="none"
-      />
+      {isFocused && (
+        <VideoView
+          player={player}
+          style={{ position: 'absolute', top: '-5%', left: 0, right: 0, height: '110%' }}
+          contentFit="fill"
+          nativeControls={false}
+          pointerEvents="none"
+        />
+      )}
       {children}
     </View>
   )

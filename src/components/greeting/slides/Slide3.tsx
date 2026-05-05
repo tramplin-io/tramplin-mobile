@@ -1,9 +1,10 @@
 import { StyleSheet, View } from 'react-native'
 // import LottieView from 'lottie-react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 
 import { SolanaCircleBgIcon } from '@/components/icons'
 import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 
 const tramplinIcon01 = require('@/assets/videos/tramplin_icon_01.mp4')
 
@@ -15,11 +16,7 @@ interface Slide3Props {
  * Slide 3: How it works. Background: bg-fill-primary.
  */
 export function Slide3({ width }: Slide3Props) {
-  const player = useVideoPlayer(tramplinIcon01, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(tramplinIcon01)
 
   return (
     <View style={{ width }} className="flex-1 bg-silver-light px-5 pt-18 gap-5">
@@ -39,7 +36,14 @@ export function Slide3({ width }: Slide3Props) {
       </View>
 
       <View className="w-full items-center justify-center aspect-square rounded-md overflow-hidden">
-        <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="contain" nativeControls={false} />
+        {isFocused && (
+          <VideoView
+            player={player}
+            style={StyleSheet.absoluteFillObject}
+            contentFit="contain"
+            nativeControls={false}
+          />
+        )}
       </View>
 
       <View>

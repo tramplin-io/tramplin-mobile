@@ -1,9 +1,10 @@
 import { ActivityIndicator, ImageBackground, StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { SolanaCircleIcon } from '@/components/icons/icons'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
@@ -163,12 +164,9 @@ export function RewardCardRegular({
 }
 
 function RewardCardBackgroundVideo({ sourceVideo }: Readonly<{ sourceVideo: number }>) {
-  const player = useVideoPlayer(sourceVideo, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(sourceVideo)
 
+  if (!isFocused) return null
   return <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
 }
 

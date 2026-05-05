@@ -1,13 +1,16 @@
-import { View, Pressable, StyleSheet } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
-import { useCSSVariable } from 'uniwind'
-import { LeaveIcon, SolanaCircleIcon, TelegramIcon, TwitterIcon } from '@/components/icons/icons'
-import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
-import type { Win } from '@/lib/api/generated/restApi.schemas'
-import { Text } from '../ui/text'
-import { Button } from '../ui'
-import { cn } from '@/lib/utils'
+import { StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { VideoView } from 'expo-video'
+import { useCSSVariable } from 'uniwind'
+
+import { SolanaCircleIcon } from '@/components/icons/icons'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
+import type { Win } from '@/lib/api/generated/restApi.schemas'
+import { cn } from '@/lib/utils'
+import { formatAwardedAgo, formatPrizeSol } from '@/utils/format'
+
+import { Button } from '../ui'
+import { Text } from '../ui/text'
 
 const rewardGoldVideo = require('@/assets/videos/rewards/tramplin_reward_gold_3x4.mp4')
 
@@ -29,11 +32,7 @@ export function RewardCardBig({
   hasError = false,
   buttonText = 'Claim Now',
 }: RewardCardBigProps) {
-  const player = useVideoPlayer(rewardGoldVideo, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(rewardGoldVideo)
 
   const amountSol = reward ? formatPrizeSol(reward) : '0'
   const awardedText = revealedAt ? formatAwardedAgo(revealedAt).replace('AWARDED ', '') : null
@@ -48,7 +47,9 @@ export function RewardCardBig({
   //  critical-secondary content-primary
   return (
     <View style={styles.cardWrap} className={cn('rounded-2xl overflow-hidden', disabled && 'opacity-50')}>
-      <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      {isFocused && (
+        <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />
+      )}
       {hasError && (
         <LinearGradient
           colors={[criticalSecondary, contentPrimary]}

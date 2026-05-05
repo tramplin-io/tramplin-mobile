@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, View } from 'react-native'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { InfoGoldIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import { cn } from '@/lib/utils'
 
 import { peekBg, videoSources } from './utils'
@@ -16,12 +17,9 @@ export interface PromoCardHeaderProps {
 }
 
 function PromoCardVideo({ source }: Readonly<{ source: number }>) {
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(source)
 
+  if (!isFocused) return null
   return (
     <VideoView
       player={player}
