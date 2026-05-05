@@ -227,7 +227,7 @@ export interface Profile {
   isPushNotificationsOn?: boolean
   isDiscordNotificationsOn?: boolean
   isTelegramNotificationsOn?: boolean
-  walletAddress: string[]
+  walletAddress: string
   lastAuthenticatedAt?: string
   notificationTypes?: NotificationType[]
   email?: string
@@ -235,6 +235,7 @@ export interface Profile {
   telegramUserId?: string
   discordId?: string
   tgAuthCode?: string
+  isMobileUser?: boolean
   id?: string
   createdAt?: string
   updatedAt?: string
@@ -812,6 +813,7 @@ export type DeleteMyDeviceTokenParams = {
 
 export type IndexProfilesParams = {
   ids?: string[]
+  isMobileUser?: boolean
   walletAddress?: string
   search?: string
   sortOrder?: IndexProfilesSortOrder

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Pressable, StyleSheet, View, type PressableProps } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
+import { Pressable, View, type PressableProps } from 'react-native'
 import { Tabs, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
@@ -164,6 +163,7 @@ export default function TabsLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
+          lazy: true,
           tabBarStyle: {
             paddingBottom: insets.bottom,
             height: 64 + insets.bottom,

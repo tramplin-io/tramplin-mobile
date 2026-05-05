@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
-import { useRouter } from 'expo-router'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { InfoIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 
@@ -63,7 +63,6 @@ export function DashboardCard({
   onExpire,
   className,
 }: DashboardCardProps) {
-  const router = useRouter()
   const contentTertiary = useCSSVariable('--color-content-tertiary') as string
   const prizeDisplay = prize ? (prefixText ? `${prefixText} ${prize}` : prize) : '...'
 
@@ -164,12 +163,9 @@ export function DashboardCard({
 }
 
 function DashboardCardVideo({ source }: Readonly<{ source: number }>) {
-  const player = useVideoPlayer(source, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(source)
 
+  if (!isFocused) return null
   return (
     <VideoView
       player={player}

@@ -1,10 +1,11 @@
 import { ImageBackground, Pressable, StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useVideoPlayer, VideoView } from 'expo-video'
+import { VideoView } from 'expo-video'
 import { useCSSVariable } from 'uniwind'
 
 import { SmallCupIcon, SolanaCircleIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
+import { useVideoPlayerWithLifecycle } from '@/hooks/useVideoPlayerWithLifecycle'
 import type { DrawType } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
 import { formatPrizeSol } from '@/utils/format'
@@ -109,12 +110,9 @@ export function RewardCardStack({
 }
 
 function RewardCardBackgroundVideo({ sourceVideo }: Readonly<{ sourceVideo: number }>) {
-  const player = useVideoPlayer(sourceVideo, (p) => {
-    p.loop = true
-    p.muted = true
-    p.play()
-  })
+  const { player, isFocused } = useVideoPlayerWithLifecycle(sourceVideo)
 
+  if (!isFocused) return null
   return (
     <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
       <VideoView player={player} style={StyleSheet.absoluteFillObject} contentFit="cover" nativeControls={false} />

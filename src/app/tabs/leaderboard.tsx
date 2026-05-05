@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from 'react'
 import { Linking, Pressable, RefreshControl, ScrollView, View } from 'react-native'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { useCSSVariable } from 'uniwind'
 
 import { ScreenWrapper } from '@/components/general'
@@ -280,6 +280,15 @@ function LeaderboardTable({
 }
 
 export default function LeaderboardTab() {
+  const [mounted, setMounted] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      setMounted(true)
+      return () => setMounted(false)
+    }, []),
+  )
+
   const [tab, setTab] = useState<TabId>('winners')
   // const [winnersPage, setWinnersPage] = useState(0)
   // const [stakersPage, setStakersPage] = useState(0)
@@ -305,6 +314,8 @@ export default function LeaderboardTab() {
     await Promise.all([refetchWins(), refetchStakers()])
     setRefreshing(false)
   }, [refetchWins, refetchStakers])
+
+  if (!mounted) return null
 
   return (
     <ScreenWrapper>
