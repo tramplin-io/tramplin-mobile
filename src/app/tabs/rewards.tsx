@@ -74,6 +74,15 @@ function winToWinner(win: Win): Winner {
 }
 
 export default function RewardsTab() {
+  const [mounted, setMounted] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      setMounted(true)
+      return () => setMounted(false)
+    }, []),
+  )
+
   const [isRegularStackExpanded, setIsRegularStackExpanded] = useState(false)
   const [isEpochStackExpanded, setIsEpochStackExpanded] = useState(false)
   const [claimErrorCountdowns, setClaimErrorCountdowns] = useState<Record<string, number>>({})
@@ -418,7 +427,7 @@ export default function RewardsTab() {
     [isLoading, isRegularStackExpanded, regularWins, regularRewardsTotal, useLazyRegularList, bigWins.length],
   )
 
-  const listFooterComponent = useCallback(
+  const listFooterComponent = useMemo(
     () => (
       <>
         <DashboardCards myStats={myStats} isLoading={isLoadingMyStats} refetchMyStats={refetchMyStats} />
@@ -445,6 +454,8 @@ export default function RewardsTab() {
     [epochListHeaderComponent, regularListHeaderComponent],
   )
 
+  if (!mounted) return null
+
   return (
     <ScreenWrapper>
       <SectionList
@@ -458,8 +469,8 @@ export default function RewardsTab() {
         stickySectionHeadersEnabled={false}
         viewabilityConfig={viewabilityConfig}
         initialNumToRender={REWARDS_NOTIFICATIONS_LIMIT}
-        maxToRenderPerBatch={10}
-        windowSize={5}
+        maxToRenderPerBatch={4}
+        windowSize={3}
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         refreshControl={
