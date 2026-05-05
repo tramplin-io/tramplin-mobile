@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
 import { HeaderGrating } from '@/components/general'
-import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8 } from '@/components/greeting/slides'
+import { Slide1, Slide3, Slide4, Slide5, Slide6, Slide7 } from '@/components/greeting/slides'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/Container'
 import { Text } from '@/components/ui/text'
