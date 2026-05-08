@@ -14,6 +14,7 @@ import { CollapsibleStack } from '@/components/ui/collapsible-stack'
 import { Text } from '@/components/ui/text'
 import { LAMPORTS_PER_SOL } from '@/constants'
 import { useClaimPrize } from '@/hooks/useClaimPrize'
+import { AnalyticsEvent, useAnalytics } from '@/lib/analytics'
 import { useIndexMyWins, useReadMyStats } from '@/lib/api/generated/restApi'
 import type { Win } from '@/lib/api/generated/restApi.schemas'
 // import { IndexMyWinsMock } from '@/mock/rawards'
@@ -111,6 +112,7 @@ export default function RewardsTab() {
   // const wins = IndexMyWinsMock
 
   const { claim, isClaiming } = useClaimPrize()
+  const analytics = useAnalytics()
 
   const [refreshing, setRefreshing] = useState(false)
   const handleRefresh = useCallback(async () => {
@@ -150,6 +152,13 @@ export default function RewardsTab() {
 
   const handleClaim = useCallback(
     async (wins: Win[], winKey?: string) => {
+      const batchPrize = wins.reduce((sum, win) => sum + (win.prizeSol ?? 0), 0)
+
+      analytics.track(AnalyticsEvent.CLAIM_REWARD_CLICK, {
+        type: wins[0].drawType,
+        amount_sol: batchPrize,
+        count: wins.length,
+      })
       try {
         await claim(wins.map(winToWinner))
         Toast.show({ type: 'success', text1: 'Reward claimed!' })
@@ -163,7 +172,7 @@ export default function RewardsTab() {
         }
       }
     },
-    [claim, startErrorCountdown, refetchWins],
+    [claim, startErrorCountdown, refetchWins, analytics],
   )
 
   const bigWins = wins.filter((w) => w.drawType === 'big')

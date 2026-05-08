@@ -25,7 +25,6 @@ export function ConnectButton() {
   const logout = useAuthStore((s) => s.logout)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const handleConnect = useCallback(async () => {
     setError(null)
     setLoading(true)

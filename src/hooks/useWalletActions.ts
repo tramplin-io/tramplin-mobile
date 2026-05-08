@@ -45,6 +45,11 @@ export function useWalletActions() {
     return msg.includes('authorization request failed')
   }, [])
 
+  const isTimeoutError = useCallback((err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err)
+    return msg.includes('TimeoutException')
+  }, [])
+
   const ensureForeground = useCallback(() => {
     // MWA requests can fail if the app is backgrounded during the intent round-trip
     if (AppState.currentState !== 'active') {
@@ -61,6 +66,10 @@ export function useWalletActions() {
         console.error('withReauthorizeRetry - err:', err)
         if (!isAuthRequestFailed(err)) throw err
 
+        if (isTimeoutError(err)) {
+          throw new Error('Timeout waiting for response')
+        }
+
         // Solflare/Android can return a protocol-level auth failure if the cached session is stale.
         // Reset session and try once more. We cannot call deauthorizeSession here (it requires
         // a DeauthorizeAPI wallet reference we don't have in this path); disconnect + connect
@@ -72,7 +81,7 @@ export function useWalletActions() {
         return await fn()
       }
     },
-    [wallet, ensureForeground, isAuthRequestFailed],
+    [wallet, ensureForeground, isAuthRequestFailed, isTimeoutError],
   )
 
   /**

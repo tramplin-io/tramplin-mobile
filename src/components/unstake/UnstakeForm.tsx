@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Keyboard, Linking, Pressable, View, type TextInput } from 'react-native'
+import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { useCSSVariable } from 'uniwind'
 
 import { SolscanIcon } from '@/components/icons'
@@ -10,6 +11,7 @@ import { Text } from '@/components/ui/text'
 import { AppConfig } from '@/constants'
 import { LAMPORTS_PER_SOL } from '@/constants/solana'
 import { useUnstake, useUserActiveStake, useUserStakeAccounts } from '@/hooks'
+import { AnalyticsEvent, useAnalytics } from '@/lib/analytics'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
 import { getSolscanTxUrl } from '@/utils/wallet'
@@ -25,6 +27,8 @@ type Props = Readonly<{
 export function UnstakeForm({ onClose }: Props) {
   const { data: stakeAccounts, refresh: refreshStakeAccounts } = useUserStakeAccounts()
   const { data: activeStake } = useUserActiveStake()
+  const { account } = useMobileWallet()
+  const analytics = useAnalytics()
 
   const { unstake, isLoading } = useUnstake()
   const { refetch: refetchMyStats } = useReadMyStats()
@@ -56,9 +60,10 @@ export function UnstakeForm({ onClose }: Props) {
   const handleMax = useCallback(() => {
     if (maxSol > 0) {
       setAmount(String(maxSol))
+      analytics.track(AnalyticsEvent.CLICK_MAX_UNSTAKE_BUTTON, { max_sol: maxSol })
     }
     setDisplayError(null)
-  }, [maxSol])
+  }, [maxSol, analytics])
 
   const executeUnstake = useCallback(
     async (amountSol: number) => {
@@ -79,23 +84,41 @@ export function UnstakeForm({ onClose }: Props) {
 
   const handleConfirmUnstake = useCallback(async () => {
     if (!canSubmit) return
+    analytics.track(AnalyticsEvent.UNSTAKE_INITIATED, { amount_sol: amountNum })
     setStatus('processing')
     setDisplayError(null)
 
     const result = await executeUnstake(amountNum)
+    const remainingSol = Math.max(0, maxSol - amountNum)
+
+    const isFullWithdrawal = remainingSol < 0.0001
 
     if (result?.success && result.signature) {
+      analytics.track(AnalyticsEvent.UNSTAKE_SUCCESS, {
+        tx_hash: result.signature,
+        amount_sol: amountNum,
+        remaining_sol: remainingSol,
+        is_full_withdrawal: isFullWithdrawal,
+      })
+      if (isFullWithdrawal) {
+        analytics.track(AnalyticsEvent.UNSTAKE_ALL_SUCCESS, {
+          tx_hash: result.signature,
+          amount_sol: amountNum,
+        })
+      }
       setLastSignature(result.signature)
       setStatus('success')
     } else if (result?.networkError) {
+      analytics.track(AnalyticsEvent.UNSTAKE_ERROR, { error_code: result.error })
       setStatus('network_failed')
       setDisplayError(result.error ?? 'Network request failed')
     } else {
+      analytics.track(AnalyticsEvent.UNSTAKE_ERROR, { error_code: result?.error })
       setStatus('failed')
       setDisplayError(result?.error ?? 'Transaction failed')
       setRetryCountdown(3)
     }
-  }, [canSubmit, amountNum, executeUnstake])
+  }, [canSubmit, amountNum, executeUnstake, analytics, maxSol])
 
   const handleTryAgain = useCallback(() => {
     setDisplayError(null)

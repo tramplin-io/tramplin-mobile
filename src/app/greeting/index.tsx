@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/Container'
 import { Text } from '@/components/ui/text'
 import { useWalletActions } from '@/hooks/useWalletActions'
+import { AnalyticsEvent, useAnalytics } from '@/lib/analytics'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useProfileStore } from '@/lib/stores/profile-store'
@@ -46,6 +47,7 @@ export default function GreetingScreen() {
   const { hasSystemPushPermission, registerForPushNotifications } = useSystemPushPermission()
   const { createDeviceToken, updateUserProfile, isPushNotificationsOn } = useProfileStore()
 
+  const analytics = useAnalytics()
   const flatListRef = useRef<FlatList>(null)
 
   const fillTop = useCSSVariable('--color-getting-gradient-secondary') as string | undefined
@@ -59,6 +61,7 @@ export default function GreetingScreen() {
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current
 
   const handleLaunchApp = useCallback(async () => {
+    analytics.track(AnalyticsEvent.WALLET_CONNECT_CLICK)
     setSigningIn(true)
 
     try {
@@ -79,6 +82,8 @@ export default function GreetingScreen() {
         return
       }
 
+      // Wallet connected and login successful event
+      analytics.track(AnalyticsEvent.WALLET_CONNECTED, { wallet_address: result.publicKey })
       await updateUserProfile({})
 
       try {
@@ -101,6 +106,7 @@ export default function GreetingScreen() {
       setSigningIn(false)
     }
   }, [
+    analytics,
     loginWithWallet,
     signLoginMessage,
     error,

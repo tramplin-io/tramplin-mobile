@@ -28,6 +28,8 @@ const API_URLS = {
   DEV_REFERRALS: process.env.EXPO_PUBLIC_REFERRALS_API_URL || 'https://develop-referrals-api.tramplin.io/api',
 } as const
 
+const FORMO_WRITE_KEY = process.env.EXPO_PUBLIC_FORMO_WRITE_KEY || ''
+
 const DEV_TOOLS_ENABLED: boolean = process.env.EXPO_PUBLIC_DEV_TOOLS_ENABLED === 'true'
 
 export {
@@ -43,4 +45,5 @@ export {
   ANDROID_APP_STORE_URL,
   SOLANA_APP_STORE_URL,
   API_URLS,
+  FORMO_WRITE_KEY,
 }

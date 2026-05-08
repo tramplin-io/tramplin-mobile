@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Keyboard, Linking, Pressable, TextInput, View } from 'react-native'
+import { ActivityIndicator, Keyboard, Linking, Pressable, View, type TextInput } from 'react-native'
 import type { Rpc, SolanaRpcApi } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { useCSSVariable } from 'uniwind'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { AppConfig } from '@/constants/app-config'
 import { LAMPORTS_PER_SOL, MIN_STAKE_SOL, MIN_SUBSEQUENT_STAKE_SOL } from '@/constants/solana'
 import { useUserStakeAccounts } from '@/hooks'
 import { useStake } from '@/hooks/useStake'
 import { useWalletBalance } from '@/hooks/useWalletBalance'
+import { AnalyticsEvent, useAnalytics } from '@/lib/analytics'
 import { useReadMyStats } from '@/lib/api/generated/restApi'
 import { cn } from '@/lib/utils'
 import type { BalanceInfo } from '@/types/wallet'
@@ -52,6 +52,7 @@ type Props = Readonly<{
 export function StakeForm({ onClose }: Props) {
   const { balance } = useWalletBalance()
   const { client } = useMobileWallet()
+  const analytics = useAnalytics()
   const { data: myStats, isLoading: isLoadingMyStats, refetch: refetchMyStats } = useReadMyStats()
   const { refresh: refreshStakeAccounts } = useUserStakeAccounts()
 
@@ -122,23 +123,32 @@ export function StakeForm({ onClose }: Props) {
 
   const handleConfirmStake = useCallback(async () => {
     if (!canSubmit) return
+    analytics.track(AnalyticsEvent.STAKE_BUTTON_CLICK, { amount_sol: amountNum })
     setStatus('processing')
     setDisplayError(null)
 
     const result = await executeStake(amountNum)
 
     if (result?.success && result.signature) {
+      analytics.track(AnalyticsEvent.STAKE_SUCCESS, {
+        value: amountNum,
+        tx_hash: result.signature,
+        // user_id: account ? String(account.address) : undefined,
+        // remaining_sol: maxSol > 0 ? Math.max(0, maxSol - amountNum) : undefined,
+      })
       setLastSignature(result.signature)
       setStatus('success')
     } else if (result?.networkError) {
+      analytics.track(AnalyticsEvent.STAKE_ERROR, { error_code: result.error })
       setStatus('network_failed')
       setDisplayError(result.error ?? 'Network request failed')
     } else {
+      analytics.track(AnalyticsEvent.STAKE_ERROR, { error_code: result?.error })
       setStatus('failed')
       setDisplayError(result?.error ?? 'Transaction failed')
       setRetryCountdown(3)
     }
-  }, [canSubmit, amountNum, executeStake])
+  }, [canSubmit, amountNum, executeStake, analytics])
 
   const handleTryAgain = useCallback(() => {
     setDisplayError(null)

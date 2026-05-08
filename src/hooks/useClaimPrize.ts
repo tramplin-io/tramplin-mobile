@@ -12,7 +12,8 @@ import {
 } from '@solana/kit'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 
-import { signatureToBase58 } from '@/utils/format'
+import { AnalyticsEvent, useAnalytics } from '@/lib/analytics'
+import { lamportsToSol, signatureToBase58 } from '@/utils/format'
 import { batchInstructions, prepareClaimInstruction, rpc, type Winner } from '@/utils/solana'
 import { isCancellationError } from '@/utils/wallet'
 
@@ -31,6 +32,7 @@ type UseClaimPrizeReturn = {
 export function useClaimPrize(): UseClaimPrizeReturn {
   const { account, signAndSendTransaction } = useMobileWallet()
   const { removeWins } = useDrawWins()
+  const analytics = useAnalytics()
 
   const [signatures, setSignatures] = useState<Signature[] | null>(null)
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
@@ -41,6 +43,7 @@ export function useClaimPrize(): UseClaimPrizeReturn {
     async (winners: Winner[]): Promise<Signature[]> => {
       if (!account) throw new Error('Wallet not connected')
 
+      // analytics.track(AnalyticsEvent.CLAIM_INITIATE)
       setClaimingWinners(winners)
       setError(null)
       setStatus('pending')
@@ -80,6 +83,14 @@ export function useClaimPrize(): UseClaimPrizeReturn {
 
           const batchWinnerIds = new Set(batchWinners.map((bw) => `${bw.epochOrSlot}-${bw.winnerId}`))
           setClaimingWinners((prev) => prev.filter((w) => !batchWinnerIds.has(`${w.epochOrSlot}-${w.winnerId}`)))
+
+          const batchPrize = batch.indices.reduce((sum, i) => sum + (winners[i]?.prize ?? 0n), 0n)
+
+          analytics.track(AnalyticsEvent.CLAIM_SUCCESS, {
+            type: winners[0].kind,
+            tx_hash: signature,
+            amount_sol: lamportsToSol(batchPrize),
+          })
         }
 
         setSignatures(collectedSignatures)
@@ -91,6 +102,7 @@ export function useClaimPrize(): UseClaimPrizeReturn {
 
         if (isCancellationError(err)) {
           const cancelError = new Error('Transaction cancelled')
+          analytics.track(AnalyticsEvent.CLAIM_ERROR, { error_code: cancelError.message })
           setError(cancelError)
           setStatus('error')
           throw cancelError
@@ -98,12 +110,13 @@ export function useClaimPrize(): UseClaimPrizeReturn {
 
         const finalError = err instanceof Error ? err : new Error(String(err))
         console.error('Claim failed:', finalError)
+        analytics.track(AnalyticsEvent.CLAIM_ERROR, { error_code: finalError.message })
         setError(finalError)
         setStatus('error')
         throw finalError
       }
     },
-    [account, signAndSendTransaction, removeWins],
+    [account, signAndSendTransaction, removeWins, analytics],
   )
 
   const reset = useCallback(() => {
