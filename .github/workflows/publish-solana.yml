@@ -1,0 +1,117 @@
+name: Build & Publish to Solana dApp Store
+
+on:
+  push:
+    # branches: [main]
+    branches: [ci-cd]
+  workflow_dispatch:
+
+jobs:
+  # ─── Job 1: Build the signed APK ───────────────────────────────────────────
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    outputs:
+      apk-path: ${{ steps.build.outputs.apk-path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # ── Required for --local builds on GitHub runners ──────────────────────
+      # Remove both steps below if switching to EAS cloud (drop --local flag)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      # ── End of local-only steps ────────────────────────────────────────────
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+          packager: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build APK
+        id: build
+        run: |
+          eas build \
+            --platform android \
+            --profile production \
+            --non-interactive \
+            --local \
+            --output ${{ github.workspace }}/app-release.apk
+          echo "apk-path=${{ github.workspace }}/app-release.apk" >> $GITHUB_OUTPUT
+# EAS CLOUD — remove --local line above and the two Java/Android SDK steps in the build job
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: app-release.apk
+          retention-days: 7
+
+  # ─── Job 2: Publish to Solana dApp Store ───────────────────────────────────
+  publish:
+    name: Publish to Solana dApp Store
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production # requires manual approval in GitHub repo settings
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+
+      - name: Install dapp-store CLI
+        run: pnpm add -g @solana-mobile/dapp-store-cli
+
+      - name: Decode Solana keypair
+        run: |
+          echo "${{ secrets.SOLANA_KEYPAIR_B64 }}" | base64 -d > ./keypair.json
+
+      - name: Publish release
+        env:
+          DAPP_STORE_API_KEY: ${{ secrets.DAPP_STORE_API_KEY }}
+        run: |
+          dapp-store \
+            --apk-file ./app-release.apk \
+            --whats-new "Release ${{ github.ref_name }} — $(date +'%Y-%m-%d')"
+
+      - name: Cleanup keypair
+        if: always()
+        run: rm -f ./keypair.json
