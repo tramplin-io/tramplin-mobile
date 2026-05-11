@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: pnpm
+          # cache: pnpm
 
       # ── Required for --local builds on GitHub runners ──────────────────────
       # Remove both steps below if switching to EAS cloud (drop --local flag)
@@ -90,7 +90,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: pnpm
+          # cache: pnpm
 
       - name: Download APK artifact
         uses: actions/download-artifact@v4
