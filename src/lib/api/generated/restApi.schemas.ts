@@ -105,6 +105,7 @@ export const JobType = {
   aprSync: 'aprSync',
   validatorStakeAccountSync: 'validatorStakeAccountSync',
   sendNotification: 'sendNotification',
+  createDrawReminderNotifications: 'createDrawReminderNotifications',
 } as const
 
 export interface UpdateJobInput {
@@ -116,6 +117,7 @@ export interface CreateNotificationInput {
   type: NotificationExtraType
   title: string
   body: string
+  content?: string
   category: NotificationCategory
   url?: string
   targetType: NotificationTargetType
@@ -137,6 +139,7 @@ export interface Notification {
   type?: NotificationExtraType
   title: string
   body: string
+  content?: string
   metadata?: string
   isSeen?: boolean
   isProcessed?: boolean
@@ -159,17 +162,21 @@ export const NotificationCategory = {
   product: 'product',
   rewards: 'rewards',
   points: 'points',
+  winAlerts: 'winAlerts',
+  drawReminders: 'drawReminders',
+  referalActivity: 'referalActivity',
+  announcements: 'announcements',
 } as const
 
 export type NotificationExtraType = (typeof NotificationExtraType)[keyof typeof NotificationExtraType]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NotificationExtraType = {
-  telegram: 'telegram',
-  tramplin: 'tramplin',
-  success: 'success',
-  solana: 'solana',
-  discord: 'discord',
+  draws: 'draws',
+  staking: 'staking',
+  wins: 'wins',
+  referrals: 'referrals',
+  announcements: 'announcements',
 } as const
 
 export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
@@ -218,6 +225,10 @@ export const NotificationType = {
   product: 'product',
   rewards: 'rewards',
   points: 'points',
+  winAlerts: 'winAlerts',
+  drawReminders: 'drawReminders',
+  referalActivity: 'referalActivity',
+  announcements: 'announcements',
 } as const
 
 export interface Profile {
@@ -729,6 +740,10 @@ export type ReadJobParams = {
 }
 
 export type UpdateJobParams = {
+  id: string
+}
+
+export type DeleteMyNotificationParams = {
   id: string
 }
 

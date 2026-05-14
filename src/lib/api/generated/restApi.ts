@@ -33,6 +33,7 @@ import type {
   CreatePromoInput,
   CreatePromoParams,
   DeleteMyDeviceTokenParams,
+  DeleteMyNotificationParams,
   DeletePromoParams,
   DrawForecast,
   DrawSync,
@@ -946,6 +947,67 @@ export const useCreateNotification = <TError = unknown, TContext = unknown>(
   TContext
 > => {
   const mutationOptions = getCreateNotificationMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+
+export const deleteMyNotification = (params: DeleteMyNotificationParams) => {
+  return customInstance<void>({ url: `/deleteMyNotification`, method: 'DELETE', params })
+}
+
+export const getDeleteMyNotificationMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteMyNotification>>,
+    TError,
+    { params: DeleteMyNotificationParams },
+    TContext
+  >
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteMyNotification>>,
+  TError,
+  { params: DeleteMyNotificationParams },
+  TContext
+> => {
+  const mutationKey = ['deleteMyNotification']
+  const { mutation: mutationOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteMyNotification>>,
+    { params: DeleteMyNotificationParams }
+  > = (props) => {
+    const { params } = props ?? {}
+
+    return deleteMyNotification(params)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteMyNotificationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMyNotification>>>
+
+export type DeleteMyNotificationMutationError = unknown
+
+export const useDeleteMyNotification = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteMyNotification>>,
+      TError,
+      { params: DeleteMyNotificationParams },
+      TContext
+    >
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteMyNotification>>,
+  TError,
+  { params: DeleteMyNotificationParams },
+  TContext
+> => {
+  const mutationOptions = getDeleteMyNotificationMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
