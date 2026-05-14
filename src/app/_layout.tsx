@@ -173,12 +173,15 @@ function RootLayout() {
               <Stack.Screen name="screens/contact-us" />
               <Stack.Screen name="screens/app-logs" />
               <Stack.Screen name="screens/notification-settings" />
+              <Stack.Screen name="screens/notifications/index" />
+              <Stack.Screen name="screens/notifications/[notificationId]" />
               <Stack.Screen
                 name="screens/leaderboard-detail"
                 options={{ presentation: 'fullScreenModal', headerShown: false }}
               />
               <Stack.Screen name="no-internet/index" />
               <Stack.Screen name="splash" />
+              {/* TODO add hot found page */}
             </Stack>
           </AuthGuard>,
           <PortalHost key="portal" />,
