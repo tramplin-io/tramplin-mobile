@@ -66,7 +66,7 @@ export function PromoHowItWorksModal({ open, onClose, title, content }: Readonly
       // contentHeight={500}
       enableDynamicSizing={false}
       // maxDynamicContentSize={500}
-      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor, marginTop: insets.top + 8 }}
+      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor, marginTop: insets.top + 8, width: 48, height: 4 }}
       enableDismissOnClose
       backdropComponent={renderBackdrop}
       backgroundStyle={{

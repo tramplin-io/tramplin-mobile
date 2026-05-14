@@ -47,9 +47,10 @@ export type StakeFormStakeProps = Readonly<{
 
 type Props = Readonly<{
   onClose?: () => void
+  stakeAmount?: string
 }>
 
-export function StakeForm({ onClose }: Props) {
+export function StakeForm({ onClose, stakeAmount = '' }: Props) {
   const { balance } = useWalletBalance()
   const { client } = useMobileWallet()
   const { data: myStats, isLoading: isLoadingMyStats, refetch: refetchMyStats } = useReadMyStats()
@@ -87,7 +88,7 @@ export function StakeForm({ onClose }: Props) {
     setLastSignature(null)
   }, [])
 
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState(stakeAmount)
   const [status, setStatus] = useState<StakeFormStatus>('idle')
   const [displayError, setDisplayError] = useState<string | null>(null)
   const [retryCountdown, setRetryCountdown] = useState(0)

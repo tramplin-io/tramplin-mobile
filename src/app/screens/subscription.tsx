@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, Stack } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import { useCSSVariable } from 'uniwind'
 
@@ -62,6 +63,7 @@ function SegmentButton({
 
 export default function SubscriptionScreen() {
   const { userProfile, fetchUserProfile, updateUserProfile } = useProfileStore()
+  const insets = useSafeAreaInsets()
   const [email, setEmail] = useState('')
   const [discordId, setDiscordId] = useState('')
   const [notificationTypes, setNotificationTypes] = useState<NotificationType[]>(['product'])
@@ -175,7 +177,7 @@ export default function SubscriptionScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={0}
     >
-      <ScreenWrapper>
+      <ScreenWrapper style={{ paddingTop: insets.top }}>
         <View className="flex-row items-center justify-between mb-2 mt-2 px-4">
           <BackButton onPress={handleBack} className="mb-0 z-10" />
           <Text variant="h4" className="text-center w-full -ml-10">

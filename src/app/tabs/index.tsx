@@ -7,8 +7,8 @@ import { ScreenWrapper } from '@/components/general'
 import {
   CommunityStats,
   DashboardHeader,
-  PromoCard,
   // NotificationsCollapsibleStack,
+  PromoCard,
   // StakePromptCard,
   YourStake,
 } from '@/components/main'
@@ -46,8 +46,9 @@ export default function HomeTab() {
 
   return (
     <ScreenWrapper>
+      <DashboardHeader title="Home" />
       <ScrollView
-        contentContainerClassName="px-4 pb-34 py-8 flex-grow gap-8"
+        contentContainerClassName="px-4 py-6 pb-34  flex-grow gap-8"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -58,7 +59,6 @@ export default function HomeTab() {
           />
         }
       >
-        <DashboardHeader />
         {/* <NotificationsCollapsibleStack /> */}
         <PromoCard />
         <YourStake onUnstakePress={handleOpenUnstake} />
