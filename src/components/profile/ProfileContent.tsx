@@ -4,6 +4,7 @@ import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import { router } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
+import { useCSSVariable } from 'uniwind'
 
 import { DeveloperPanel } from '@/components/profile/DeveloperPanel'
 import { Card } from '@/components/ui'
@@ -48,19 +49,26 @@ function MenuItem({
   showChevron?: boolean
   onPress?: () => void
 }>) {
+  const contentPrimary = useCSSVariable('--color-content-primary') as string
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex-row justify-between items-center py-4 ${isLast ? '' : 'border-b border-border-tertiary'}`}
+      className={`flex-row justify-between items-center py-4 ${isLast ? '' : 'border-b border-fill-tertiary'}`}
       activeOpacity={0.7}
     >
       <Text variant="body" className={`${textClassName ?? ''}`}>
         {title}
       </Text>
       {showChevron && (
-        <Text className="text-brand-primary text-lg font-semibold" style={{ lineHeight: 20 }}>
-          ›
-        </Text>
+        <View
+          className="border-l-[1.5px] border-b-[1.5px] rotate-225"
+          style={{
+            marginLeft: 6,
+            width: 8,
+            height: 8,
+            borderColor: contentPrimary,
+          }}
+        />
       )}
     </TouchableOpacity>
   )
@@ -69,7 +77,7 @@ function MenuItem({
 function Section({ title, items }: Readonly<{ title: string; items: MenuSectionItem[] }>) {
   return (
     <View className="gap-2">
-      <Text variant="body" className="text-content-primary uppercase tracking-wide">
+      <Text variant="small" className="text-content-tertiary uppercase tracking-wide">
         {title}
       </Text>
       <Card variant="profile">
@@ -200,10 +208,10 @@ export function ProfileContent({ isTab = false }: Readonly<ProfileContentProps>)
       title: 'Notifications',
       onPress: () => router.push('/screens/notification-settings'),
     },
-    {
-      title: 'Subscription',
-      onPress: () => router.push('/screens/subscription'),
-    },
+    // {
+    //   title: 'Subscription',
+    //   onPress: () => router.push('/screens/subscription'),
+    // },
   ]
 
   const helpItems: MenuSectionItem[] = [
@@ -270,23 +278,24 @@ export function ProfileContent({ isTab = false }: Readonly<ProfileContentProps>)
   }, [])
 
   const content = (
-    <View className="gap-6 pt-2">
-      {/* <Section title="GENERAL" items={generalItems} /> */}
-      <Section title="NEED HELP?" items={helpItems} />
-      <Section title="LEGAL" items={legalItems} />
+    <View className="gap-4 pt-2">
+      <View className="gap-10 mb-6">
+        <Section title="GENERAL" items={generalItems} />
+        <Section title="NEED HELP?" items={helpItems} />
+        <Section title="LEGAL" items={legalItems} />
 
-      {__DEV__ && (
-        <Section
-          title="DEV"
-          items={[
-            {
-              title: 'Dev Test Screen',
-              onPress: () => router.push('/screens/devTest'),
-            },
-          ]}
-        />
-      )}
-
+        {DEV_TOOLS_ENABLED && (
+          <Section
+            title="DEV"
+            items={[
+              {
+                title: 'Dev Test Screen',
+                onPress: () => router.push('/screens/devTest'),
+              },
+            ]}
+          />
+        )}
+      </View>
       <Button variant="destructive" size="xl" onPress={handleSignOut}>
         <Text>Sign Out</Text>
       </Button>
