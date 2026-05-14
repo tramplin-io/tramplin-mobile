@@ -25,7 +25,7 @@ export function UnstakeModal({ open, onOpenChange }: Props) {
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const insets = useSafeAreaInsets()
   const fillPrimary = useCSSVariable('--color-fill-primary')
-  const handleIndicatorColor = useCSSVariable('--color-brand-secondary')
+  const handleIndicatorColor = useCSSVariable('--color-content-tertiary')
 
   const [keyboardHeight, setKeyboardHeight] = useState(0)
   useEffect(() => {
@@ -75,7 +75,7 @@ export function UnstakeModal({ open, onOpenChange }: Props) {
       ref={bottomSheetRef}
       onDismiss={handleDismiss}
       bottomInset={bottomInset}
-      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor as string }}
+      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor as string, width: 48, height: 4 }}
       keyboardBehavior="extend"
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"

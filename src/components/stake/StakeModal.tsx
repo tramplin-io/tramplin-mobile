@@ -19,13 +19,14 @@ const TAB_BAR_HEIGHT = 64
 type Props = Readonly<{
   open: boolean
   onOpenChange: (open: boolean) => void
+  stakeAmount?: string
 }>
 
-export function StakeModal({ open, onOpenChange }: Props) {
+export function StakeModal({ open, onOpenChange, stakeAmount = '' }: Props) {
   const bottomSheetRef = useRef<BottomSheetModal>(null)
   const insets = useSafeAreaInsets()
   const fillPrimary = useCSSVariable('--color-fill-primary')
-  const handleIndicatorColor = useCSSVariable('--color-brand-secondary')
+  const handleIndicatorColor = useCSSVariable('--color-content-tertiary')
 
   const [keyboardHeight, setKeyboardHeight] = useState(0)
   useEffect(() => {
@@ -75,7 +76,7 @@ export function StakeModal({ open, onOpenChange }: Props) {
       ref={bottomSheetRef}
       onDismiss={handleDismiss}
       bottomInset={bottomInset}
-      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor as string }}
+      handleIndicatorStyle={{ backgroundColor: handleIndicatorColor as string, width: 48, height: 4 }}
       // snapPoints={['70%', '90%']}
       keyboardBehavior="extend"
       keyboardBlurBehavior="restore"
@@ -94,7 +95,7 @@ export function StakeModal({ open, onOpenChange }: Props) {
       <BottomSheetScrollView keyboardShouldPersistTaps="always">
         <BottomSheetView style={{ flex: 1, paddingBottom: keyboardHeight - TAB_BAR_HEIGHT }}>
           <ErrorBoundary>
-            <StakeForm onClose={handleDismiss} />
+            <StakeForm onClose={handleDismiss} stakeAmount={stakeAmount} />
           </ErrorBoundary>
         </BottomSheetView>
       </BottomSheetScrollView>
