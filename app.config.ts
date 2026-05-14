@@ -10,8 +10,8 @@ const enableCharlesProxy =
   process.env.EXPO_PUBLIC_ENABLE_CHARLES_PROXY === 'true' || process.env.ENABLE_CHARLES_PROXY === 'true'
 // const disableAndroidBackup = process.env.EAS_BUILD_PROFILE !== 'production'
 
-const version: string = '1.0.4'
-const buildNumber: number = 12
+const version: string = '1.0.5'
+const buildNumber: number = 13
 
 /* PROD VERSION LOG
 1.0.0 (3) - Initial release - 2026_03_13
@@ -24,6 +24,7 @@ const buildNumber: number = 12
 1.0.3 (10) - Update - 2026_05_04 - Update FAQ
 1.0.3 (11) - Update - 2026_05_04 - Update rewards card video
 1.0.4 (12) - Update - 2026_05_05 - Fix video player issue
+1.0.5 (13) - Update - 2026_05
 */
 
 /**
