@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Button as RNButton, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Button as RNButton, ScrollView, StyleSheet, View } from 'react-native'
 import { useMobileWallet } from '@wallet-ui/react-native-kit'
 import * as Haptics from 'expo-haptics'
-import { router } from 'expo-router'
+import { router, Stack } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
+import { ScreenWrapper } from '@/components/general'
 import { BackButton } from '@/components/general/BackButton'
 import { Button } from '@/components/ui'
-import { Container } from '@/components/ui/Container'
 import { Switch } from '@/components/ui/switch'
 import { Text } from '@/components/ui/text'
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
 import { AccountInfo } from '@/components/wallet/AccountInfo'
 import { ConnectButton } from '@/components/wallet/ConnectButton'
 import { SignMessageForm } from '@/components/wallet/SignMessageForm'
+import { CreateMyDeviceTokenInput } from '@/lib/api/generated/restApi.schemas'
 import { NotificationsDebug } from '@/lib/notifications/debug'
 import { useSystemPushPermission } from '@/lib/notifications/hooks'
 import { getExpoPushToken } from '@/lib/notifications/utils'
@@ -71,8 +73,10 @@ export default function ProfileTab() {
   //   store: store,
   // })
 
-  const wallet = useMobileWallet()
+  const [expoTokens, setExpoTokens] = useState<CreateMyDeviceTokenInput | null>(null)
 
+  const wallet = useMobileWallet()
+  const insets = useSafeAreaInsets()
   // console.log('account', account)
   // console.log('accounts', accounts)
   // console.log('client', client)
@@ -164,8 +168,26 @@ export default function ProfileTab() {
     ],
   )
 
+  const handleDeviceTokenSettings = useCallback(async () => {
+    const token = await registerForPushNotifications({ forceOpenSettings: true })
+    if (token) {
+      const created = await createDeviceToken(token)
+      if (created) {
+        setExpoTokens(token)
+      }
+    }
+  }, [registerForPushNotifications, createDeviceToken])
+
   return (
-    <Container safe={false}>
+    <ScreenWrapper style={{ paddingTop: insets.top }}>
+      <Stack.Screen
+        options={{
+          title: 'DEV PAGE',
+          presentation: 'fullScreenModal',
+          headerShown: false,
+          animation: 'fade',
+        }}
+      />
       <View className="flex-row items-center justify-between mb-4 mt-4 px-4">
         <BackButton onPress={() => router.back()} className="mb-0 z-10" />
         <Text variant="h4" className="text-center w-full -ml-10">
@@ -189,13 +211,24 @@ export default function ProfileTab() {
 
         {/* Notifications toggle (when authenticated) */}
         {isAuthenticated && (
-          <View className="mb-6 flex-row items-center justify-between rounded-lg bg-fill-secondary p-4">
-            <Text className="text-content-primary text-base">Notifications</Text>
-            <Switch
-              checked={isNotificationsOn}
-              onCheckedChange={handleNotificationsToggle}
-              disabled={isProfileLoading || isTogglingNotifications}
-            />
+          <View className="mb-6 ">
+            <View className="mb-6 flex-row items-center justify-between rounded-lg bg-fill-secondary p-4">
+              <Text className="text-content-primary text-base">Notifications</Text>
+              <Switch
+                checked={isNotificationsOn}
+                onCheckedChange={handleNotificationsToggle}
+                disabled={isProfileLoading || isTogglingNotifications}
+              />
+            </View>
+            {expoTokens && (
+              <View className="mb-6 flex-col rounded-lg bg-fill-secondary p-4">
+                <Text className="text-content-primary text-base">Expo Tokens</Text>
+                <Text className="text-content-primary text-base">Expo :{expoTokens.expoDeviceToken}</Text>
+              </View>
+            )}
+            <Button variant="default" size="lg" onPress={handleDeviceTokenSettings}>
+              <Text>Create Device Token</Text>
+            </Button>
           </View>
         )}
 
@@ -348,7 +381,7 @@ export default function ProfileTab() {
           </View>
         </View>
       </ScrollView>
-    </Container>
+    </ScreenWrapper>
   )
 }
 
