@@ -7,8 +7,8 @@ import { ProfileContent } from '@/components/profile'
 export default function SettingsTab() {
   return (
     <ScreenWrapper>
-      <ScrollView contentContainerClassName="px-4 pb-16 py-8 flex-grow" showsVerticalScrollIndicator={false}>
-        <DashboardHeader title="Settings" className="mb-6" />
+      <DashboardHeader title="Settings" />
+      <ScrollView contentContainerClassName="px-4 pb-16 pt-6 flex-grow" showsVerticalScrollIndicator={false}>
         <ProfileContent isTab />
       </ScrollView>
     </ScreenWrapper>

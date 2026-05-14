@@ -239,8 +239,7 @@ export default function RewardsTab() {
 
   const headerComponent = useCallback(
     () => (
-      <View className="gap-3 px-4 pt-8 pb-0">
-        <DashboardHeader title="Rewards" className="mb-6" />
+      <View className="gap-3 px-4 pt-6 pb-0">
         {isLoading && <RewardCardRegular variant="loading" shouldPlayVideo={false} />}
 
         {/* {!isLoading && wins.length === 0 && <RewardCardRegular variant="empty" shouldPlayVideo={false} />} */}
@@ -458,6 +457,7 @@ export default function RewardsTab() {
 
   return (
     <ScreenWrapper>
+      <DashboardHeader title="Rewards" />
       <SectionList
         sections={sections}
         keyExtractor={regularListKeyExtractor}

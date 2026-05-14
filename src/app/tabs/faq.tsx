@@ -368,9 +368,8 @@ export default function FAQTab() {
 
   return (
     <ScreenWrapper>
-      <ScrollView contentContainerClassName="px-4 pb-40 py-8 flex-grow" showsVerticalScrollIndicator={false}>
-        <DashboardHeader title="Questions & Answers" className="mb-6" />
-
+      <DashboardHeader title="Questions & Answers" />
+      <ScrollView contentContainerClassName="px-4 pb-40 pt-6 flex-grow" showsVerticalScrollIndicator={false}>
         <View className="mb-8">
           {sections.map((section) => (
             <View key={section.title} className="mb-6">

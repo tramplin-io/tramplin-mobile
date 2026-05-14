@@ -16,6 +16,7 @@ import { CONTACT_REASONS } from '@/constants/profile'
 import { useContactUs } from '@/lib/api/generated/restApi'
 import type { ContactUsInput } from '@/lib/api/generated/restApi.schemas'
 import { cn } from '@/lib/utils'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function parseSelectValue(v: unknown): string {
   if (typeof v === 'string') return v
@@ -26,6 +27,8 @@ function parseSelectValue(v: unknown): string {
 }
 
 export default function ContactUsScreen() {
+  const insets = useSafeAreaInsets()
+  
   const [reason, setReason] = useState('')
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')
@@ -40,7 +43,7 @@ export default function ContactUsScreen() {
   const { mutateAsync: sendContactUs, isPending } = useContactUs()
 
   const handleBack = useCallback(() => {
-    router.push('/profile')
+    router.back()
   }, [])
 
   const resetForm = useCallback(() => {
@@ -99,7 +102,7 @@ export default function ContactUsScreen() {
 
   // TODO: Update design of components to match the new design system
   return (
-    <ScreenWrapper>
+    <ScreenWrapper style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center justify-between mb-2 mt-2 px-4">
         <BackButton onPress={handleBack} className="mb-0 z-10" />
         <Text variant="h4" className="text-center w-full -ml-10">

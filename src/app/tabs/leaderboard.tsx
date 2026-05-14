@@ -319,8 +319,9 @@ export default function LeaderboardTab() {
 
   return (
     <ScreenWrapper>
+      <DashboardHeader title="Community Stats" />
       <ScrollView
-        contentContainerClassName="px-4 pb-30 py-8 flex-grow"
+        contentContainerClassName="px-4 pb-30 pt-6 flex-grow"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -331,8 +332,6 @@ export default function LeaderboardTab() {
           />
         }
       >
-        <DashboardHeader title="Community Stats" className="mb-6" />
-
         <Tabs value={tab} onValueChange={handleTabChange} className="mb-4">
           <TabsList className="h-auto p-0 bg-transparent gap-2">
             <TabsTrigger value="winners" className="data-[state=active]:bg-transparent px-0 pb-2">
