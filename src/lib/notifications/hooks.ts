@@ -28,17 +28,96 @@ export function useNotificationObserver({
     //   }
     // }
 
+    /*
+    Endpoint - https://exp.host/--/api/v2/push/send
+    Method - POST
+
+    to - expo push token - На новий странице DEV Test Screen
+
+    PRE-01, PRE-02, STAKE-02, POST-02
+    {
+      "to": "ExponentPushToken[PU3qk1HgavfkFvD8mieO3B]",
+      "sound": "default",
+      "title": "Original Title - Stake screen",
+      "body": "Missed Draws, Draws-Per-Epoch, Low-Barrier Anchor",
+      "data": { 
+          "contentType": "modal",
+          "modalType": "staking",
+          "screen": "/tabs"
+        }
+    }
+
+    PRE-03
+    {
+      "to": "ExponentPushToken[PU3qk1HgavfkFvD8mieO3B]",
+      "sound": "default",
+      "title": "Original Title - Stake screen",
+      "body": "Missed Draws, Draws-Per-Epoch, Low-Barrier Anchor",
+      "data": { 
+          "contentType": "modal",
+          "modalType": "staking",
+          "stakeAmount": "1.25",
+          "screen": "/tabs"
+        }
+    }
+
+    STAKE-01, SKR-02
+    {
+      "to": "ExponentPushToken[PU3qk1HgavfkFvD8mieO3B]",
+      "sound": "default",
+      "title": "Original Title - Rewards screen",
+      "body": "You Won",
+      "data": { 
+          "contentType": "screen",
+          "screen": "/tabs/rewards"
+        }
+    }
+
+    Notifications
+    {
+      "to": "ExponentPushToken[PU3qk1HgavfkFvD8mieO3B]",
+      "sound": "default",
+      "title": "Original Title - notifications",
+      "body": "Notifications",
+      "data": { 
+         "contentType": "screen",
+         "screen": "/screens/notifications"
+        }
+    }
+
+    Announcement - id - взять из админки для своего пользователя.
+    https://develop-admin.tramplin.io/#/notifications/6a046192dcd7b21e796734eb/show
+    {
+      "to": "ExponentPushToken[PU3qk1HgavfkFvD8mieO3B]",
+      "sound": "default",
+      "title": "Original Title - Announcement",
+      "body": "Notifications Announcement",
+      "data": { 
+        "contentType": "screen",
+        "screen": "/screens/notifications/<id>",
+        "id": "6a046192dcd7b21e796734eb"
+        }
+    }
+    */
+
     function handleNotificationAction(notification: Notifications.Notification) {
       // console.log('notification', notification)
-      const { contentType, modalType, screen } = notification.request.content.data
+      const { contentType, modalType, screen, id, stakeAmount } = notification.request.content.data as {
+        contentType?: string
+        modalType?: string
+        screen?: string
+        id?: string
+        stakeAmount?: string
+      }
 
       if (contentType === 'modal' && modalType) {
-        router.push(`${screen}?modalType=${modalType}` as Href)
+        router.push(`${screen}?modalType=${modalType}${stakeAmount ? `&stakeAmount=${stakeAmount}` : ''}` as Href)
         return
       }
 
       if (contentType === 'screen' && screen) {
-        router.push(`${screen}` as Href)
+        const resolvedScreen = id ? screen.replace('<id>', id) : screen
+        router.push(resolvedScreen as Href)
         return
       }
 
