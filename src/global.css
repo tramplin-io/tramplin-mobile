@@ -36,6 +36,11 @@
   --text-small-bold--letter-spacing: 0; /* 0px */
   --text-small-bold--font-weight: 600; /* M Bold */
 
+  --text-body-small: 0.75rem; /* 12px */
+  --text-body-small--line-height: 0.875rem; /* 14px */
+  --text-body-small--letter-spacing: 0; /* 0px */
+  --text-body-small--font-weight: 400; /* M Regular */
+
   --text-body: 1rem; /* 16px */
   --text-body--line-height: 1.25rem; /* 20px */
   --text-body--letter-spacing: 0; /* 0px */
@@ -124,9 +129,10 @@
       --color-card: oklch(0.95 0 0); /* # */
       --color-card-foreground: oklch(0 0 0); /* # */
       --color-destructive: oklch(0.84 0.09 15); /* # */
+      --color-unread-notification: oklch(0.9184 0.0121 286.16); /* #e3e3ec */
 
       /* State Colors */
-      --color-error: oklch(0.6493 0.1718 8.91); /* ##e25979 */
+      --color-error: oklch(0.6407 0.2269 26.48); /* #F83838 */
       --color-success: oklch(0.7334 0.1236 140.83); /* #7cbc71 */
       --color-warning: oklch(0.7695 0.1382 57.93); /* #f59c53 */
       --color-error-bg: oklch(0.8306 0.094164 19.2558); /* #FFAFAF */
@@ -198,6 +204,7 @@
       --color-card: oklch(0.16 0 0);
       --color-card-foreground: oklch(1 0 0);
       --color-destructive: oklch(0.77 0.13 15);
+      --color-unread-notification: oklch(0.9184 0.0121 286.16); /* #e3e3ec */
 
       /* State Colors */
       --color-error: oklch(0.6493 0.1718 8.91); /* #e25979 */
