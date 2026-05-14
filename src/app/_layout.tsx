@@ -99,7 +99,8 @@ function RootLayout() {
   // console.log('color', color)
 
   const pathname = usePathname()
-  const hideHeader = pathname === '/greeting' || pathname === '/splash' || pathname === '/'
+  const hideHeader =
+    pathname === '/greeting' || pathname === '/splash' || pathname === '/' || pathname === '/+not-found'
 
   useEffect(() => {
     async function prepare() {
@@ -181,7 +182,7 @@ function RootLayout() {
               />
               <Stack.Screen name="no-internet/index" />
               <Stack.Screen name="splash" />
-              {/* TODO add hot found page */}
+              <Stack.Screen name="+not-found" options={{ headerShown: false }} />
             </Stack>
           </AuthGuard>,
           <PortalHost key="portal" />,
