@@ -32,8 +32,8 @@ export function Header({ variant, showLogo = true }: Readonly<HeaderProps>) {
   const navigation = useNavigation()
 
   const { account } = useMobileWallet()
-  const fillPrimary = useCSSVariable('--color-fill-primary')
-  const fillFade = useCSSVariable('--color-fill-fade')
+  const fillPrimary = useCSSVariable('--color-fill-primary') as string
+  const fillFade = useCSSVariable('--color-fill-fade') as string
 
   const contentPrimary = useCSSVariable('--color-content-primary') as string
   const borderPrimary = useCSSVariable('--color-border-primary') as string
@@ -63,6 +63,10 @@ export function Header({ variant, showLogo = true }: Readonly<HeaderProps>) {
         router.replace('/tabs/')
       }
     }
+  }
+
+  if (isApp) {
+    return null
   }
 
   return (
