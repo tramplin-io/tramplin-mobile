@@ -26,6 +26,7 @@ type AuthState = {
   isForceUpdateModalVisible: boolean
   isUpdateAvailableModalVisible: boolean
   installAppDate: string | null
+  welcomeShownAt: string | null
   error: string | null
 
   // Actions
@@ -38,6 +39,7 @@ type AuthState = {
   checkUpdateAvailable: () => void
   dismissUpdateAvailable: () => void
   setInstallAppDate: () => void
+  setWelcomeShownAt: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -51,6 +53,7 @@ export const useAuthStore = create<AuthState>()(
       isForceUpdateModalVisible: false,
       isUpdateAvailableModalVisible: false,
       installAppDate: null,
+      welcomeShownAt: null,
       error: null,
 
       setEmail: (email: string) => {
@@ -59,6 +62,10 @@ export const useAuthStore = create<AuthState>()(
 
       setInstallAppDate: () => {
         set({ installAppDate: new Date().toISOString() })
+      },
+
+      setWelcomeShownAt: () => {
+        set({ welcomeShownAt: new Date().toISOString() })
       },
 
       checkUpdateAvailable: () => {
@@ -309,6 +316,7 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
         email: state.email,
         installAppDate: state.installAppDate,
+        welcomeShownAt: state.welcomeShownAt,
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.token) {

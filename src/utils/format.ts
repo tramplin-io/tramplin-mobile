@@ -82,10 +82,11 @@ export function signatureToBase58(bytes: Uint8Array): string {
 
 /**
  * Format a JS Date or ISO string into relative time like "2 DAYS AGO".
- * - < 1 minute → "NOW"
- * - < 1 hour → "N MIN AGO"
- * - < 24 hours → "N HOURS AGO"
- * - otherwise → "N DAY(S) AGO"
+ * - < 1 minute  → "Just now"
+ * - < 1 hour    → "X min ago"
+ * - < 24 hours  → "X hours ago"
+ * - < 7 days    → "X days ago"
+ * - ≥ 7 days    → "12 May" (absolute date)
  */
 export function formatRelativeTime(dateInput: string | Date | undefined): string {
   if (!dateInput) return '—'
@@ -97,25 +98,19 @@ export function formatRelativeTime(dateInput: string | Date | undefined): string
   const diffMs = now.getTime() - date.getTime()
   const diffSeconds = Math.floor(diffMs / 1000)
 
-  if (diffSeconds < 60) {
-    return 'NOW'
-  }
+  if (diffSeconds < 60) return 'Just now'
 
   const diffMinutes = Math.floor(diffSeconds / 60)
-  if (diffMinutes < 60) {
-    if (diffMinutes === 1) return '1 MIN AGO'
-    return `${diffMinutes} MINS AGO`
-  }
+  if (diffMinutes < 60) return `${diffMinutes} min ago`
 
   const diffHours = Math.floor(diffMinutes / 60)
-  if (diffHours < 24) {
-    if (diffHours === 1) return '1 HOUR AGO'
-    return `${diffHours} HOURS AGO`
-  }
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
 
   const diffDays = Math.floor(diffHours / 24)
-  if (diffDays === 1) return '1 DAY AGO'
-  return `${diffDays} DAYS AGO`
+  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${date.getDate()} ${months[date.getMonth()]}`
 }
 
 /**
