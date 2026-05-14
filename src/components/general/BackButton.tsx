@@ -1,8 +1,9 @@
-import { cn } from '@/lib/utils'
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native'
-import { Text } from '@/components/ui/text'
 import { useCSSVariable } from 'uniwind'
+
+import { Text } from '@/components/ui/text'
+import { cn } from '@/lib/utils'
 
 interface BackButtonProps {
   onPress: () => void
@@ -19,7 +20,7 @@ export const BackButton = ({
   className = '',
   buttonClassName = '',
   textClassName = '',
-  arrowSize = 10,
+  arrowSize = 12,
   text = '',
   disabled = false,
 }: BackButtonProps) => {
@@ -29,14 +30,19 @@ export const BackButton = ({
       disabled={disabled}
       className={cn('flex-row items-center mb-8', disabled ? 'opacity-70' : '', className)}
     >
-      <View className={cn('size-10 items-center justify-center rounded-2xl bg-fill-tertiary', buttonClassName)}>
+      <View
+        className={cn(
+          'size-10 border border-border-quaternary rounded-full items-center justify-center bg-fill-secondary',
+          buttonClassName,
+        )}
+      >
         <View
           className="border-l-2 border-b-2 rotate-45 "
           style={{
-            marginLeft: 4,
+            marginLeft: 6,
             width: arrowSize,
             height: arrowSize,
-            borderColor: String(useCSSVariable('--color-brand-primary')),
+            borderColor: String(useCSSVariable('--color-content-primary')),
           }}
         />
       </View>
