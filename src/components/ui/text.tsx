@@ -27,6 +27,7 @@ const textVariants = cva(
         h5: cn('text-h5'),
         h5Digits: cn('text-h5 font-family-digits'),
         body: cn('text-body font-family-regular-medium'),
+        bodySmall: cn('text-body-small font-family-regular-medium'),
         small: cn('text-small font-family-regular-medium'),
         smallRegular: cn('text-small-regular font-family-regular-medium'),
         smallBold: cn('text-small-bold font-family-bold-light'),

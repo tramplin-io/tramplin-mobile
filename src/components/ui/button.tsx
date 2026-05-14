@@ -22,6 +22,12 @@ const buttonVariants = cva(
           'hover:scale-[1.02] active:scale-[0.99]',
           Platform.select({ web: 'hover:bg-primary/90' }),
         ),
+        purple: cn(
+          'rounded-full text-fill-tertiary',
+          'bg-brand-primary',
+          'hover:scale-[1.02] active:scale-[0.99]',
+          Platform.select({ web: 'hover:bg-primary/90' }),
+        ),
         destructive: cn(
           'rounded-full border border-critical-secondary text-fill-tertiary',
           '[background-image:linear-gradient(to_bottom,#E7E7E7,#FF9494)]',
@@ -110,6 +116,7 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
     variant: {
       default:
         'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
+      purple: 'text-body text-fill-tertiary',
       destructive:
         'text-body text-content-primary drop-shadow-md shadow-fill-tertiary text-shadow-[0_-1px_1px_0_var(--color-fill-tertiary)]',
       gold: 'text-body text-reward-large-primary',

@@ -1,9 +1,10 @@
-import { cn } from '@/lib/utils'
-import * as SwitchPrimitives from '@rn-primitives/switch'
 import * as React from 'react'
 import { Platform } from 'react-native'
+import * as SwitchPrimitives from '@rn-primitives/switch'
 import Animated, { useAnimatedStyle, useDerivedValue, withTiming } from 'react-native-reanimated'
 import { useCSSVariable } from 'uniwind'
+
+import { cn } from '@/lib/utils'
 
 const SwitchWeb = React.forwardRef<SwitchPrimitives.RootRef, SwitchPrimitives.RootProps>(
   ({ className, ...props }, ref) => (
@@ -33,13 +34,14 @@ SwitchWeb.displayName = 'SwitchWeb'
 const SwitchNative = React.forwardRef<SwitchPrimitives.RootRef, SwitchPrimitives.RootProps>(
   ({ className, ...props }, ref) => {
     const brandPrimary = useCSSVariable('--color-brand-primary') as string | undefined
-    const fillSecondary = useCSSVariable('--color-fill-secondary') as string | undefined
+    // const fillSecondary = useCSSVariable('--color-fill-secondary') as string | undefined
     const fillTertiary = useCSSVariable('--color-fill-tertiary') as string | undefined
-    const borderTertiary = useCSSVariable('--color-border-tertiary') as string | undefined
+    const rewardSmallPrimary = useCSSVariable('--color-reward-small-primary') as string | undefined
+    // const borderTertiary = useCSSVariable('--color-border-tertiary') as string | undefined
 
-    const translateX = useDerivedValue(() => (props.checked ? 19 : 2))
+    const translateX = useDerivedValue(() => (props.checked ? 19 : 1))
     const animatedRootStyle = useAnimatedStyle(() => ({
-      backgroundColor: props.checked ? brandPrimary ?? '#8682F7' : fillSecondary ?? '#F0F0F0',
+      backgroundColor: props.checked ? (brandPrimary ?? '#8682F7') : (rewardSmallPrimary ?? '#CCCFD1'),
     }))
     const animatedThumbStyle = useAnimatedStyle(() => ({
       transform: [{ translateX: withTiming(translateX.value, { duration: 200 }) }],
@@ -48,11 +50,11 @@ const SwitchNative = React.forwardRef<SwitchPrimitives.RootRef, SwitchPrimitives
     return (
       <Animated.View
         style={animatedRootStyle}
-        className={cn('h-[32px] w-[51px] rounded-full', props.disabled && 'opacity-50')}
+        className={cn('h-[24px] w-[44px] rounded-full', props.disabled && 'opacity-50')}
       >
         <SwitchPrimitives.Root
           className={cn(
-            'flex-row h-[32px] w-[51px] shrink-0 items-center rounded-full border-2 border-transparent',
+            'flex-row h-[24px] w-[44px] shrink-0 items-center rounded-full border-2 border-transparent',
             className,
           )}
           {...props}
@@ -61,17 +63,17 @@ const SwitchNative = React.forwardRef<SwitchPrimitives.RootRef, SwitchPrimitives
           <Animated.View style={animatedThumbStyle}>
             <SwitchPrimitives.Thumb
               style={{
-                height: 27,
-                width: 27,
-                borderRadius: 14,
+                height: 20,
+                width: 20,
+                borderRadius: 10,
                 backgroundColor: fillTertiary ?? '#FFFFFF',
-                borderWidth: 1,
-                borderColor: borderTertiary,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 2,
+                // borderWidth: 1,
+                // borderColor: borderTertiary,
+                // shadowColor: '#000',
+                // shadowOffset: { width: 0, height: 1 },
+                // shadowOpacity: 0.1,
+                // shadowRadius: 2,
+                // elevation: 2,
               }}
             />
           </Animated.View>
