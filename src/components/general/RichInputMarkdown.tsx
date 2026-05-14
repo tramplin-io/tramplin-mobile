@@ -1,5 +1,6 @@
 import { View } from 'react-native'
-import Markdown, { type MarkdownProps } from 'react-native-markdown-display'
+import FitImage from 'react-native-fit-image'
+import Markdown, { type MarkdownProps, type RenderRules } from 'react-native-markdown-display'
 import { useCSSVariable } from 'uniwind'
 
 const FONT_REGULAR = 'GT-Standard-M-Standard-Regular'
@@ -8,6 +9,27 @@ const FONT_BOLD = 'GT-Standard-M-Standard-Bold'
 interface RichInputMarkdownProps {
   markdown: string
   className?: string
+}
+
+// react-native-markdown-display spreads { key, ...rest } into FitImage which triggers a React warning.
+// Override to pass key directly to FitImage instead of via spread.
+const markdownRules: RenderRules = {
+  image: (node, _children, _parent, styles, allowedImageHandlers, defaultImageHandler) => {
+    const { src, alt } = node.attributes as { src: string; alt?: string }
+    const show = allowedImageHandlers.some((h) => src.toLowerCase().startsWith(h.toLowerCase()))
+    if (!show && defaultImageHandler === null) return null
+    const uri = show ? src : `${defaultImageHandler}${src}`
+    return (
+      <FitImage
+        key={node.key}
+        indicator={false}
+        style={styles._VIEW_SAFE_image}
+        source={{ uri }}
+        accessible={!!alt}
+        accessibilityLabel={alt}
+      />
+    )
+  },
 }
 
 export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInputMarkdownProps>) {
@@ -30,11 +52,11 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       lineHeight: 20,
       fontWeight: '400',
       color: contentTertiary,
-      marginTop: 0,
-      marginBottom: 4,
+      marginTop: 8,
+      marginBottom: 8,
     },
     heading1: {
-      fontFamily: FONT_BOLD,
+      // fontFamily: FONT_BOLD,
       fontSize: 26,
       lineHeight: 33,
       fontWeight: '600',
@@ -43,30 +65,30 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       marginBottom: 18,
     },
     heading2: {
-      fontFamily: FONT_BOLD,
+      // fontFamily: FONT_BOLD,
       fontSize: 22,
       lineHeight: 28,
       fontWeight: '600',
       color: contentPrimary,
-      marginTop: 0,
+      marginTop: 16,
       marginBottom: 16,
     },
     heading3: {
-      fontFamily: FONT_BOLD,
+      // fontFamily: FONT_BOLD,
       fontSize: 20,
       lineHeight: 26,
       fontWeight: '600',
       color: contentPrimary,
-      marginTop: 0,
+      marginTop: 14,
       marginBottom: 14,
     },
     heading4: {
-      fontFamily: FONT_BOLD,
+      // fontFamily: FONT_BOLD,
       fontSize: 18,
       lineHeight: 23,
       fontWeight: '600',
       color: contentPrimary,
-      marginTop: 0,
+      marginTop: 14,
       marginBottom: 12,
     },
     heading5: {
@@ -75,7 +97,7 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       lineHeight: 18,
       fontWeight: '500',
       color: contentSecondary,
-      marginTop: 0,
+      marginTop: 8,
       marginBottom: 8,
     },
     heading6: {
@@ -84,7 +106,7 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       lineHeight: 18,
       fontWeight: '500',
       color: contentSecondary,
-      marginTop: 0,
+      marginTop: 4,
       marginBottom: 4,
     },
     strong: {
@@ -103,16 +125,20 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
     },
     blockquote: {
       borderLeftWidth: 2,
-      borderLeftColor: contentTertiary,
+      // biome-ignore lint/suspicious/noExplicitAny: blockquote renders as ViewStyle at runtime but library types it as TextStyle
+      borderLeftColor: brandPrimary as any,
       paddingLeft: 12,
       color: contentSecondary,
+      marginTop: 12,
+      marginBottom: 12,
+      marginLeft: 0,
     },
     bullet_list: {
-      paddingLeft: 8,
+      paddingLeft: 4,
       marginBottom: 4,
     },
     ordered_list: {
-      paddingLeft: 8,
+      paddingLeft: 4,
       marginBottom: 4,
     },
     list_item: {
@@ -145,7 +171,9 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
 
   return (
     <View className={className}>
-      <Markdown style={markdownStyles}>{markdown}</Markdown>
+      <Markdown style={markdownStyles} rules={markdownRules}>
+        {markdown}
+      </Markdown>
     </View>
   )
 }
