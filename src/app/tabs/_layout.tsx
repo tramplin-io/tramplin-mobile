@@ -1,75 +1,49 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Pressable, View, type PressableProps } from 'react-native'
-import { Tabs, usePathname } from 'expo-router'
+import { router, Tabs, useLocalSearchParams, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
+import { PlusIcon } from '@/components/icons/icons'
 import {
-  // BigCupIcon,
-  // BundleIcon,
-  // FilterIcon,
+  FaqFillIcon,
+  FaqIcon,
   HomeFillIcon,
   HomeIcon,
-  InsertChartFillIcon,
-  InsertChartIcon,
-  MessageQuestionFillIcon,
-  MessageQuestionIcon,
-  PlusIcon,
-  // SearchIcon,
+  RewardsFillIcon,
+  RewardsIcon,
   SettingsFillIcon,
   SettingsIcon,
-  WheelchairPickupFillIcon,
-  WheelchairPickupIcon,
-} from '@/components/icons/icons'
+  StatsFillIcon,
+  StatsIcon,
+} from '@/components/icons/NavMenu'
+// import { CustomTabBar } from '@/components/navigation/BottomTabs'
 // import { LogoSmall } from '@/components/icons/Logo'
 import { StakeModal } from '@/components/stake'
 import { Button } from '@/components/ui'
 import { Text } from '@/components/ui/text'
+import { WelcomeModal } from '@/components/welcome'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { cn } from '@/lib/utils'
 
-function StakeTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
-  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
-  return focused ? (
-    <HomeFillIcon width={24} height={24} color={primaryColor} />
-  ) : (
-    <HomeIcon width={24} height={24} color={primaryColor} />
-  )
+function StakeTabIcon({ focused }: { readonly focused: boolean }) {
+  return focused ? <HomeFillIcon width={24} height={24} /> : <HomeIcon width={24} height={24} />
 }
 
-function LeaderTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
-  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
-  return focused ? (
-    <InsertChartFillIcon width={24} height={24} color={primaryColor} />
-  ) : (
-    <InsertChartIcon width={24} height={24} color={primaryColor} />
-  )
+function LeaderTabIcon({ focused }: { readonly focused: boolean }) {
+  return focused ? <StatsFillIcon width={24} height={24} /> : <StatsIcon width={24} height={24} />
 }
 
-function RewardsTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
-  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
-  return focused ? (
-    <WheelchairPickupFillIcon width={24} height={24} color={primaryColor} />
-  ) : (
-    <WheelchairPickupIcon width={24} height={24} color={primaryColor} />
-  )
+function RewardsTabIcon({ focused }: { readonly focused: boolean }) {
+  return focused ? <RewardsFillIcon width={24} height={24} /> : <RewardsIcon width={24} height={24} />
 }
 
-function FAQTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
-  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
-  return focused ? (
-    <MessageQuestionFillIcon width={24} height={24} color={primaryColor} />
-  ) : (
-    <MessageQuestionIcon width={24} height={24} color={primaryColor} />
-  )
+function FAQTabIcon({ focused }: { readonly focused: boolean }) {
+  return focused ? <FaqFillIcon width={24} height={24} /> : <FaqIcon width={24} height={24} />
 }
 
-function SettingsTabIcon({ color, focused }: { readonly color: string; readonly focused: boolean }) {
-  const primaryColor = useCSSVariable('--color-content-primary') as string | undefined
-  return focused ? (
-    <SettingsFillIcon width={24} height={24} color={primaryColor} />
-  ) : (
-    <SettingsIcon width={24} height={24} color={primaryColor} />
-  )
+function SettingsTabIcon({ focused }: { readonly focused: boolean }) {
+  return focused ? <SettingsFillIcon width={24} height={24} /> : <SettingsIcon width={24} height={24} />
 }
 
 type TabBarButtonProps = PressableProps & {
@@ -122,19 +96,64 @@ function TabBarButtonWrapper({
   )
 }
 
+let stakeParamHandled = false
+
 export default function TabsLayout() {
   const insets = useSafeAreaInsets()
   const pathname = usePathname()
-  const activeTint = useCSSVariable('--color-brand-primary')
-  const inactiveTint = useCSSVariable('--color-content-tertiary')
-  const backgroundColor = useCSSVariable('--color-fill-tertiary')
+  // const params = useLocalSearchParams()
+  const activeTint = useCSSVariable('--color-content-primary') as string
+  const inactiveTint = useCSSVariable('--color-content-primary') as string
+  const backgroundColor = useCSSVariable('--color-fill-secondary') as string
+  // const borderColor = useCSSVariable('--color-fill-tertiary') as string
   const [stakeModalOpen, setStakeModalOpen] = useState(false)
   const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
   const isStakeHide = pathname === '/tabs/settings' || pathname.startsWith('/tabs/settings/')
 
+  const welcomeShownAt = useAuthStore((s) => s.welcomeShownAt)
+  const setWelcomeShownAt = useAuthStore((s) => s.setWelcomeShownAt)
+  const [welcomeModalOpen, setWelcomeModalOpen] = useState(false)
+  const handleWelcomeModalChange = useCallback((open: boolean) => {
+    setWelcomeModalOpen(open)
+  }, [])
+  const handleWelcomeStakePress = useCallback(() => {
+    setStakeModalOpen(true)
+  }, [])
+
+  const { modalType, stakeAmount: stakeAmountParam = '' } = useLocalSearchParams<{
+    modalType?: string
+    stakeAmount?: string
+  }>()
+  const [capturedStakeAmount, setCapturedStakeAmount] = useState('')
+
+  const handleStakeModalChange = useCallback((open: boolean) => {
+    setStakeModalOpen(open)
+    if (!open) {
+      router.setParams({ modalType: undefined, stakeAmount: undefined })
+      setCapturedStakeAmount('')
+      stakeParamHandled = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (modalType === 'staking' && !stakeParamHandled) {
+      stakeParamHandled = true
+      setCapturedStakeAmount(stakeAmountParam)
+      setStakeModalOpen(true)
+      router.setParams({ modalType: undefined, stakeAmount: undefined })
+    }
+  }, [modalType, stakeAmountParam])
+
   useEffect(() => {
     if (isStakeHide) setStakeModalOpen(false)
   }, [isStakeHide])
+
+  useEffect(() => {
+    if (!welcomeShownAt) {
+      setWelcomeShownAt()
+      setWelcomeModalOpen(true)
+    }
+  }, [welcomeShownAt, setWelcomeShownAt])
 
   return (
     <View className="flex-1">
@@ -186,6 +205,7 @@ export default function TabsLayout() {
           tabBarInactiveTintColor: inactiveTint == null ? undefined : String(inactiveTint),
           tabBarButton: TabBarButtonWrapper,
         }}
+        // tabBar={(props) => <CustomTabBar {...props} />}
       >
         <Tabs.Screen
           name="index"
@@ -229,11 +249,19 @@ export default function TabsLayout() {
           className="items-center justify-center px-4 gap-5 z-50"
           style={{
             position: 'absolute',
-            bottom: 90 + insets.bottom,
+            bottom: 76 + insets.bottom,
             left: 0,
             right: 0,
           }}
         >
+          {/* <Button
+            variant="default"
+            size="xl"
+            onPress={() => setWelcomeModalOpen(true)}
+            className="w-full border-brand-primary"
+          >
+            <Text variant="body">Open</Text>
+          </Button> */}
           <Button variant="default" size="xl" onPress={handleOpenStake} className="w-full border-brand-primary">
             <PlusIcon size={20} className="drop-shadow-md" />
             <Text variant="body">Stake SOL</Text>
@@ -241,7 +269,13 @@ export default function TabsLayout() {
         </View>
       )}
 
-      <StakeModal open={stakeModalOpen} onOpenChange={setStakeModalOpen} />
+      <StakeModal open={stakeModalOpen} onOpenChange={handleStakeModalChange} stakeAmount={capturedStakeAmount} />
+
+      <WelcomeModal
+        open={welcomeModalOpen}
+        onOpenChange={handleWelcomeModalChange}
+        onStakePress={handleWelcomeStakePress}
+      />
     </View>
   )
 }
