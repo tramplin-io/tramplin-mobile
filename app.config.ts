@@ -124,8 +124,8 @@ const defineConfig = ({ config }: ConfigContext): ExpoConfig => ({
       'expo-notifications',
       {
         defaultChannel: 'default',
-        // icon: './local/assets/notification_icon.png',
-        // color: '#ffffff',
+        icon: './src/assets/images/notification_icon.png',
+        color: '#8682F7',
         // sounds: ['./local/assets/notification_sound.wav', './local/assets/notification_sound_other.wav'],
         // enableBackgroundRemoteNotifications: false,
       },
