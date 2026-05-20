@@ -10,6 +10,7 @@ import { BellIcon, CrossIcon, DeleteIcon } from '@/components/icons/icons'
 import { Text } from '@/components/ui/text'
 import { useDeleteMyNotification } from '@/lib/api/generated/restApi'
 import type { Notification as ApiNotification, NotificationExtraType } from '@/lib/api/generated/restApi.schemas'
+import { useAuthStore } from '@/lib/stores/auth-store'
 import { cn } from '@/lib/utils'
 import { formatRelativeTime } from '@/utils/format'
 
@@ -119,7 +120,8 @@ export const NotificationCard = memo(function NotificationCard({
       }
 
       if (contentType === 'modal' && modalType) {
-        router.push(`${screen}?modalType=${modalType}${stakeAmount ? `&stakeAmount=${stakeAmount}` : ''}` as Href)
+        useAuthStore.getState().setPendingNotificationModal({ modalType, stakeAmount })
+        router.navigate((screen ?? '/tabs') as Href)
         return
       }
 
@@ -211,7 +213,7 @@ export const NotificationCard = memo(function NotificationCard({
                 </Text>
               )}
               <Text variant="small" className="text-content-tertiary mt-0.5">
-                {formatRelativeTime(notification.createdAt)}
+                {formatRelativeTime(notification.processedAt)}
               </Text>
             </View>
           </Pressable>
