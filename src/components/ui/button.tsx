@@ -122,7 +122,7 @@ const buttonTextVariants = cva(cn(Platform.select({ web: 'pointer-events-none tr
       gold: 'text-body text-reward-large-primary',
       black: 'text-body text-content-tertiary',
       tertiary: 'text-body text-content-tertiary',
-      gray: 'text-body text-content-tertiary',
+      gray: 'text-body text-content-primary disabled:text-silver-light',
       error: 'text-body text-critical-secondary',
       errorSmall: 'text-body text-critical-secondary',
       preset: 'text-smallBold',
@@ -161,7 +161,7 @@ function Button({ className, variant, size, ...props }: ButtonProps) {
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
       <Pressable
-        className={cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className)}
+        className={cn(props.disabled && ' ', buttonVariants({ variant, size }), className)}
         // role="button"
         {...props}
       />

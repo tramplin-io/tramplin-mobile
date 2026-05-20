@@ -158,6 +158,9 @@
       /* Gradient */
       --color-getting-gradient-primary: oklch(0.6758 0.1564 283.48);
       --color-getting-gradient-secondary: oklch(0.6758 0.1564 283.48 / 0);
+
+      /* Content */
+      --color-content-article-body: oklch(0.4313 0 0); /* #505050 */
     }
 
     @variant dark {
@@ -233,6 +236,9 @@
       /* Gradient */
       --color-getting-gradient-primary: oklch(0.6758 0.1564 283.48);
       --color-getting-gradient-secondary: oklch(0.6758 0.1564 283.48 / 0);
+
+      /* Content */
+      --color-content-article-body: oklch(0.4313 0 0); /* #505050 */
     }
   }
 }

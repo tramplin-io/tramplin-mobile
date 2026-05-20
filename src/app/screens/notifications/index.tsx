@@ -183,7 +183,7 @@ export default function AppNotificationsScreen() {
           onPress={handleMarkAllAsRead}
           disabled={isMarkingAsRead || !hasUnreadNotifications}
         >
-          <Text variant="body" className="text-content-primary">
+          <Text variant="body" disabled={isMarkingAsRead || !hasUnreadNotifications}>
             Mark all as read
           </Text>
         </Button>
