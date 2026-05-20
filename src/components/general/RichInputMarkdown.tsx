@@ -23,7 +23,7 @@ const markdownRules: RenderRules = {
       <FitImage
         key={node.key}
         indicator={false}
-        style={styles._VIEW_SAFE_image}
+        style={[styles._VIEW_SAFE_image, { borderRadius: 10, overflow: 'hidden' }]}
         source={{ uri }}
         accessible={!!alt}
         accessibilityLabel={alt}
@@ -35,7 +35,7 @@ const markdownRules: RenderRules = {
 export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInputMarkdownProps>) {
   const contentPrimary = useCSSVariable('--color-content-primary') as string
   const contentSecondary = useCSSVariable('--color-content-secondary') as string
-  const contentTertiary = useCSSVariable('--color-content-tertiary') as string
+  const contentArticleBody = useCSSVariable('--color-content-article-body') as string
   const brandPrimary = useCSSVariable('--color-brand-primary') as string
 
   const markdownStyles: MarkdownProps['style'] = {
@@ -43,7 +43,7 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       fontFamily: FONT_REGULAR,
       fontSize: 15,
       lineHeight: 22,
-      color: contentTertiary,
+      color: contentArticleBody,
       fontWeight: '400',
     },
     paragraph: {
@@ -51,7 +51,7 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       fontSize: 15,
       lineHeight: 20,
       fontWeight: '400',
-      color: contentTertiary,
+      color: contentArticleBody,
       marginTop: 8,
       marginBottom: 8,
     },
@@ -124,14 +124,15 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       textDecorationLine: 'underline',
     },
     blockquote: {
-      borderLeftWidth: 2,
+      borderLeftWidth: 4,
       // biome-ignore lint/suspicious/noExplicitAny: blockquote renders as ViewStyle at runtime but library types it as TextStyle
       borderLeftColor: brandPrimary as any,
       paddingLeft: 12,
-      color: contentSecondary,
+      color: contentArticleBody,
       marginTop: 12,
       marginBottom: 12,
       marginLeft: 0,
+      backgroundColor: 'transparent',
     },
     bullet_list: {
       paddingLeft: 4,
@@ -146,13 +147,13 @@ export function RichInputMarkdown({ markdown = '', className }: Readonly<RichInp
       flexDirection: 'row',
     },
     bullet_list_icon: {
-      color: contentTertiary,
+      color: contentArticleBody,
       fontSize: 15,
       lineHeight: 22,
       marginRight: 6,
     },
     ordered_list_icon: {
-      color: contentTertiary,
+      color: contentArticleBody,
       fontSize: 15,
       lineHeight: 22,
       marginRight: 6,
