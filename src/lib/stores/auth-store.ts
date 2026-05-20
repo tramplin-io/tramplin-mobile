@@ -17,6 +17,11 @@ import { useProfileStore } from './profile-store'
 import { useReferralsStore } from './referrals-store'
 import { useUserStore } from './user-store'
 
+type PendingNotificationModal = {
+  modalType: string
+  stakeAmount?: string
+}
+
 type AuthState = {
   token: string | null
   session: Session | null
@@ -28,6 +33,7 @@ type AuthState = {
   installAppDate: string | null
   welcomeShownAt: string | null
   error: string | null
+  pendingNotificationModal: PendingNotificationModal | null
 
   // Actions
   loginWithWallet: (walletCredentials: WalletCredentials) => Promise<boolean>
@@ -38,6 +44,7 @@ type AuthState = {
   setEmail: (email: string) => void
   checkUpdateAvailable: () => void
   dismissUpdateAvailable: () => void
+  setPendingNotificationModal: (modal: PendingNotificationModal | null) => void
   setInstallAppDate: () => void
   setWelcomeShownAt: () => void
 }
@@ -55,6 +62,7 @@ export const useAuthStore = create<AuthState>()(
       installAppDate: null,
       welcomeShownAt: null,
       error: null,
+      pendingNotificationModal: null,
 
       setEmail: (email: string) => {
         set({ email })
@@ -79,6 +87,10 @@ export const useAuthStore = create<AuthState>()(
 
       dismissUpdateAvailable: () => {
         set({ isUpdateAvailableModalVisible: false })
+      },
+
+      setPendingNotificationModal: (modal) => {
+        set({ pendingNotificationModal: modal })
       },
 
       loginWithWallet: async (walletCredentials: WalletCredentials) => {

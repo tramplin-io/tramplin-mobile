@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Pressable, View, type PressableProps } from 'react-native'
-import { router, Tabs, useLocalSearchParams, usePathname } from 'expo-router'
+import { useIsFocused } from '@react-navigation/native'
+import { Tabs, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useCSSVariable } from 'uniwind'
 
@@ -96,16 +97,12 @@ function TabBarButtonWrapper({
   )
 }
 
-let stakeParamHandled = false
-
 export default function TabsLayout() {
   const insets = useSafeAreaInsets()
   const pathname = usePathname()
-  // const params = useLocalSearchParams()
   const activeTint = useCSSVariable('--color-content-primary') as string
   const inactiveTint = useCSSVariable('--color-content-primary') as string
   const backgroundColor = useCSSVariable('--color-fill-secondary') as string
-  // const borderColor = useCSSVariable('--color-fill-tertiary') as string
   const [stakeModalOpen, setStakeModalOpen] = useState(false)
   const handleOpenStake = useCallback(() => setStakeModalOpen(true), [])
   const isStakeHide = pathname === '/tabs/settings' || pathname.startsWith('/tabs/settings/')
@@ -120,29 +117,26 @@ export default function TabsLayout() {
     setStakeModalOpen(true)
   }, [])
 
-  const { modalType, stakeAmount: stakeAmountParam = '' } = useLocalSearchParams<{
-    modalType?: string
-    stakeAmount?: string
-  }>()
   const [capturedStakeAmount, setCapturedStakeAmount] = useState('')
+
+  const pendingNotificationModal = useAuthStore((s) => s.pendingNotificationModal)
+  const setPendingNotificationModal = useAuthStore((s) => s.setPendingNotificationModal)
+  const isFocused = useIsFocused()
 
   const handleStakeModalChange = useCallback((open: boolean) => {
     setStakeModalOpen(open)
     if (!open) {
-      router.setParams({ modalType: undefined, stakeAmount: undefined })
       setCapturedStakeAmount('')
-      stakeParamHandled = false
     }
   }, [])
 
   useEffect(() => {
-    if (modalType === 'staking' && !stakeParamHandled) {
-      stakeParamHandled = true
-      setCapturedStakeAmount(stakeAmountParam)
+    if (isFocused && pendingNotificationModal?.modalType === 'staking') {
+      setCapturedStakeAmount(pendingNotificationModal.stakeAmount ?? '')
       setStakeModalOpen(true)
-      router.setParams({ modalType: undefined, stakeAmount: undefined })
+      setPendingNotificationModal(null)
     }
-  }, [modalType, stakeAmountParam])
+  }, [isFocused, pendingNotificationModal, setPendingNotificationModal])
 
   useEffect(() => {
     if (isStakeHide) setStakeModalOpen(false)

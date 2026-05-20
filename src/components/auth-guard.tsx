@@ -1,7 +1,7 @@
 import { useEffect, type PropsWithChildren } from 'react'
 import { useRouter, useSegments } from 'expo-router'
 
-import { useNotificationObserver, useSystemPushPermission } from '@/lib/notifications/hooks'
+import { takePendingColdStartRoute, useNotificationObserver, useSystemPushPermission } from '@/lib/notifications/hooks'
 import { setSentryUser } from '@/lib/sentry'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useProfileStore } from '@/lib/stores/profile-store'
@@ -76,6 +76,12 @@ export function AuthGuard({ children }: Readonly<PropsWithChildren>) {
     if (isAuthenticated) {
       if (inGreetingGroup) {
         router.replace('/tabs/')
+      } else {
+        // App has settled on a real route — flush any cold-start notification target.
+        const pendingRoute = takePendingColdStartRoute()
+        if (pendingRoute) {
+          router.push(pendingRoute)
+        }
       }
     } else {
       if (!inGreetingGroup) {
